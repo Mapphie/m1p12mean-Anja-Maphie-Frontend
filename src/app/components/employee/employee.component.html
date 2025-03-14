@@ -19,6 +19,7 @@
                     <p-inputicon styleClass="pi pi-search" />
                     <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
                 </p-iconfield>
+                <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
             </div>
         </ng-template>
         <ng-template #header>
@@ -53,4 +54,47 @@
             </tr>
         </ng-template>
     </p-table>
+
+    <p-dialog [(visible)]="employeDialog" [style]="{ width: '450px' }" header="Détails de l'employé" [modal]="true">
+        <ng-template #content>
+            <div class="flex flex-col gap-6">
+
+                <div>
+                    <label for="nom" class="block font-bold mb-3">Nom</label>
+                    <input type="text" pInputText id="nom" [(ngModel)]="employe.nom" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !employe.nom">Name is required.</small>
+                </div>
+                <div>
+                    <label for="email" class="block font-bold mb-3">Email</label>
+                    <textarea id="email" pTextarea [(ngModel)]="employe.email" required rows="3" cols="20" fluid></textarea>
+                </div>
+
+                <div>
+                    <label for="contact" class="block font-bold mb-3">Contact</label>
+                    <textarea id="contact" pTextarea [(ngModel)]="employe.contact" required rows="3" cols="20" fluid></textarea>
+                </div>
+
+                <div>
+                    <label for="adresse" class="block font-bold mb-3">Adresse</label>
+                    <textarea id="adresse" pTextarea [(ngModel)]="employe.adresse" required rows="3" cols="20" fluid></textarea>
+                </div>
+
+                <div>
+                    <label for="poste" class="block font-bold mb-3">Poste</label>
+                    <p-select [(ngModel)]="employe.poste" inputId="poste" [options]="statuses" optionLabel="label" optionValue="label" placeholder="Select a Status" fluid />
+                </div>
+
+                <div>
+                    <label for="salaire" class="block font-bold mb-3">Salaire</label>
+                    <textarea id="salaire" pTextarea [(ngModel)]="employe.salaire" required rows="3" cols="20" fluid></textarea>
+                </div>
+
+            </div>
+        </ng-template>
+
+        <ng-template #footer>
+            <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+            <p-button label="Save" icon="pi pi-check" (click)="saveemployee()" />
+        </ng-template>
+    </p-dialog>
 </div>

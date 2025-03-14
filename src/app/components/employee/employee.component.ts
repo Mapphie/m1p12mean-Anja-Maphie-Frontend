@@ -1,8 +1,11 @@
+import { Employe, EmployeService } from './../../services/employe.service';
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
@@ -36,15 +39,25 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
     RatingModule,
     RippleModule,
     IconFieldModule,
-    BadgeModule
+    BadgeModule,
+    DialogModule,
+    ConfirmDialogModule
   ],
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.scss',
 })
 export class EmployeeComponent implements OnInit{
     customers3: any[] = [];
+    employeDialog: boolean = false;
     @ViewChild('dt') dt!: Table;
 
+    submitted: boolean = false;
+
+    employe!: Employe;
+
+    constructor(
+        private employeService: EmployeService
+    ) {}
 
     ngOnInit() {
     this.customers3 = [
@@ -110,6 +123,10 @@ export class EmployeeComponent implements OnInit{
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-
+    openNew() {
+        this.employe = {};
+        this.submitted = false;
+        this.employeDialog = true;
+    }
 
 }
