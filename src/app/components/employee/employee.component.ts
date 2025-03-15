@@ -55,6 +55,8 @@ export class EmployeeComponent implements OnInit{
 
     employe!: Employe;
 
+    postes!: any[];
+
     constructor(
         private employeService: EmployeService
     ) {}
@@ -62,9 +64,10 @@ export class EmployeeComponent implements OnInit{
     ngOnInit() {
     this.customers3 = [
       {
-        name: "John Doe",
+        nom: "John Doe",
         email: "john@gmail.com",
-        Contact: "012320145",
+        contact: "012320145",
+        adresse:"Lot TT 124 Ivato",
         status: "Active",
         date: "2024-03-14",
         poste:"Mécanicien",
@@ -72,9 +75,10 @@ export class EmployeeComponent implements OnInit{
         intervention:"5"
       },
       {
-        name: "Jane Smith",
+        nom: "Jane Smith",
         email: "jane@gmail.com",
-        Contact: "017820145",
+        adresse:"Lot TT 124 Ivato",
+        contact: "017820145",
         status: "Inactive",
         date: "2024-02-10",
         poste:"Manager",
@@ -82,9 +86,10 @@ export class EmployeeComponent implements OnInit{
         intervention:""
       },
       {
-        name: "Anne Marie",
+        nom: "Anne Marie",
         email: "marie@gmail.com",
-        Contact: "017828545",
+        contact: "017828545",
+        adresse:"Lot TT 124 Ivato",
         status: "Active",
         date: "2024-02-10",
         poste:"Manager",
@@ -92,7 +97,9 @@ export class EmployeeComponent implements OnInit{
         intervention:""
       }
     ];
-  }
+
+    this.loadDemoData();
+    }
 
     getSeverity(status: string) {
         switch (status) {
@@ -123,10 +130,36 @@ export class EmployeeComponent implements OnInit{
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-    openNew() {
-        this.employe = {};
+    loadDemoData() {
+
+      this.postes = [
+          { label: 'Mécanicien', value: 'Mécanicien' },
+          { label: 'Manager', value: 'Manager' }
+      ];
+
+    }
+
+    openNewEmploye() {
+        this.employe = {id: 1,
+          nom: '',
+          email: '',
+          contact: '',
+          adresse: '',
+          poste: '',
+          salaire: 0,
+          etat: 1};
         this.submitted = false;
         this.employeDialog = true;
+    }
+
+    hideDialog() {
+      this.employeDialog = false;
+      this.submitted = false;
+    }
+
+    editEmploye(employe: Employe) {
+      this.employe = { ...employe };
+      this.employeDialog = true;
     }
 
 }
