@@ -7,17 +7,24 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { RippleModule } from 'primeng/ripple';
 import { AppFloatingConfigurator } from '../../layout/component/app.floatingconfigurator';
+import { DividerModule } from 'primeng/divider';
+
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [ButtonModule, CheckboxModule, InputTextModule, PasswordModule, FormsModule, RouterModule, RippleModule, AppFloatingConfigurator],
+    imports: [ButtonModule, CheckboxModule, InputTextModule, PasswordModule, FormsModule, RouterModule, RippleModule, AppFloatingConfigurator,
+        DividerModule,
+        ButtonModule,
+        RippleModule,
+        InputTextModule,
+    ],
     template: `
         <app-floating-configurator />
         <div class="bg-surface-50 dark:bg-surface-950 flex items-center justify-center min-h-screen min-w-[100vw] overflow-hidden">
             <div class="flex flex-col items-center justify-center">
                 <div style="border-radius: 56px; padding: 0.3rem; background: linear-gradient(180deg, var(--primary-color) 10%, rgba(33, 150, 243, 0) 30%)">
-                    <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-20" style="border-radius: 53px">
+                    <div class="w-full bg-surface-0 dark:bg-surface-900 py-20 px-8 sm:px-80" style="border-radius: 53px;">
                         <div class="text-center mb-8">
                             <svg viewBox="0 0 54 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="mb-8 w-16 shrink-0 mx-auto">
                                 <path
@@ -36,25 +43,37 @@ import { AppFloatingConfigurator } from '../../layout/component/app.floatingconf
                                     />
                                 </g>
                             </svg>
-                            <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Authentification</div>
+                            <div class="text-surface-900 dark:text-surface-0 text-3xl font-medium mb-4">Welcome to PrimeLand!</div>
+                            <span class="text-muted-color font-medium">Sign in to continue</span>
                         </div>
-
-                        <div>
-                            <label for="email1" class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Email</label>
-                            <input pInputText id="email1" type="text" placeholder="Addresse Email" class="w-full md:w-[30rem] mb-8" [(ngModel)]="email" />
-
-                            <label for="password1" class="block text-surface-900 dark:text-surface-0 font-medium text-xl mb-2">Mot de Passe</label>
-                            <p-password id="password1" [(ngModel)]="password" placeholder="Mot de passe" [toggleMask]="true" styleClass="mb-4" [fluid]="true" [feedback]="false"></p-password>
-
-                            <p-button label="Se connecter" styleClass="w-full" routerLink="/"></p-button>
-                        </div>
+                            <div class="flex flex-col md:flex-row">
+                                <div class="w-full md:w-5/12 flex flex-col items-center justify-center gap-3 py-5">
+                                    <div class="flex flex-col gap-2">
+                                        <label for="username">adresse email</label>
+                                        <input pInputText id="email" type="text" />
+                                    </div>
+                                    <div class="flex flex-col gap-2">
+                                        <label for="password">mot de passe </label>
+                                        <input pInputText id="password" type="password" />
+                                    </div>
+                                    <div class="flex">
+                                        <p-button label="Login" icon="pi pi-user" class="w-full max-w-[17.35rem] mx-auto"></p-button>
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-20/10">
+                                    <p-divider layout="vertical" class="!hidden md:!flex"><b>OR</b></p-divider>
+                                    <p-divider layout="horizontal" class="!flex md:!hidden" align="center"><b>OR</b></p-divider>
+                                </div>
+                                <div class="w-full md:w-5/15 flex items-center justify-center py-5">
+                                    <p-button label="Sign Up" icon="pi pi-user-plus" severity="success" class="w-full" styleClass="w-full max-w-[17.35rem] mx-auto"></p-button>
+                                </div>
+                            </div>
                     </div>
                 </div>
-            </div>
         </div>
     `
 })
-export class Login {
+export class LogReg {
     email: string = '';
 
     password: string = '';
