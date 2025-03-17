@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface Employe {
-  id: number;
+  id: string;
   nom: string;
   email: string;
   contact: string;
@@ -19,51 +21,27 @@ export interface Employe {
 
 export class EmployeService {
 
-    constructor() { }
+    private apiUrl = 'http://localhost:5000/employes'
 
-    getAllEmployes(){
-        return [
-            {
-                id:1,
-                nom: "John Doe",
-                email: "john@gmail.com",
-                contact: "012320145",
-                adresse:"Lot TT 124 Ivato",
-                etat: "Active",
-                date: "2024-03-14",
-                poste:"Mécanicien",
-                salaire:300000,
-                intervention:"5",
-            },
-            {
-                id:2,
-                nom: "Jane Smith",
-                email: "jane@gmail.com",
-                adresse:"Lot TT 124 Ivato",
-                contact: "017820145",
-                etat: "Inactive",
-                date: "2024-02-10",
-                poste:"Manager",
-                salaire :500000,
-                intervention:""
-            },
-            {
-                id:3,
-                nom: "Anne Marie",
-                email: "marie@gmail.com",
-                contact: "017828545",
-                adresse:"Lot TT 124 Ivato",
-                etat: "Active",
-                date: "2024-02-10",
-                poste:"Manager",
-                salaire :500000,
-                intervention:""
-            }
-
-        ];
-    }
+    constructor(private http: HttpClient) { }
 
     getEmployes() {
         return Promise.resolve(this.getAllEmployes());
+    }
+
+    getAllEmployes(): Observable<any>{
+        return this.http.get(this.apiUrl);
+    }
+
+    addEmploye(article: any): Observable<any>{
+        return this.http.post(this.apiUrl, article);
+    }
+
+    updateEmploye(id: string, article:any): Observable<any>{
+        return this.http.put(`${this.apiUrl}/${id}`, article);
+    }
+
+    deleteEmploye(id: string): Observable<any>{
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 }

@@ -1,7 +1,7 @@
 
 <div class="card">
 
-    <p-table #dt [value]="employes()" sortField="representative.name"
+    <p-table #dt [value]="employes" sortField="representative.name"
         sortMode="single" [scrollable]="true"
         [rows]="10"
         [paginator]="true"
@@ -42,7 +42,7 @@
                 <td>{{ employe.nom }}</td>
                 <td>{{ employe.email }}</td>
                 <td>{{ employe.contact }}</td>
-                <td>{{ employe.date }}</td>
+                <td>{{ employe.date | date: 'dd/MM/yyyy'}}</td>
                 <td><p-tag [value]="employe.poste" [severity]="getPoste(employe.poste)" /></td>
                 <td>{{ employe.salaire }}</td>
                 <td><p-badge [value]="employe.intervention" severity="info"></p-badge></td>

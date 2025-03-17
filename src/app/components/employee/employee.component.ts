@@ -49,7 +49,6 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
   providers: [MessageService, EmployeService, ConfirmationService]
 })
 export class EmployeeComponent implements OnInit{
-    customers3: any[] = [];
     employeDialog: boolean = false;
     @ViewChild('dt') dt!: Table;
 
@@ -57,9 +56,10 @@ export class EmployeeComponent implements OnInit{
 
     employe!: Employe;
 
-    employes = signal<Employe[]>([]);
-
+    employes: Employe[] = [];
     postes!: any[];
+
+    newEploye={nom: '',email: '',contact: '',adresse: '',poste: '',salaire: 0,etat: 'Active'};
 
     constructor(
         private employeService: EmployeService,
@@ -69,6 +69,7 @@ export class EmployeeComponent implements OnInit{
 
     ngOnInit() {
         this.loadDemoData();
+        this.loadEmployes();
     }
 
     getSeverity(etat: string) {
@@ -100,11 +101,11 @@ export class EmployeeComponent implements OnInit{
         table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
     }
 
-    loadDemoData() {
+    loadEmployes(): void{
+        this.employeService.getAllEmployes().subscribe(data => this.employes = data);
+    }
 
-        this.employeService.getEmployes().then((data) => {
-            this.employes.set(data);
-        });
+    loadDemoData() {
 
         this.postes = [
           { label: 'Mécanicien', value: 'Mécanicien' },
@@ -115,8 +116,7 @@ export class EmployeeComponent implements OnInit{
     }
 
     openNewEmploye() {
-        this.employe = {id: 0,
-          nom: '',
+        this.employe = {id:'',nom: '',
           email: '',
           contact: '',
           adresse: '',
@@ -144,15 +144,8 @@ export class EmployeeComponent implements OnInit{
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.employes.set(this.employes().filter((val) => val.id !== employe.id));
-                this.employe = {id: 0,
-                    nom: '',
-                    email: '',
-                    contact: '',
-                    adresse: '',
-                    poste: '',
-                    salaire: 0,
-                    etat: ''};
+                this.employeService.deleteEmploye(employe.id).subscribe(() =>  this.loadEmployes());
+
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Successful',
@@ -162,5 +155,15 @@ export class EmployeeComponent implements OnInit{
             }
         });
     }
+
+    addEmploye(): void{
+        if(this.newEploye.nom && this.newEploye.email && this.newEploye.contact && this.newEploye.adresse && this.newEploye.poste && this.newEploye.salaire){
+            this.employeService.addEmploye(this.newEploye).subscribe(() =>{
+            this.loadEmployes();
+            this.newEploye = {nom: '',email: '',contact: '',adresse: '',poste: '',salaire: 0,etat: 'Active'};
+            });
+        }
+    }
+
 
 }
