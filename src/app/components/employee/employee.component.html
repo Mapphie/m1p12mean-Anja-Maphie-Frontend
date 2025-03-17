@@ -1,7 +1,7 @@
 
 <div class="card">
 
-    <p-table #dt [value]="customers3" sortField="representative.name"
+    <p-table #dt [value]="employes()" sortField="representative.name"
         sortMode="single" [scrollable]="true"
         [rows]="10"
         [paginator]="true"
@@ -11,7 +11,7 @@
         [tableStyle]="{ 'min-width': '60rem' }"
         [showCurrentPageReport]="true"
         [rowsPerPageOptions]="[10, 20, 30]"
-        [globalFilterFields]="['name', 'email', 'contact','poste','salaire', 'status']">
+        [globalFilterFields]="['name', 'email', 'contact','poste','salaire', 'etat']">
         <ng-template #caption>
             <div class="flex items-center justify-between">
                 <h5 class="m-0">Employés</h5>
@@ -37,19 +37,19 @@
             </tr>
         </ng-template>
 
-        <ng-template #body let-customer let-rowIndex="rowIndex">
+        <ng-template #body let-employe let-rowIndex="rowIndex">
             <tr>
-                <td>{{ customer.nom }}</td>
-                <td>{{ customer.email }}</td>
-                <td>{{ customer.contact }}</td>
-                <td>{{ customer.date }}</td>
-                <td><p-tag [value]="customer.poste" [severity]="getPoste(customer.poste)" /></td>
-                <td>{{ customer.salaire }}</td>
-                <td><p-badge [value]="customer.intervention" severity="info"></p-badge></td>
-                <td><p-tag [value]="customer.status" [severity]="getSeverity(customer.status)" /></td>
+                <td>{{ employe.nom }}</td>
+                <td>{{ employe.email }}</td>
+                <td>{{ employe.contact }}</td>
+                <td>{{ employe.date }}</td>
+                <td><p-tag [value]="employe.poste" [severity]="getPoste(employe.poste)" /></td>
+                <td>{{ employe.salaire }}</td>
+                <td><p-badge [value]="employe.intervention" severity="info"></p-badge></td>
+                <td><p-tag [value]="employe.etat" [severity]="getSeverity(employe.etat)" /></td>
                 <td>
-                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editEmploye(customer)"/>
-                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true"  />
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editEmploye(employe)"/>
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteEmploye(employe)" />
                 </td>
             </tr>
         </ng-template>
@@ -84,7 +84,7 @@
 
                 <div>
                     <label for="poste" class="block font-bold mb-3">Poste</label>
-                    <p-select [(ngModel)]="employe.poste" inputId="poste" [options]="postes" optionLabel="label" optionValue="label" placeholder="Select a Status" fluid />
+                    <p-select [(ngModel)]="employe.poste" inputId="poste" [options]="postes" optionLabel="label" optionValue="label" placeholder="Choisir un poste" fluid />
                 </div>
 
                 <div>
@@ -101,4 +101,6 @@
             <p-button label="Save" icon="pi pi-check"  />
         </ng-template>
     </p-dialog>
+
+    <p-confirmDialog></p-confirmDialog>
 </div>

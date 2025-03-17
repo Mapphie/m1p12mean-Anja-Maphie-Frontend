@@ -1,7 +1,8 @@
 import { Employe, EmployeService } from './../../services/employe.service';
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -45,6 +46,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
   ],
   templateUrl: './employee.component.html',
   styleUrl: './employee.component.scss',
+  providers: [MessageService, EmployeService, ConfirmationService]
 })
 export class EmployeeComponent implements OnInit{
     customers3: any[] = [];
@@ -55,54 +57,22 @@ export class EmployeeComponent implements OnInit{
 
     employe!: Employe;
 
+    employes = signal<Employe[]>([]);
+
     postes!: any[];
 
     constructor(
-        private employeService: EmployeService
+        private employeService: EmployeService,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService
     ) {}
 
     ngOnInit() {
-    this.customers3 = [
-      {
-        nom: "John Doe",
-        email: "john@gmail.com",
-        contact: "012320145",
-        adresse:"Lot TT 124 Ivato",
-        status: "Active",
-        date: "2024-03-14",
-        poste:"Mécanicien",
-        salaire:"300 000 AR",
-        intervention:"5"
-      },
-      {
-        nom: "Jane Smith",
-        email: "jane@gmail.com",
-        adresse:"Lot TT 124 Ivato",
-        contact: "017820145",
-        status: "Inactive",
-        date: "2024-02-10",
-        poste:"Manager",
-        salaire :"500 000 AR",
-        intervention:""
-      },
-      {
-        nom: "Anne Marie",
-        email: "marie@gmail.com",
-        contact: "017828545",
-        adresse:"Lot TT 124 Ivato",
-        status: "Active",
-        date: "2024-02-10",
-        poste:"Manager",
-        salaire :"500 000 AR",
-        intervention:""
-      }
-    ];
-
-    this.loadDemoData();
+        this.loadDemoData();
     }
 
-    getSeverity(status: string) {
-        switch (status) {
+    getSeverity(etat: string) {
+        switch (etat) {
             case 'Active':
                 return 'success';
 
@@ -132,22 +102,27 @@ export class EmployeeComponent implements OnInit{
 
     loadDemoData() {
 
-      this.postes = [
+        this.employeService.getEmployes().then((data) => {
+            this.employes.set(data);
+        });
+
+        this.postes = [
           { label: 'Mécanicien', value: 'Mécanicien' },
           { label: 'Manager', value: 'Manager' }
       ];
 
+
     }
 
     openNewEmploye() {
-        this.employe = {id: 1,
+        this.employe = {id: 0,
           nom: '',
           email: '',
           contact: '',
           adresse: '',
           poste: '',
           salaire: 0,
-          etat: 1};
+          etat: ''};
         this.submitted = false;
         this.employeDialog = true;
     }
@@ -160,6 +135,32 @@ export class EmployeeComponent implements OnInit{
     editEmploye(employe: Employe) {
       this.employe = { ...employe };
       this.employeDialog = true;
+    }
+
+    deleteEmploye(employe: Employe) {
+
+        this.confirmationService.confirm({
+            message: 'Are you sure you want to delete ' + employe.nom + '?',
+            header: 'Confirm',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.employes.set(this.employes().filter((val) => val.id !== employe.id));
+                this.employe = {id: 0,
+                    nom: '',
+                    email: '',
+                    contact: '',
+                    adresse: '',
+                    poste: '',
+                    salaire: 0,
+                    etat: ''};
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    detail: 'Employee Deleted',
+                    life: 3000
+                });
+            }
+        });
     }
 
 }
