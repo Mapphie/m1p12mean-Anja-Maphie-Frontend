@@ -10,11 +10,12 @@ import { FeaturesWidget } from './components/featureswidget';
 import { HighlightsWidget } from './components/highlightswidget';
 import { PricingWidget } from './components/pricingwidget';
 import { FooterWidget } from './components/footerwidget';
+import { ContactUsWidget } from './components/contactuswidget';
 
 @Component({
     selector: 'app-landing',
     standalone: true,
-    imports: [RouterModule, TopbarWidget, HeroWidget, FeaturesWidget, HighlightsWidget, PricingWidget, FooterWidget, RippleModule, StyleClassModule, ButtonModule, DividerModule],
+    imports: [RouterModule, TopbarWidget, HeroWidget, FeaturesWidget, HighlightsWidget, PricingWidget, FooterWidget,ContactUsWidget, RippleModule, StyleClassModule, ButtonModule, DividerModule],
     template: `
         <div class="bg-surface-0 dark:bg-surface-900">
             <div id="home" class="landing-wrapper overflow-hidden">
