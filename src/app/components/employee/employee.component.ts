@@ -59,7 +59,9 @@ export class EmployeeComponent implements OnInit{
     employes: Employe[] = [];
     postes!: any[];
 
-    newEploye={nom: '',email: '',contact: '',adresse: '',poste: '',salaire: 0,etat: 'Active'};
+    // newEmploye={nom: '',email: '',contact: '',adresse: '',poste: '',salaire: 0,etat: 'Active'};
+
+    editedEmploye: any = null;
 
     constructor(
         private employeService: EmployeService,
@@ -116,13 +118,15 @@ export class EmployeeComponent implements OnInit{
     }
 
     openNewEmploye() {
-        this.employe = {id:'',nom: '',
+        this.employe = {_id:'',nom: '',
           email: '',
           contact: '',
           adresse: '',
           poste: '',
           salaire: 0,
-          etat: ''};
+          intervention: 0,
+          date: new Date(),
+          etat: 'Active'};
         this.submitted = false;
         this.employeDialog = true;
     }
@@ -144,7 +148,7 @@ export class EmployeeComponent implements OnInit{
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.employeService.deleteEmploye(employe.id).subscribe(() =>  this.loadEmployes());
+                this.employeService.deleteEmploye(employe._id).subscribe(() =>  this.loadEmployes());
 
                 this.messageService.add({
                     severity: 'success',
@@ -157,12 +161,54 @@ export class EmployeeComponent implements OnInit{
     }
 
     addEmploye(): void{
-        if(this.newEploye.nom && this.newEploye.email && this.newEploye.contact && this.newEploye.adresse && this.newEploye.poste && this.newEploye.salaire){
-            this.employeService.addEmploye(this.newEploye).subscribe(() =>{
+        console.log('add employe');
+        
+        if(this.employe.nom && this.employe.email && this.employe.contact && this.employe.adresse && this.employe.poste && this.employe.salaire){
+            this.employeService.addEmploye(this.employe).subscribe(() =>{
             this.loadEmployes();
-            this.newEploye = {nom: '',email: '',contact: '',adresse: '',poste: '',salaire: 0,etat: 'Active'};
             });
         }
+    }
+
+    getEditedEmploye(employe: any): void {
+        this.editedEmploye = { ...employe }; // Copie de l'employe pour modification
+    }
+
+    updateEmploye(): void {
+        console.log('update employe');
+        
+        if (this.employe && this.employe._id) {
+          this.employeService.updateEmploye(this.employe._id, this.employe).subscribe(() => {
+            this.loadEmployes();
+          });
+        }
+    }
+
+    saveEmploye() {
+        console.log('Save Employe');
+        
+        this.submitted = true;
+        console.log(`employe : `, this.employe);
+        if (this.employe._id) {
+            this.updateEmploye();
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Employé modifié',
+                life: 3000
+            });
+        } else {
+            this.addEmploye();
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Employé ajouté',
+                life: 3000
+            });
+        }
+    
+        this.employeDialog = false;
+        
     }
 
 

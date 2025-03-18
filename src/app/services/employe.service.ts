@@ -3,13 +3,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface Employe {
-  id: string;
+  _id: string;
   nom: string;
   email: string;
   contact: string;
   adresse: string;
   poste: string;
+  date: Date;
   salaire: number;
+  intervention: number;
   etat:string;
 }
 
