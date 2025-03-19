@@ -118,7 +118,7 @@ export class EmployeeComponent implements OnInit{
     }
 
     openNewEmploye() {
-        this.employe = {_id:'',nom: '',
+        this.employe = {nom: '',
           email: '',
           contact: '',
           adresse: '',
@@ -148,7 +148,7 @@ export class EmployeeComponent implements OnInit{
             header: 'Confirm',
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
-                this.employeService.deleteEmploye(employe._id).subscribe(() =>  this.loadEmployes());
+                this.employeService.deleteEmploye(employe._id!).subscribe(() =>  this.loadEmployes());
 
                 this.messageService.add({
                     severity: 'success',
@@ -162,7 +162,7 @@ export class EmployeeComponent implements OnInit{
 
     addEmploye(): void{
         console.log('add employe');
-        
+
         if(this.employe.nom && this.employe.email && this.employe.contact && this.employe.adresse && this.employe.poste && this.employe.salaire){
             this.employeService.addEmploye(this.employe).subscribe(() =>{
             this.loadEmployes();
@@ -176,9 +176,9 @@ export class EmployeeComponent implements OnInit{
 
     updateEmploye(): void {
         console.log('update employe');
-        
-        if (this.employe && this.employe._id) {
-          this.employeService.updateEmploye(this.employe._id, this.employe).subscribe(() => {
+
+        if (this.employe && this.employe._id!) {
+          this.employeService.updateEmploye(this.employe._id!, this.employe).subscribe(() => {
             this.loadEmployes();
           });
         }
@@ -186,10 +186,10 @@ export class EmployeeComponent implements OnInit{
 
     saveEmploye() {
         console.log('Save Employe');
-        
+
         this.submitted = true;
         console.log(`employe : `, this.employe);
-        if (this.employe._id) {
+        if (this.employe._id!) {
             this.updateEmploye();
             this.messageService.add({
                 severity: 'success',
@@ -206,9 +206,9 @@ export class EmployeeComponent implements OnInit{
                 life: 3000
             });
         }
-    
+
         this.employeDialog = false;
-        
+
     }
 
 
