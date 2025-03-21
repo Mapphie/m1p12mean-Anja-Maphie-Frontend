@@ -80,7 +80,7 @@
             </tr>
         </ng-template>
         <ng-template #body let-customer>
-            <tr>
+            <tr (click) = "goToCustomerDetails()" class="cursor-pointer hover:bg-gray-100">
                 <td>
                     {{ customer.nom }}
                 </td>

@@ -94,50 +94,6 @@ export class AppMenu {
                 ]
             },
             {
-                label: 'Hierarchy',
-                items: [
-                    {
-                        label: 'Submenu 1',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            {
-                                label: 'Submenu 1.1',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [
-                                    { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-                                    { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                                    { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-                                ]
-                            },
-                            {
-                                label: 'Submenu 1.2',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Submenu 2',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            {
-                                label: 'Submenu 2.1',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [
-                                    { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-                                    { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
-                                ]
-                            },
-                            {
-                                label: 'Submenu 2.2',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 label: 'Informations',
                 items: [
                     {
@@ -146,9 +102,15 @@ export class AppMenu {
                         routerLink: ['/documentation']
                     },
                     {
-                        label: 'Source',
+                        label: 'Source Front',
                         icon: 'pi pi-fw pi-github',
                         url: 'https://github.com/Mapphie/m1p12mean-Anja-Maphie-Frontend',
+                        target: '_blank'
+                    },
+                    {
+                        label: 'Source Back',
+                        icon: 'pi pi-fw pi-github',
+                        url: 'https://github.com/Mapphie/m1p12mean-Anja-Maphie-Backend',
                         target: '_blank'
                     }
                 ]

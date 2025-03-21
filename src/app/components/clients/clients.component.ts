@@ -16,6 +16,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
 import { Client, ClientsService } from '../../services/clients.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-clients',
@@ -51,7 +52,8 @@ export class ClientsComponent {
 
 
     constructor(
-            private clientsService: ClientsService
+            private clientsService: ClientsService,
+            private router: Router
         ) {}
 
     ngOnInit() {
@@ -88,6 +90,14 @@ export class ClientsComponent {
     clear(table: Table) {
         table.clear();
         this.filter.nativeElement.value = '';
+    }
+
+    // goToCustomerDetails(customerId: number) {
+    //     this.router.navigate(['/customer', customerId]); // Redirige vers /customer/{id}
+    // }
+
+    goToCustomerDetails() {
+        this.router.navigate(['/pages/customer']); 
     }
 
 }

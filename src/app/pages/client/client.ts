@@ -17,10 +17,12 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { SplitterModule } from 'primeng/splitter';
 import { TabsModule } from 'primeng/tabs';
 import { ToolbarModule } from 'primeng/toolbar';
+import { StatsClient } from './statsclients';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
-    selector: 'app-panels-demo',
+    selector: 'app-client-details',
     standalone: true,
     imports: [
     CommonModule,
@@ -39,124 +41,139 @@ import { ToolbarModule } from 'primeng/toolbar';
         TabsModule,
         IconFieldModule,
         InputIconModule,
-        MenubarModule
+        MenubarModule,
+        StatsClient
     ],
     template: `
         <div class="flex flex-col">
             <div class="card">
                 <div class="font-semibold text-xl mb-4">Nom du Client</div>
-                
+
             </div>
 
             <div class="flex flex-col md:flex-row h-screen">
                 <!-- Accordion prend 1/4 de la largeur -->
                 <div class="md:w-1/4 h-full">
-                    <div class="card h-full p-4">
-                        <div class="font-semibold text-sm mb-4">Ville :</div>
-                        <p class="text-lg mb-4"> ...</p>
+                    <div class="bg-white shadow-lg rounded-lg p-6 border border-gray-200 h-full">
+                        <h2 class="text-xl font-bold text-blue-600 mb-4">Informations</h2>
 
-                        <div class="font-semibold text-sm mb-4">Adresse :</div>
-                        <p class="text-lg mb-4">... </p>
+                        <div class="space-y-4">
+                        <div class="flex items-center space-x-2">
+                            <p-button icon="pi pi-map" severity="info" text raised rounded />
+                            <span class="font-semibold text-lg text-black-700">Ville :</span>
+                        </div>
 
-                        <div class="font-semibold text-sm mb-4">Email :</div>
-                        <p class="text-lg mb-4">... </p>
+                        <div class="flex items-center space-x-2">
+                            <p-button icon="pi pi-map-marker" severity="info" text raised rounded />
+                            <span class="font-semibold text-lg text-black-700">Adresse :</span>
+                        </div>
+                        
 
-                        <div class="font-semibold text-sm mb-4">Contact :</div>
-                        <p class="text-lg mb-4">... </p>
-           
+                        <div class="flex items-center space-x-2">
+                            <p-button icon="pi pi-envelope" severity="info" text raised rounded />
+                            <span class="font-semibold text-lg text-black-700">Email :</span>
+                        </div>
+                        
+
+                        <div class="flex items-center space-x-2">
+                            <p-button icon="pi pi-phone" severity="info" text raised rounded />
+                            <span class="font-semibold text-lg text-black-700">Contact :</span>
+                        </div>
+                        
+                        </div>
+                        <hr class="mt-6 border-t border-gray-300">
+                        <p-button label="Modifier" icon="pi pi-pencil"severity="secondary"  />
                     </div>
                 </div>
-
+ 
                 <!-- Panel prend le reste de l'espace -->
-                <div class="md:w-3/4 h-full">
-                    <div class="card h-full p-4">
-                        <div class="font-semibold text-xl mb-4">Menubar</div>
-                        <p-menubar [model]="nestedMenuItems">
-                            
-                        </p-menubar>
+                <div class="md:w-3/4 h-full flex flex-col ml-4">
+                    <div class="card p-4">
+                        <p-menubar [model]="nestedMenuItems" class="w-full"></p-menubar>
+                    </div>
+                    <div class="grid ">
+                        <app-stats-client *ngIf="showStatClient" class="w-full"></app-stats-client>
                     </div>
                 </div>
             </div>
 
-            
+
 
             `
 })
 export class Clients {
+    showStatClient: boolean = true;
+    showCarList: boolean = false;
+
+    constructor(
+        private router: Router
+    ) {}
+
     nestedMenuItems = [
         {
             label: 'Véhicule',
-            icon: 'pi pi-fw pi-table',
+            icon: 'pi pi-fw pi-car',
             items: [
                 {
-                    label: 'New',
-                    icon: 'pi pi-fw pi-user-plus',
-                    items: [
-                        {
-                            label: 'Customer',
-                            icon: 'pi pi-fw pi-plus'
-                        },
-                        {
-                            label: 'Duplicate',
-                            icon: 'pi pi-fw pi-copy'
-                        }
-                    ]
+                    label: 'Liste',
+                    icon: 'pi pi-fw pi-list'
                 },
                 {
-                    label: 'Edit',
-                    icon: 'pi pi-fw pi-user-edit'
-                }
+                    label: 'Nouveau',
+                    icon: 'pi pi-fw pi-plus'
+                },
+                
             ]
         },
         {
             label: 'Rendez-vous',
-            icon: 'pi pi-fw pi-shopping-cart',
+            icon: 'pi pi-fw pi-calendar-clock',
             items: [
                 {
-                    label: 'View',
+                    label: 'Liste',
                     icon: 'pi pi-fw pi-list'
                 },
                 {
-                    label: 'Search',
-                    icon: 'pi pi-fw pi-search'
-                }
+                    label: 'Nouveau',
+                    icon: 'pi pi-fw pi-plus'
+                },
+                
             ]
         },
         {
             label: 'Devis',
-            icon: 'pi pi-fw pi-envelope',
+            icon: 'pi pi-fw pi-file',
             items: [
                 {
-                    label: 'Tracker',
-                    icon: 'pi pi-fw pi-compass'
+                    label: 'Liste',
+                    icon: 'pi pi-fw pi-list'
                 },
                 {
-                    label: 'Map',
-                    icon: 'pi pi-fw pi-map-marker'
+                    label: 'Nouveau',
+                    icon: 'pi pi-fw pi-plus'
                 },
-                {
-                    label: 'Manage',
-                    icon: 'pi pi-fw pi-pencil'
-                }
             ]
         },
         {
             label: 'Facture',
-            icon: 'pi pi-fw pi-user',
+            icon: 'pi pi-fw pi-receipt',
             items: [
                 {
-                    label: 'Settings',
-                    icon: 'pi pi-fw pi-cog'
+                    label: 'Liste',
+                    icon: 'pi pi-fw pi-list'
                 },
                 {
-                    label: 'Billing',
-                    icon: 'pi pi-fw pi-file'
-                }
+                    label: 'Nouveau',
+                    icon: 'pi pi-fw pi-plus'
+                },
             ]
         },
         {
-            label: 'Quit',
-            icon: 'pi pi-fw pi-sign-out'
+            label: 'Retour',
+            icon: 'pi pi-fw pi-arrow-circle-left',
+            command: ()=>{
+                this.router.navigate(['/clients']);
+            }
         }
     ];
 }
