@@ -1,0 +1,106 @@
+
+<div class="card">
+
+    <p-table #dt [value]="employes" sortField="representative.name"
+        sortMode="single" [scrollable]="true"
+        [rows]="10"
+        [paginator]="true"
+        scrollHeight="400px"
+        rowGroupMode="subheader"
+        groupRowsBy="representative.name"
+        [tableStyle]="{ 'min-width': '60rem' }"
+        [showCurrentPageReport]="true"
+        [rowsPerPageOptions]="[10, 20, 30]"
+        [globalFilterFields]="['name', 'email', 'contact','poste','salaire', 'etat']">
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <h5 class="m-0">Employés</h5>
+                <p-iconfield>
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+                </p-iconfield>
+                <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNewEmploye()" />
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th pSortableColumn="name" style="min-width:16rem">Nom <p-sortIcon field="name" /></th>
+                <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+                <th pSortableColumn="contact">Contact <p-sortIcon field="contact" /></th>
+                <th pSortableColumn="date">Date d'arivée <p-sortIcon field="date" /></th>
+                <th pSortableColumn="poste">Poste <p-sortIcon field="poste" /></th>
+                <th pSortableColumn="salaire">Salaire <p-sortIcon field="salaire" /></th>
+                <th pSortableColumn="intervention">Intervention <p-sortIcon field="intervention" /></th>
+                <th pSortableColumn="etat">Etat <p-sortIcon field="etat" /></th>
+                <th></th>
+
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-employe let-rowIndex="rowIndex">
+            <tr>
+                <td>{{ employe.nom }}</td>
+                <td>{{ employe.email }}</td>
+                <td>{{ employe.contact }}</td>
+                <td>{{ employe.date | date: 'dd/MM/yyyy'}}</td>
+                <td><p-tag [value]="employe.poste" [severity]="getPoste(employe.poste)" /></td>
+                <td>{{ employe.salaire }}</td>
+                <td><p-badge [value]="employe.intervention" severity="info"></p-badge></td>
+                <td><p-tag [value]="employe.etat" [severity]="getSeverity(employe.etat)" /></td>
+                <td>
+                    <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editEmploye(employe)"/>
+                    <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteEmploye(employe)" />
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <p-dialog [(visible)]="employeDialog" [style]="{ width: '450px' }" header="Détails de l'employé" [modal]="true">
+        <ng-template #content>
+            <div class="flex flex-col gap-6">
+
+                <div>
+                    <label for="nom" class="block font-bold mb-3">Nom</label>
+                    <input type="text" pInputText id="nom" [(ngModel)]="employe.nom" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !employe.nom">Name est requis.</small>
+                </div>
+                <div>
+                    <label for="email" class="block font-bold mb-3">Email</label>
+                    <input type="text" pInputText id="email" [(ngModel)]="employe.email" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !employe.email">Email est requis.</small>
+                </div>
+
+                <div>
+                    <label for="contact" class="block font-bold mb-3">Contact</label>
+                    <input type="text" pInputText id="contact" [(ngModel)]="employe.contact" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !employe.contact">Contact est requis.</small>
+                </div>
+
+                <div>
+                    <label for="adresse" class="block font-bold mb-3">Adresse</label>
+                    <input type="text" pInputText id="adresse" [(ngModel)]="employe.adresse" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !employe.adresse">Adresse est requis.</small>
+                </div>
+
+                <div>
+                    <label for="poste" class="block font-bold mb-3">Poste</label>
+                    <p-select [(ngModel)]="employe.poste" inputId="poste" [options]="postes" optionLabel="label" optionValue="label" placeholder="Choisir un poste" fluid />
+                </div>
+
+                <div>
+                    <label for="salaire" class="block font-bold mb-3">Salaire</label>
+                    <input type="text" pInputText id="salaire" [(ngModel)]="employe.salaire" required autofocus fluid />
+                    <small class="text-red-500" *ngIf="submitted && !employe.salaire">Salaire est requis.</small>
+                </div>
+
+            </div>
+        </ng-template>
+
+        <ng-template #footer>
+            <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
+            <p-button label="Save" icon="pi pi-check" (click)="saveEmploye()"  />
+        </ng-template>
+    </p-dialog>
+
+    <p-confirmDialog></p-confirmDialog>
+</div>
