@@ -1,0 +1,64 @@
+import { Injectable } from '@angular/core';
+import { ClientsService } from './clients.service';
+
+export interface RendezVous {
+  _id?: string;
+  service: string[];
+  client: string;
+  startTime: string;
+  endTime:string;
+  description:string;
+  date:Date;
+  etat:string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
+export class RendezVousService {
+
+  constructor(
+    private clientsService: ClientsService
+  ) { }
+
+  getData(){
+    return [
+      {
+        service: ["Changement d'huile","Remplacement des freins"],
+        client: "CLT0001",
+        startTime: "08:30",
+        endTime: "09:30",
+        description: "Vidange complète avec changement de filtre",
+        date: new Date("2025-03-25"),
+        etat: "Confirmé"
+      },
+      {
+        service: ["Révision complète"],
+        client: "CLT0002",
+        startTime: "10:00",
+        endTime: "15:30",
+        description: "Contrôle général du véhicule avec diagnostic",
+        date: new Date("2025-03-26"),
+        etat: "En attente"
+      },
+      {
+        service: ["Remplacement des freins"],
+        client: "CLT0003",
+        startTime: "14:00",
+        endTime: "15:30",
+        description: "Changement des plaquettes et disques avant",
+        date: new Date("2025-03-27"),
+        etat: "Annulé"
+      }
+    ];
+  }
+
+  getAllData() {
+    return Promise.resolve(this.getData());
+  }
+
+  getClientDetails(clientNumber: string) {
+    const clients = this.clientsService.getData();
+    return clients.find(client => client.number === clientNumber) || null;
+  }
+} 

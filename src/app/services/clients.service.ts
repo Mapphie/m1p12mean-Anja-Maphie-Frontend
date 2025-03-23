@@ -23,6 +23,7 @@ export class ClientsService {
   getData(){
     return [
         {
+            number: "CLT0001",
             nom: "Jean Dupont",
             email: "jean.dupont@example.com",
             contact: "+33 6 12 34 56 78",
@@ -34,6 +35,7 @@ export class ClientsService {
             etat: "actif"
           },
           {
+            number: "CLT0002",
             nom: "Garage Auto Express",
             email: "contact@autoexpress.com",
             contact: "+33 1 45 67 89 10",
@@ -45,6 +47,7 @@ export class ClientsService {
             etat: "actif"
           },
           {
+            number: "CLT0003",
             nom: "Michel Lefebvre",
             email: "michel.lefebvre@business.com",
             contact: "+33 7 98 76 54 32",

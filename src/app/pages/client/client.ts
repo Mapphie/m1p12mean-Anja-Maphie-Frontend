@@ -19,6 +19,7 @@ import { TabsModule } from 'primeng/tabs';
 import { ToolbarModule } from 'primeng/toolbar';
 import { StatsClient } from './statsclients';
 import { Router, RouterLink } from '@angular/router';
+import { RendezVousComponent } from "../../components/rendez-vous/rendez-vous.component";
 
 
 @Component({
@@ -26,24 +27,25 @@ import { Router, RouterLink } from '@angular/router';
     standalone: true,
     imports: [
     CommonModule,
-        FormsModule,
-        ToolbarModule,
-        ButtonModule,
-        RippleModule,
-        SplitButtonModule,
-        AccordionModule,
-        FieldsetModule,
-        MenuModule,
-        InputTextModule,
-        DividerModule,
-        SplitterModule,
-        PanelModule,
-        TabsModule,
-        IconFieldModule,
-        InputIconModule,
-        MenubarModule,
-        StatsClient
-    ],
+    FormsModule,
+    ToolbarModule,
+    ButtonModule,
+    RippleModule,
+    SplitButtonModule,
+    AccordionModule,
+    FieldsetModule,
+    MenuModule,
+    InputTextModule,
+    DividerModule,
+    SplitterModule,
+    PanelModule,
+    TabsModule,
+    IconFieldModule,
+    InputIconModule,
+    MenubarModule,
+    StatsClient,
+    RendezVousComponent
+],
     template: `
         <div class="flex flex-col">
             <div class="card">
@@ -93,6 +95,7 @@ import { Router, RouterLink } from '@angular/router';
                     </div>
                     <div class="grid ">
                         <app-stats-client *ngIf="showStatClient" class="w-full"></app-stats-client>
+                        <app-rendez-vous *ngIf="showRv"></app-rendez-vous>
                     </div>
                 </div>
             </div>
@@ -104,6 +107,8 @@ import { Router, RouterLink } from '@angular/router';
 export class Clients {
     showStatClient: boolean = true;
     showCarList: boolean = false;
+    showRv: boolean = false;
+
 
     constructor(
         private router: Router
@@ -131,7 +136,11 @@ export class Clients {
             items: [
                 {
                     label: 'Liste',
-                    icon: 'pi pi-fw pi-list'
+                    icon: 'pi pi-fw pi-list',
+                    command: ()=>{
+                        this.showStatClient = false;
+                        this.showRv = true;
+                    }
                 },
                 {
                     label: 'Nouveau',

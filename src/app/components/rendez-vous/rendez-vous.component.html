@@ -1,0 +1,146 @@
+<div class="card">
+    <div class="font-semibold text-xl mb-4">Rendez-vous</div>
+    <p-table
+        #dt1
+        [value]="rendezVous"
+        dataKey="id"
+        [rows]="10"
+        [loading]="loading"
+        [rowHover]="true"
+        [showGridlines]="true"
+        [paginator]="true"
+        [globalFilterFields]="['date', 'service', 'client', 'etat']"
+        responsiveLayout="scroll"
+    >
+        <ng-template #caption>
+            <div class="flex justify-between items-center flex-column sm:flex-row">
+                <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Date
+                        <p-columnFilter type="text" field="name" display="menu" placeholder="Search by name"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Créneau 
+                        <p-columnFilter type="text" field="ville" display="menu" placeholder="Search by country"></p-columnFilter>
+                    </div>
+                </th>
+               
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Client
+                        <p-columnFilter type="text" field="email" display="menu" placeholder="Search by country"></p-columnFilter>
+                    </div>
+                </th>
+
+                <th style="min-width: 12rem">
+                    <div class="flex justify-between items-center">
+                        Etat
+                        <p-columnFilter field="etat" matchMode="equals" display="menu">
+                            <ng-template #filter let-value let-filter="filterCallback">
+                                <p-select [ngModel]="value" [options]="statuses" (onChange)="filter($event.value)" placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                    <ng-template let-option #item>
+                                        <span [class]="'customer-badge status-' + option.value">{{ option.label }}</span>
+                                    </ng-template>
+                                </p-select>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+
+            </tr>
+        </ng-template>
+        <ng-template #body let-rendezVous>
+            <tr class="cursor-pointer hover:bg-gray-100"  (click)="getDetails(rendezVous)">
+                <td>
+                    {{ rendezVous.date | date: 'dd/MM/yyyy' }}
+                </td>
+                <td>
+                    <p-button label="{{ rendezVous.startTime }}" severity="help" outlined />
+                     - 
+                    <p-button label="{{ rendezVous.endTime }}" severity="help" outlined />
+                </td>
+                
+                <td>
+                    {{ rendezVous.client }}
+                </td>
+
+                <td class="text-center">
+                    <p-tag  [value]="rendezVous.etat.toLowerCase()" [severity]="getSeverity(rendezVous.etat.toLowerCase())" styleClass="dark:!bg-surface-900" />
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+            <tr>
+                <td colspan="8">Aucun rendez-vous trouvé.</td>
+            </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading customers data. Please wait.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+
+    <p-dialog [(visible)]="rdvDialog" [style]="{ width: '500px' }" header="Détails du Rendez-vous" [modal]="true">
+        <div class="p-4">
+            <!-- État du rendez-vous -->
+            <p-tag [value]="selectedRdv?.etat" [severity]="getSeverity(selectedRdv?.etat)" class="mb-3" />
+    
+            <!-- Infos client -->
+            <div class="flex items-center gap-3 mb-4">
+                <i class="pi pi-user text-xl"></i>
+                <div>
+                    <div class="font-semibold text-lg">{{ getClient(selectedRdv?.client)?.nom }}</div>
+                    <div class="text-gray-500">{{ getClient(selectedRdv?.client)?.contact }}</div>
+                </div>
+            </div>
+    
+            <!-- Date et heure -->
+            <div class="flex items-center gap-3 mb-4">
+                <i class="pi pi-calendar text-xl"></i>
+                <div>
+                    <div class="font-semibold">{{ selectedRdv?.startTime }} - {{ selectedRdv?.endTime }}</div>
+                    <div class="text-gray-500">{{ selectedRdv?.date | date: 'EEEE, d MMMM yyyy' }}</div>
+                </div>
+            </div>
+    
+            <!-- Service -->
+            <div class="flex items-center gap-3 mb-4">
+                <i class="pi pi-briefcase text-xl"></i>
+                <div>
+                    <div *ngFor="let serviceItem of selectedRdv?.service" class="font-semibold">
+                        {{ serviceItem }}
+                      </div>
+                </div>
+            </div>
+
+    
+            <!-- Commentaire -->
+            <div class="flex items-center gap-3 mb-4">
+                <i class="pi pi-comment text-xl"></i>
+                <div class="text-gray-500">{{ selectedRdv?.description }}</div>
+            </div>
+    
+            <!-- Actions -->
+            <div class="flex justify-end gap-2 mt-4">
+                <button pButton icon="pi pi-pencil" class="p-button-outlined p-button-secondary"></button>
+                <button pButton icon="pi pi-trash" class="p-button-outlined p-button-danger"></button>
+            </div>
+        </div>
+    </p-dialog>
+    
+</div>
