@@ -144,16 +144,20 @@ export class EmployeeComponent implements OnInit{
     deleteEmploye(employe: Employe) {
 
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete ' + employe.nom + '?',
-            header: 'Confirm',
+            message: "Êtes-vous sûr de vouloir archiver l'employé " + employe.nom + " ?",
+            header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
+            acceptLabel: 'Oui',
+            rejectLabel: 'Non',
+            acceptButtonStyleClass: 'p-button-success',
+            rejectButtonStyleClass: 'p-button-danger',
             accept: () => {
                 this.employeService.deleteEmploye(employe._id!).subscribe(() =>  this.loadEmployes());
 
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Successful',
-                    detail: 'Employee Deleted',
+                    detail: 'Employé supprimé',
                     life: 3000
                 });
             }
