@@ -45,7 +45,7 @@ import { DialogModule } from 'primeng/dialog';
 })
 export class RendezVousComponent {
   rendezVous: RendezVous[] = [];
-  
+
   loading: boolean = true;
 
   statuses: any[] = [];
@@ -62,7 +62,7 @@ export class RendezVousComponent {
       private rendezVousService: RendezVousService,
       private router: Router
   ) {}
-  
+
   ngOnInit() {
       this.rendezVousService.getAllData().then((data) => {
           this.rendezVous = data;
@@ -95,6 +95,17 @@ export class RendezVousComponent {
               return 'success';
       }
   }
+
+  getSeverityIcon(etat: string): string {
+    switch (etat) {
+        case 'annulé':
+            return 'pi pi-times'; // Icône d'annulation
+        case 'en attente':
+            return 'pi pi-clock'; // Icône d'attente
+        default:
+            return 'pi pi-check'; // Icône de validation
+    }
+}
 
   clear(table: Table) {
     table.clear();

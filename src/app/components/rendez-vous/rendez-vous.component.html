@@ -33,11 +33,11 @@
                 </th>
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
-                        Créneau 
+                        Créneau
                         <p-columnFilter type="text" field="ville" display="menu" placeholder="Search by country"></p-columnFilter>
                     </div>
                 </th>
-               
+
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
                         Client
@@ -69,10 +69,10 @@
                 </td>
                 <td>
                     <p-button label="{{ rendezVous.startTime }}" severity="help" outlined />
-                     - 
+                     -
                     <p-button label="{{ rendezVous.endTime }}" severity="help" outlined />
                 </td>
-                
+
                 <td>
                     {{ rendezVous.client }}
                 </td>
@@ -95,11 +95,22 @@
     </p-table>
 
 
-    <p-dialog [(visible)]="rdvDialog" [style]="{ width: '500px' }" header="Détails du Rendez-vous" [modal]="true">
+    <p-dialog [(visible)]="rdvDialog" [style]="{ width: '500px' }" [modal]="true">
+        <ng-template pTemplate="header">
+            <div class="flex justify-between items-center">
+                <!-- Bouton dans le header -->
+                <p-button
+                    [label]="selectedRdv?.etat"
+                    [icon]="getSeverityIcon(selectedRdv?.etat)"
+                    [severity]="getSeverity(selectedRdv?.etat)" >
+                </p-button>
+
+
+            </div>
+        </ng-template>
+
         <div class="p-4">
-            <!-- État du rendez-vous -->
-            <p-tag [value]="selectedRdv?.etat" [severity]="getSeverity(selectedRdv?.etat)" class="mb-3" />
-    
+
             <!-- Infos client -->
             <div class="flex items-center gap-3 mb-4">
                 <i class="pi pi-user text-xl"></i>
@@ -108,16 +119,17 @@
                     <div class="text-gray-500">{{ getClient(selectedRdv?.client)?.contact }}</div>
                 </div>
             </div>
-    
+
             <!-- Date et heure -->
             <div class="flex items-center gap-3 mb-4">
                 <i class="pi pi-calendar text-xl"></i>
                 <div>
+
                     <div class="font-semibold">{{ selectedRdv?.startTime }} - {{ selectedRdv?.endTime }}</div>
                     <div class="text-gray-500">{{ selectedRdv?.date | date: 'EEEE, d MMMM yyyy' }}</div>
                 </div>
             </div>
-    
+
             <!-- Service -->
             <div class="flex items-center gap-3 mb-4">
                 <i class="pi pi-briefcase text-xl"></i>
@@ -128,19 +140,20 @@
                 </div>
             </div>
 
-    
+
             <!-- Commentaire -->
             <div class="flex items-center gap-3 mb-4">
                 <i class="pi pi-comment text-xl"></i>
                 <div class="text-gray-500">{{ selectedRdv?.description }}</div>
             </div>
-    
+
             <!-- Actions -->
-            <div class="flex justify-end gap-2 mt-4">
+            <div class="flex justify-end gap-2 ml-auto">
                 <button pButton icon="pi pi-pencil" class="p-button-outlined p-button-secondary"></button>
                 <button pButton icon="pi pi-trash" class="p-button-outlined p-button-danger"></button>
             </div>
+
         </div>
     </p-dialog>
-    
+
 </div>
