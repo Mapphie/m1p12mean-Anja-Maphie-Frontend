@@ -99,10 +99,8 @@
         <ng-template pTemplate="header">
             <div class="flex justify-between items-center">
                 <!-- Bouton dans le header -->
-                <p-button
-                    [label]="selectedRdv?.etat"
-                    [icon]="getSeverityIcon(selectedRdv?.etat)"
-                    [severity]="getSeverity(selectedRdv?.etat)" >
+                <p-button [label]="selectedRdv?.etat" [icon]="getSeverityIcon(selectedRdv?.etat.toLowerCase())"
+                    [severity]="getSeverity(selectedRdv?.etat.toLowerCase())" >
                 </p-button>
 
 
@@ -149,11 +147,57 @@
 
             <!-- Actions -->
             <div class="flex justify-end gap-2 ml-auto">
-                <button pButton icon="pi pi-pencil" class="p-button-outlined p-button-secondary"></button>
+                <button pButton icon="pi pi-pencil" class="p-button-outlined p-button-secondary" (click)="UpdateRdvDialog(selectedRdv)"></button>
                 <button pButton icon="pi pi-trash" class="p-button-outlined p-button-danger"></button>
             </div>
 
         </div>
     </p-dialog>
+
+    <p-dialog [(visible)]="updatingDialog" [modal]="true" [header]="isEdit ? 'Modifier le Rendez-vous' : 'Nouveau Rendez-vous'" [style]="{width: '500px'}">
+        <form [formGroup]="rdvForm" (ngSubmit)="onSubmit()">
+          <div class="p-fluid">
+            <div class="p-field">
+              <label for="client">Client</label>
+              <input id="client" type="text" pInputText formControlName="client" />
+            </div>
+            
+            <div class="p-field">
+              <label for="services">Services</label>
+              <p-multiSelect id="services" formControlName="service" [options]="serviceOptions" optionLabel="name"></p-multiSelect>
+            </div>
+            
+            <div class="p-field">
+              <label for="date">Date</label>
+              <p-calendar id="date" formControlName="date" [showIcon]="true"></p-calendar>
+            </div>
+            
+            <div class="p-field">
+              <label for="startTime">Heure de début</label>
+              <p-inputMask id="startTime" formControlName="startTime" mask="99:99"></p-inputMask>
+            </div>
+            
+            <div class="p-field">
+              <label for="endTime">Heure de fin</label>
+              <p-inputMask id="endTime" formControlName="endTime" mask="99:99"></p-inputMask>
+            </div>
+            
+            <div class="p-field">
+              <label for="description">Description</label>
+              <textarea id="description" pInputTextarea formControlName="description"></textarea>
+            </div>
+            
+            <div class="p-field">
+              <label for="etat">État</label>
+              <p-dropdown id="etat" formControlName="etat" [options]="statuses" optionLabel="name"></p-dropdown>
+            </div>
+          </div>
+          
+          <div class="p-dialog-footer">
+            <button pButton type="button" label="Annuler" icon="pi pi-times" (click)="closeUpdatingDialog()"></button>
+            <button pButton type="submit" label="Enregistrer" icon="pi pi-check" [disabled]="rdvForm.invalid"></button>
+          </div>
+        </form>
+      </p-dialog>
 
 </div>

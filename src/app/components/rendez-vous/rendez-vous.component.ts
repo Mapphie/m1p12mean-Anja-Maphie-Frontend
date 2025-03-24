@@ -8,7 +8,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { RippleModule } from 'primeng/ripple';
@@ -18,6 +18,10 @@ import { TagModule } from 'primeng/tag';
 import { RendezVous, RendezVousService } from '../../services/rendez-vous.service';
 import { Router } from '@angular/router';
 import { DialogModule } from 'primeng/dialog';
+import { TextareaModule } from 'primeng/textarea';
+import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
+import { InputMaskModule } from 'primeng/inputmask';
 
 @Component({
   selector: 'app-rendez-vous',
@@ -38,30 +42,48 @@ import { DialogModule } from 'primeng/dialog';
     RatingModule,
     RippleModule,
     IconFieldModule,
-    DialogModule
+    DialogModule,
+    DialogModule,
+    MultiSelectModule,
+    DropdownModule,
+    InputMaskModule,
+    TextareaModule,
+    CalendarModule,
+    ReactiveFormsModule
   ],
   templateUrl: './rendez-vous.component.html',
   styleUrl: './rendez-vous.component.scss'
 })
 export class RendezVousComponent {
   rendezVous: RendezVous[] = [];
-
   loading: boolean = true;
-
   statuses: any[] = [];
-
   rdvDialog : boolean = false;
-
   selectedRdv: any = null;
-
   clients: any[] = [];
+
+  updatingDialog : boolean = false;
+  isEdit = false;
+  serviceOptions: any[] = [];
+  rdvForm: FormGroup;
 
   @ViewChild('filter') filter!: ElementRef;
 
   constructor(
       private rendezVousService: RendezVousService,
-      private router: Router
-  ) {}
+      private router: Router,
+      private fb: FormBuilder
+  ) {
+    this.rdvForm = this.fb.group({
+      client: ['', Validators.required],
+      service: [[], Validators.required],
+      date: [null, Validators.required],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      description: [''],
+      etat: ['', Validators.required]
+    });
+  }
 
   ngOnInit() {
       this.rendezVousService.getAllData().then((data) => {
@@ -79,6 +101,11 @@ export class RendezVousComponent {
           { label: 'En attente', value: 'en attente' }
       ];
 
+      this.serviceOptions = [
+        { label: "Changement d'huile", value: "Changement d'huile" },
+        { label: "Remplacement des freins", value: "Remplacement des freins" },
+        { label: "Révision complète", value: "Révision complète" }
+    ];
   }
 
   onGlobalFilter(table: Table, event: Event) {
@@ -112,7 +139,7 @@ export class RendezVousComponent {
     this.filter.nativeElement.value = '';
   }
 
-  getDetails(rdv:any) {
+  getDetails(rdv:RendezVous) {
     this.selectedRdv = rdv;
     this.rdvDialog = true;
   }
@@ -123,6 +150,39 @@ export class RendezVousComponent {
 
   getClient(clientNumber: string) {
     return this.rendezVousService.getClientDetails(clientNumber);
+  }
+
+  UpdateRdvDialog(edit = false, rdv: RendezVous | null = null){
+    this.selectedRdv = rdv;
+    this.rdvDialog = false;
+    this.updatingDialog = true;
+
+    this.isEdit = edit;
+    if (edit && rdv) {
+      this.rdvForm.patchValue({
+          client: rdv.client,
+          service: rdv.service,
+          date: rdv.date,
+          startTime: rdv.startTime,
+          endTime: rdv.endTime,
+          description: rdv.description,
+          etat: rdv.etat
+      });
+    } else {
+        this.rdvForm.reset();
+    }
+  }
+
+  onSubmit() {
+    if (this.rdvForm.valid) {
+      console.log('Formulaire soumis :', this.rdvForm.value);
+      this.updatingDialog = false;
+    }
+  }
+
+
+  closeUpdatingDialog(){
+    this.updatingDialog = false;
   }
 
 }
