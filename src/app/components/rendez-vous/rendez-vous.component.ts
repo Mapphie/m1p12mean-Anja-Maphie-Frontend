@@ -157,6 +157,8 @@ export class RendezVousComponent {
     this.rdvDialog = false;
     this.updatingDialog = true;
 
+    console.log(rdv);
+
     this.isEdit = edit;
     if (edit && rdv) {
       this.rdvForm.patchValue({

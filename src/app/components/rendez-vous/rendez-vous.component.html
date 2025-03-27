@@ -147,7 +147,7 @@
 
             <!-- Actions -->
             <div class="flex justify-end gap-2 ml-auto">
-                <button pButton icon="pi pi-pencil" class="p-button-outlined p-button-secondary" (click)="UpdateRdvDialog(selectedRdv)"></button>
+                <button pButton icon="pi pi-pencil" class="p-button-outlined p-button-secondary" (click)="UpdateRdvDialog(true,selectedRdv)"></button>
                 <button pButton icon="pi pi-trash" class="p-button-outlined p-button-danger"></button>
             </div>
 
@@ -164,7 +164,9 @@
             
             <div class="p-field">
               <label for="services">Services</label>
-              <p-multiSelect id="services" formControlName="service" [options]="serviceOptions" optionLabel="name"></p-multiSelect>
+              <p-button label="Secondary" severity="secondary" outlined />
+              <p-button label="Secondary" severity="secondary" outlined />
+
             </div>
             
             <div class="p-field">
