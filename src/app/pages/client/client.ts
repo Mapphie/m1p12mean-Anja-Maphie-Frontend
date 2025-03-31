@@ -18,8 +18,9 @@ import { SplitterModule } from 'primeng/splitter';
 import { TabsModule } from 'primeng/tabs';
 import { ToolbarModule } from 'primeng/toolbar';
 import { StatsClient } from './statsclients';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RendezVousComponent } from "../../components/rendez-vous/rendez-vous.component";
+import { Client, ClientsService } from '../../services/clients.service';
 
 
 @Component({
@@ -49,7 +50,7 @@ import { RendezVousComponent } from "../../components/rendez-vous/rendez-vous.co
     template: `
         <div class="flex flex-col">
             <div class="card">
-                <div class="font-semibold text-xl mb-4">Nom du Client</div>
+                <div class="font-semibold text-xl mb-4">{{ client?.nom }}</div>
 
             </div>
 
@@ -62,24 +63,24 @@ import { RendezVousComponent } from "../../components/rendez-vous/rendez-vous.co
                         <div class="space-y-4">
                         <div class="flex items-center space-x-2">
                             <p-button icon="pi pi-map" severity="info" text raised rounded />
-                            <span class="font-semibold text-lg text-black-700">Ville :</span>
+                            <span class="font-semibold text-lg text-black-700">Ville : {{ client?.ville }}</span>
                         </div>
 
                         <div class="flex items-center space-x-2">
                             <p-button icon="pi pi-map-marker" severity="info" text raised rounded />
-                            <span class="font-semibold text-lg text-black-700">Adresse :</span>
+                            <span class="font-semibold text-lg text-black-700">Adresse : {{ client?.adresse }}</span>
                         </div>
                         
 
                         <div class="flex items-center space-x-2">
                             <p-button icon="pi pi-envelope" severity="info" text raised rounded />
-                            <span class="font-semibold text-lg text-black-700">Email :</span>
+                            <span class="font-semibold text-lg text-black-700">Email : {{ client?.email }}</span>
                         </div>
                         
 
                         <div class="flex items-center space-x-2">
                             <p-button icon="pi pi-phone" severity="info" text raised rounded />
-                            <span class="font-semibold text-lg text-black-700">Contact :</span>
+                            <span class="font-semibold text-lg text-black-700">Contact :{{ client?.contact }}</span>
                         </div>
                         
                         </div>
@@ -108,11 +109,19 @@ export class Clients {
     showStatClient: boolean = true;
     showCarList: boolean = false;
     showRv: boolean = false;
-
+    clientNumber: string = '';
+    client: Client | undefined;
 
     constructor(
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute,
+        private clientService: ClientsService,
     ) {}
+
+    ngOnInit() :void{
+        this.clientNumber = this.route.snapshot.paramMap.get('id')!;
+        this.client = this.clientService.getById(this.clientNumber);
+    }
 
     nestedMenuItems = [
         {
@@ -133,21 +142,10 @@ export class Clients {
         {
             label: 'Rendez-vous',
             icon: 'pi pi-fw pi-calendar-clock',
-            items: [
-                {
-                    label: 'Liste',
-                    icon: 'pi pi-fw pi-list',
-                    command: ()=>{
-                        this.showStatClient = false;
-                        this.showRv = true;
-                    }
-                },
-                {
-                    label: 'Nouveau',
-                    icon: 'pi pi-fw pi-plus'
-                },
-                
-            ]
+            command: ()=>{
+                this.showStatClient = false;
+                this.showRv = true;
+            }
         },
         {
             label: 'Devis',

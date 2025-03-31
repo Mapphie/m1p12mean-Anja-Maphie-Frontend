@@ -9,6 +9,8 @@ export default [
     { path: 'crud', component: Crud },
     { path: 'empty', component: Empty },
     { path: 'customer', component: Clients },
+    { path: 'customer/:id', component: Clients },
+    
 
     { path: '**', redirectTo: '/notfound' }
 

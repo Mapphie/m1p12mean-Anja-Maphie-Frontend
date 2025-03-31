@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface Client {
     _id?: string;
@@ -17,8 +19,9 @@ export interface Client {
   providedIn: 'root'
 })
 export class ClientsService {
+  private apiUrl = 'http://localhost:5000/clients'
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getData(){
     return [
@@ -63,6 +66,22 @@ export class ClientsService {
 
   getCustomers() {
     return Promise.resolve(this.getData());
-}
+  }
+
+  getById(number: string): Client | undefined {
+    return this.getData().find(client => client.number === number);
+  }
+
+  addClient(client: any): Observable<any>{
+    return this.http.post(this.apiUrl, client);
+  }
+
+  updateClient(id: string, client:any): Observable<any>{
+      return this.http.put(`${this.apiUrl}/${id}`, client);
+  }
+
+  deleteClient(id: string): Observable<any>{
+      return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 
 }

@@ -35,12 +35,12 @@ export class EmployeService {
         return this.http.get(this.apiUrl);
     }
 
-    addEmploye(article: any): Observable<any>{
-        return this.http.post(this.apiUrl, article);
+    addEmploye(employe: any): Observable<any>{
+        return this.http.post(this.apiUrl, employe);
     }
 
-    updateEmploye(id: string, article:any): Observable<any>{
-        return this.http.put(`${this.apiUrl}/${id}`, article);
+    updateEmploye(id: string, employe:any): Observable<any>{
+        return this.http.put(`${this.apiUrl}/${id}`, employe);
     }
 
     deleteEmploye(id: string): Observable<any>{

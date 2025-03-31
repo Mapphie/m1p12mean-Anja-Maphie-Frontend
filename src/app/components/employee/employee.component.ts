@@ -153,7 +153,7 @@ export class EmployeeComponent implements OnInit{
                 this.messageService.add({
                     severity: 'success',
                     summary: 'Successful',
-                    detail: 'Employee Deleted',
+                    detail: 'Employé Archivé',
                     life: 3000
                 });
             }

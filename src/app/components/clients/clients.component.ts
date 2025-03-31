@@ -8,7 +8,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ToggleButtonModule } from 'primeng/togglebutton';
 import { ToastModule } from 'primeng/toast';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { RippleModule } from 'primeng/ripple';
@@ -17,6 +17,11 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
 import { Client, ClientsService } from '../../services/clients.service';
 import { Router } from '@angular/router';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { ConfirmationService, MessageService } from 'primeng/api';
+
 
 @Component({
   selector: 'app-clients',
@@ -36,41 +41,70 @@ import { Router } from '@angular/router';
     ButtonModule,
     RatingModule,
     RippleModule,
-    IconFieldModule
+    IconFieldModule,
+    DialogModule,
+    ConfirmDialogModule,
+    ReactiveFormsModule,
+    DropdownModule,
   ],
+  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss'
 })
 export class ClientsComponent {
+    client: Client = {} as Client
     customers1: Client[] = [];
 
     loading: boolean = true;
 
     statuses: any[] = [];
+    selectedClient! : Client;
+    clientDialog = false
+    isEdit = false
+    clientForm: FormGroup
+    submitted : boolean = false;
+
+    editedClient: any = null;
+
 
     @ViewChild('filter') filter!: ElementRef;
 
 
     constructor(
             private clientsService: ClientsService,
-            private router: Router
-        ) {}
+            private router: Router,
+            private fb: FormBuilder,
+            private confirmationService: ConfirmationService,
+            private messageService: MessageService,
+        ) {
+            this.clientForm = this.fb.group({
+                nom: ["", Validators.required],
+                adresse: [[], Validators.required],
+                date: [null, Validators.required],
+                ville: [null, Validators.required],
+                contact: [""],
+                etat: ["", Validators.required],
+            })
+        }
 
     ngOnInit() {
-        this.clientsService.getCustomers().then((customers) => {
-            this.customers1 = customers;
-            this.loading = false;
-
-
-            // @ts-ignore
-            this.customers1.forEach((customer) => (customer.date = new Date(customer.date)));
-        });
-
+        
+        this.loadClient()
         this.statuses = [
             { label: 'Actif', value: 'actif' },
             { label: 'Inactif', value: 'inactif' }
         ];
 
+    }
+
+    loadClient(){
+        this.clientsService.getCustomers().then((customers) => {
+            this.customers1 = customers;
+            this.loading = false;
+
+            this.customers1.forEach((customer) => (customer.date = new Date(customer.date)));
+        });
     }
 
     onGlobalFilter(table: Table, event: Event) {
@@ -92,12 +126,101 @@ export class ClientsComponent {
         this.filter.nativeElement.value = '';
     }
 
-    // goToCustomerDetails(customerId: number) {
-    //     this.router.navigate(['/customer', customerId]); // Redirige vers /customer/{id}
-    // }
+    goToCustomerDetails(ClientNumber : string) {
+        this.router.navigate(['/pages/customer', ClientNumber]); 
+    }
 
-    goToCustomerDetails() {
-        this.router.navigate(['/pages/customer']); 
+    openNewClient() {
+        this.client = {nom: '',
+        email: '',
+        contact: '',
+        adresse: '',
+        ville: '',
+        code_postal: 0,
+        date: new Date(),
+        etat: 'Active',
+        type: ''}
+        this.submitted = false;
+        this.clientDialog = true;
+    }
+
+    
+    editClient(client: Client) {
+        this.client = { ...client };
+        this.clientDialog = true;
+    }
+
+    deleteClient(client: Client) {
+
+        this.confirmationService.confirm({
+            message: 'Are you sure you want to delete ' + client.nom + '?',
+            header: 'Confirm',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+                this.clientsService.deleteClient(client._id!).subscribe(() =>  this.loadClient());
+
+                this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    detail: 'Client Archivé',
+                    life: 3000
+                });
+            }
+        });
+    }
+
+    addClient(): void{
+        this.clientsService.addClient(this.client).subscribe(() =>{
+            this.loadClient();
+            });
+
+    }
+
+    getEditedClient(client: any): void {
+        this.editedClient = { ...client }; // Copie de l'employe pour modification
+    }
+
+    updateClient(): void {
+        console.log('update employe');
+
+        if (this.client && this.client._id!) {
+            this.clientsService.updateClient(this.client._id!, this.client).subscribe(() => {
+            this.loadClient();
+            });
+        }
+    }
+
+    saveClient() {
+        console.log('Save Employe');
+
+        this.submitted = true;
+        console.log(`client : `, this.client);
+        if (this.client._id!) {
+            this.updateClient();
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Employé modifié',
+                life: 3000
+            });
+        } else {
+            this.addClient();
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Employé ajouté',
+                life: 3000
+            });
+        }
+
+        this.clientDialog = false;
+
+    }
+    
+    
+    closeDialog(){
+        this.clientDialog = false;
+        this.submitted = false;
     }
 
 }

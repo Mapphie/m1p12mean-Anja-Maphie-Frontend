@@ -3,6 +3,7 @@ import { ClientsService } from './clients.service';
 
 export interface RendezVous {
   _id?: string;
+  number: string;
   service: string[];
   client: string;
   startTime: string;
@@ -23,7 +24,8 @@ export class RendezVousService {
 
   getData(){
     return [
-      {
+      { 
+        number: "RDV001",
         service: ["Changement d'huile","Remplacement des freins"],
         client: "CLT0001",
         startTime: "08:30",
@@ -33,7 +35,8 @@ export class RendezVousService {
         etat: "Confirmé"
       },
       {
-        service: ["Révision complète"],
+        number: "RDV002",
+        service: ["Révision"],
         client: "CLT0002",
         startTime: "10:00",
         endTime: "15:30",
@@ -42,6 +45,7 @@ export class RendezVousService {
         etat: "En attente"
       },
       {
+        number: "RDV003",
         service: ["Remplacement des freins"],
         client: "CLT0003",
         startTime: "14:00",
@@ -60,5 +64,10 @@ export class RendezVousService {
   getClientDetails(clientNumber: string) {
     const clients = this.clientsService.getData();
     return clients.find(client => client.number === clientNumber) || null;
+  }
+
+  getRdvByClient(clientNumber: string){
+    const rdvs = this.getData();
+    return rdvs.find(rdv => rdv.client === clientNumber ) || null;
   }
 }
