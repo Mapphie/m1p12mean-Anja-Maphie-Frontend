@@ -24,7 +24,7 @@ export interface Employe {
 
 export class EmployeService {
 
-    private apiUrl = environment.url;
+    private apiUrl = environment.url + 'employes';
 
     constructor(private http: HttpClient) { }
 

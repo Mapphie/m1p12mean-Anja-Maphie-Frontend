@@ -6,7 +6,6 @@ import { Component } from '@angular/core';
         <div id="highlights" class="py-6 px-6 lg:px-20 mx-0 my-12 lg:mx-20">
             <div class="text-center">
                 <div class="text-surface-900 dark:text-surface-0 font-normal mb-2 text-4xl">A propos de notre Site</div>
-                <span class="text-muted-color text-2xl">Amet consectetur adipiscing elit...</span>
             </div>
 
             <div class="grid grid-cols-12 gap-4 my-20 pt-2 md:pt-20">
@@ -14,9 +13,14 @@ import { Component } from '@angular/core';
                     <div class="flex items-center justify-center bg-yellow-200 self-center lg:self-start" style="width: 4.2rem; height: 4.2rem; border-radius: 10px">
                         <i class="pi pi-fw pi-desktop !text-3xl text-yellow-700"></i>
                     </div>
-                    <div class="leading-none text-surface-900 dark:text-surface-0 text-3xl font-normal">Celerisque Eu Ultrices</div>
                     <span class="text-surface-700 dark:text-surface-100 text-2xl leading-normal mr-0 md:mr-2" style="max-width: 650px"
-                        >Adipiscing commodo elit at imperdiet dui. Viverra nibh cras pulvinar mattis nunc sed blandit libero. Suspendisse in est ante in. Mauris pharetra et ultrices neque ornare aenean euismod elementum nisi.</span
+                        >Bienvenue sur notre site, votre partenaire de confiance pour l’entretien
+                        et la réparation de votre véhicule. Il vous permet de découvrir nos services,
+                         de prendre rendez-vous en ligne et d’accéder à des conseils pour prolonger la durée
+                          de vie de votre voiture. Que ce soit pour une vidange, un diagnostic électronique
+                           ou une réparation mécanique, notre équipe d’experts est à votre disposition pour
+                            vous garantir sécurité et performance.
+                         Naviguez dès maintenant et profitez de notre expertise pour rouler en toute sérénité !</span
                     >
                 </div>
 
@@ -27,4 +31,4 @@ import { Component } from '@angular/core';
         </div>
     `
 })
-export class HighlightsWidget {}
+export class HighlightsWidget { }

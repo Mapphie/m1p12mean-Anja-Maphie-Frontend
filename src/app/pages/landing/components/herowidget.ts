@@ -10,19 +10,26 @@ import { Router, RouterModule } from '@angular/router';
     template: `
         <div
             id="hero"
-            class="flex flex-col pt-6 px-6 lg:px-20 overflow-hidden"
-            style="background: linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, rgb(238, 239, 175) 0%, rgb(195, 227, 250) 100%); clip-path: ellipse(150% 87% at 93% 13%)"
+            class="flex flex-col pt-3 px-6 lg:px-20 overflow-hidden"
+            style="background-image: url('https://img.freepik.com/photos-premium/station-reparation-automobile-moderne-grand-nombre-ascenseurs-equipements-specialises-pour-diagnostic-service-reparation-automobile_283617-3976.jpg?ga=GA1.1.1926012545.1678351043&semt=ais_hybrid');
+                background-size: cover; background-position: center; height: 100vh; /* full height */
+                clip-path: ellipse(130% 70% at 93% 13%);"
         >
-            <div class="mx-6 md:mx-20 mt-0 md:mt-6">
-                <h1 class="text-6xl font-bold text-gray-900 leading-tight"><span class="font-light block">m1p12mean-Maphie-Anja</span>Web Avancé</h1>
-                <p class="font-normal text-2xl leading-normal md:mt-4 text-gray-700">Projet Final</p>
-                <button pButton pRipple [rounded]="true" type="button" label="Demander un devis" class="!text-xl mt-8 !px-4 mr-4" routerLink="/auth/logreg"></button>
-                <button pButton pRipple [rounded]="true" type="button" label="Prendre un rendez-vous" class="!text-xl mt-8 !px-4"></button>
-            </div>
-            <div class="flex justify-center md:justify-end">
-                <img src="https://primefaces.org/cdn/templates/sakai/landing/screen-1.png" alt="Hero Image" class="w-9/12 md:w-auto" />
+            <div class="absolute inset-0 bg-black opacity-40"></div> <!-- Overlay to improve text visibility -->
+            <div class="mx-6 md:mx-20 mt-0 md:mt-4 relative z-10">
+                <h1 class="text-5xl font-bold text-white leading-tight">
+                    <span class="font-light block">m1p12mean-Maphie-Anja</span>Web Avancé
+                </h1>
+                <p class="font-normal text-xl leading-normal md:mt-2 text-white">Projet Final</p>
+                <button pButton pRipple [rounded]="true" type="button" label="Demander un devis"
+                    class="!text-lg mt-6 !px-4 mr-4" routerLink="/auth/loginregister"></button>
+                <button pButton pRipple [rounded]="true" type="button" label="Prendre un rendez-vous"
+                    class="!text-lg mt-6 !px-4"></button>
             </div>
         </div>
+
+
+
     `
 })
 export class HeroWidget {

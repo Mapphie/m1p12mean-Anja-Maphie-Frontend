@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+
 @Component({
     selector: 'features-widget',
     standalone: true,
@@ -13,16 +14,18 @@ import { CommonModule } from '@angular/common';
             </div>
 
             <div class="col-span-12 md:col-span-12 lg:col-span-4 p-0 lg:pr-8 lg:pb-8 mt-6 lg:mt-0">
-                <div style="height: 160px; padding: 2px; border-radius: 10px; background: linear-gradient(90deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2)), linear-gradient(180deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2))">
-                    <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px">
-                        <div class="flex items-center justify-center bg-yellow-200 mb-4" style="width: 3.5rem; height: 3.5rem; border-radius: 10px">
-                            <i class="pi pi-fw pi-users !text-2xl text-yellow-700"></i>
-                        </div>
-                        <h5 class="mb-2 text-surface-900 dark:text-surface-0">Easy to Use</h5>
-                        <span class="text-surface-600 dark:text-surface-200">Posuere morbi leo urna molestie.</span>
+                <div style="height: 160px; padding: 2px; border-radius: 10px;
+                            background-image: url('https://img.freepik.com/psd-gratuit/voiture-moderne-isolee_23-2151504570.jpg?ga=GA1.1.1926012545.1678351043&semt=ais_hybrid');
+                            background-size: cover; background-position: center;">
+                    <div class="p-4 bg-surface-0 dark:bg-surface-900 h-full" style="border-radius: 8px;
+                        background-color: rgba(0, 0, 0, 0.5);">
+                        <h5 class="mb-2 text-white">Easy to Use</h5> <!-- Changed to text-white -->
+                        <span class="text-white">Posuere morbi leo urna molestie.</span> <!-- Changed to text-white -->
                     </div>
                 </div>
             </div>
+
+
 
             <div class="col-span-12 md:col-span-12 lg:col-span-4 p-0 lg:pr-8 lg:pb-8 mt-6 lg:mt-0">
                 <div style="height: 160px; padding: 2px; border-radius: 10px; background: linear-gradient(90deg, rgba(145, 226, 237, 0.2), rgba(251, 199, 145, 0.2)), linear-gradient(180deg, rgba(253, 228, 165, 0.2), rgba(172, 180, 223, 0.2))">
