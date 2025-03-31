@@ -6,6 +6,8 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { EmployeeComponent } from './app/components/employee/employee.component';
 import { ClientsComponent } from './app/components/clients/clients.component';
+import { InvoiceListComponent } from './app/components/facture/list/list.component';
+import { DetailComponent } from './app/components/facture/detail/detail.component';
 
 export const appRoutes: Routes = [
     {
@@ -17,7 +19,10 @@ export const appRoutes: Routes = [
             { path: 'documentation', component: Documentation },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
             { path:'employes', component:EmployeeComponent },
-            { path:'clients', component:ClientsComponent }
+            { path:'clients', component:ClientsComponent },
+            { path:'factures', component:InvoiceListComponent },
+            { path:'factures/:id', component:DetailComponent },
+
 
         ]
     },

@@ -1,0 +1,117 @@
+<div class="invoice-container" *ngIf="invoice">
+    <div class="invoice-actions print-hidden">
+      <button class="btn-print" (click)="printInvoice()">Imprimer</button>
+      <a [routerLink]="['/factures']" class="btn-back">Retour</a>
+    </div>
+  
+    <div class="invoice-content">
+      <div class="invoice-header">
+        <div class="logo">LOGO</div>
+        <div class="invoice-info">
+          <h1>Facture n° {{ invoice.invoiceNumber }}</h1>
+          <div class="info-row">
+            <span class="label">Date :</span>
+            <span>{{ invoice.issueDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Limite de paiement :</span>
+            <span>{{ invoice.dueDate | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">N° client :</span>
+            <span>CLI{{ invoice.id.padStart(3, '0') }}</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="address-section">
+        <div class="address-box">
+          <h2>Emetteur</h2>
+          <div class="address-content">
+            <p>{{ companyInfo.name }}</p>
+            <p>{{ companyInfo.address }}</p>
+            <p>Tél : {{ companyInfo.phone }}</p>
+            <p>Email : {{ companyInfo.email }}</p>
+          </div>
+        </div>
+        <div class="address-box">
+          <h2>Destinataire</h2>
+          <div class="address-content">
+            <p>{{ invoice!.clientName }}</p>
+            <p>{{ invoice!.clientAddress }}</p>
+            <p>Tél : {{ invoice!.clientPhone || 'Non renseigné' }}</p>
+            <p>Email : {{ invoice!.clientEmail || 'Non renseigné' }}</p>
+          </div>
+        </div>
+      </div>
+  
+      <div class="vehicle-info">
+        <div class="vehicle-row">
+          <div class="vehicle-item">
+            <span class="label">Immatriculation :</span>
+            <span>{{ vehicleInfo.registration }}</span>
+          </div>
+          <div class="vehicle-item">
+            <span class="label">N° série :</span>
+            <span>{{ vehicleInfo.serialNumber }}</span>
+          </div>
+        </div>
+        <div class="vehicle-row">
+          <div class="vehicle-item">
+            <span class="label">Marque :</span>
+            <span>{{ vehicleInfo.brand }}</span>
+          </div>
+          <div class="vehicle-item">
+            <span class="label">Kilométrage :</span>
+            <span>{{ vehicleInfo.mileage }}</span>
+          </div>
+        </div>
+        <div class="vehicle-row">
+          <div class="vehicle-item">
+            <span class="label">Modèle :</span>
+            <span>{{ vehicleInfo.model }}</span>
+          </div>
+        </div>
+      </div>
+  
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th>Réf</th>
+            <th>Désignation</th>
+            <th>Prix u HT</th>
+            <th>Qté</th>
+            <th>Total HT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of invoice.items">
+            <td>{{ 'REF' + (invoice.items.indexOf(item) + 1).toString().padStart(3, '0') }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.price.toFixed(2) }} €</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.amount.toFixed(2) }} €</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"></td>
+            <td class="total-label">Total HT</td>
+            <td>{{ invoice.subtotal.toFixed(2) }} €</td>
+          </tr>
+          <tr>
+            <td colspan="3"></td>
+            <td class="total-label">TVA ({{ (invoice.taxRate * 100).toFixed(0) }}%)</td>
+            <td>{{ invoice.taxAmount.toFixed(2) }} €</td>
+          </tr>
+          <tr>
+            <td colspan="3"></td>
+            <td class="total-label">Total TTC</td>
+            <td>{{ invoice.total.toFixed(2) }} €</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+  
+  
