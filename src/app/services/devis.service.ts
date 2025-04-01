@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface LigneDevis {
   reference: string
@@ -59,7 +60,7 @@ export interface Devis {
   providedIn: 'root'
 })
 export class DevisService {
-  private devisUrl = "api/devis" // URL vers l'API
+  private apiUrl = environment.url;
   private devisList = new BehaviorSubject<Devis[]>([])
   devis$ = this.devisList.asObservable()
 
@@ -171,7 +172,7 @@ export class DevisService {
         ]
       }
     ];
-  
+
 
   constructor(private http: HttpClient) {
     this.devisList.next(this.mockDevis)
@@ -238,6 +239,26 @@ export class DevisService {
       { reference: "ART002", designation: "Huile moteur", prixUnitaire: 45, taxe: 20 },
       { reference: "ART003", designation: "Filtre à air", prixUnitaire: 25, taxe: 20 },
     ])
+  }
+
+  getQuotes(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl)
+  }
+
+  getQuoteById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`)
+  }
+
+  createQuote(quote: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, quote)
+  }
+
+  updateQuote(id: string, quote: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, quote)
+  }
+
+  deleteQuote(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`)
   }
 }
 

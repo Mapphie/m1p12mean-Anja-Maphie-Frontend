@@ -64,8 +64,12 @@ export class DevisComponent implements OnInit{
   }
 
   modifierDevis(): void {
+    console.log('TRYING TO UPDATE');
+
     if (this.devis) {
-      this.router.navigate(["/devis", this.devis.numero, "modifier"])
+        console.log('DEVIS : ',this.devis);
+
+      this.router.navigate(["/devis/update", this.devis.numero])
     }
   }
 
