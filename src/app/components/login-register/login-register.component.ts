@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -9,6 +9,8 @@ import { AppFloatingConfigurator } from '../../layout/component/app.floatingconf
 import { DividerModule } from 'primeng/divider';
 import { MessageModule } from 'primeng/message';
 import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+
 
 
 
@@ -28,12 +30,22 @@ import { User, UserService } from './../../services/user.service';
     styleUrl: './login-register.component.scss',
     standalone: true,
 })
-export class LoginRegisterComponent {
+export class LoginRegisterComponent implements OnInit {
     users: any[] = [];
-    constructor(private userService: UserService) { }
+    action: string | null = "";
+    constructor(private userService: UserService, private route: ActivatedRoute) { }
 
     datalog = { email: '', password: '' };
     errorMessage = "";
+
+
+    ngOnInit(): void {
+        this.route.paramMap.subscribe(params => {
+            this.action = params.get('action');
+            console.log(this.action);
+        });
+    }
+
 
     loginregister(): void {
         if (this.datalog.email && this.datalog.password) {

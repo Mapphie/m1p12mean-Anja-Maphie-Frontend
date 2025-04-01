@@ -14,7 +14,8 @@ export default [
     { path: 'login', component: Login },
     { path: 'authreg', component: AuthReg },
     { path: 'logreg', component: LogReg },
-    { path: 'loginregister', component: LoginRegisterComponent },
+    // { path: 'loginregister', component: LoginRegisterComponent },
+    { path: 'loginregister/:action', component: LoginRegisterComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'newlogin', component: NewloginComponent },
 ] as Routes;

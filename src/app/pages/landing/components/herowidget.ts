@@ -22,9 +22,9 @@ import { Router, RouterModule } from '@angular/router';
                 </h1>
                 <p class="font-normal text-xl leading-normal md:mt-2 text-white">Projet Final</p>
                 <button pButton pRipple [rounded]="true" type="button" label="Demander un devis"
-                    class="!text-lg mt-6 !px-4 mr-4" routerLink="/auth/loginregister"></button>
+                    class="!text-lg mt-6 !px-4 mr-4" routerLink="/auth/loginregister/devis"></button>
                 <button pButton pRipple [rounded]="true" type="button" label="Prendre un rendez-vous"
-                    class="!text-lg mt-6 !px-4"></button>
+                    class="!text-lg mt-6 !px-4" routerLink="/auth/loginregister/rdv"></button>
             </div>
         </div>
 
