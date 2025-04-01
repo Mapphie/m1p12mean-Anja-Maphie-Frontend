@@ -9,45 +9,100 @@
           <span class="icon">+</span> Nouvelle facture
         </a>
       </div>
-      <div class="card-content">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>N° Facture</th>
-              <th>Client</th>
-              <th>Date</th>
-              <th>Échéance</th>
-              <th class="text-right">Montant</th>
-              <th>Statut</th>
-              <th class="text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let facture of invoices" (click)="getDetail(facture.invoiceNumber)" style="cursor: pointer;">
-              <td class="font-medium">{{ facture.invoiceNumber }}</td>
-              <td>{{ facture.clientName }}</td>
-              <td>{{ facture.issueDate | date:'dd/MM/yyyy' }}</td>
-              <td>{{ facture.dueDate | date:'dd/MM/yyyy' }}</td>
-              <td class="text-right">{{ facture.total.toFixed(2) }} €</td>
-              <td>
-                <span class="badge" [ngClass]="getStatusClass(facture.status)">
-                  {{ facture.status }}
-                </span>
-              </td>
-              <td class="text-right">
-                <div class="action-buttons">
-                  <a [routerLink]="['/factures', facture.id]" class="btn btn-icon">
-                    <span class="icon">👁️</span>
-                  </a>
-                  <button class="btn btn-icon" (click)="downloadInvoice(facture)">
-                    <span class="icon">⬇️</span>
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+      <div class="card">
+        <p-table
+            #dt1
+            [value]="invoices"
+            dataKey="id"
+            [rows]="10"
+            [loading]="loading"
+            [rowHover]="true"
+            [showGridlines]="true"
+            [paginator]="true"
+            [globalFilterFields]="['invoiceNumber', 'client.name', 'total', 'status']"
+            responsiveLayout="scroll"
+        >
+        <ng-template #caption>
+          <div class="flex justify-between items-center flex-column sm:flex-row">
+              <button pButton label="Clear" class="p-button-outlined mb-2" icon="pi pi-filter-slash" (click)="clear(dt1)"></button>
+              <p-iconfield iconPosition="left" class="ml-auto">
+                  <p-inputicon>
+                      <i class="pi pi-search"></i>
+                  </p-inputicon>
+                  <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+              </p-iconfield>
+          </div>
+        </ng-template>
 
+        <ng-template #header>
+          <tr>
+              <th style="min-width: 12rem">
+                  <div class="flex justify-between items-center">
+                    N° Facture
+                      <p-columnFilter type="text" field="num" display="menu" placeholder="Search by name"></p-columnFilter>
+                  </div>
+              </th>
+              <th style="min-width: 12rem">
+                <div class="flex justify-between items-center">
+                  Client
+                    <p-columnFilter type="text" field="client" display="menu" placeholder="Search by name"></p-columnFilter>
+                </div>
+              </th>
+              <th style="min-width: 12rem">
+                <div class="flex justify-between items-center">
+                  Date
+                    <p-columnFilter type="date" field="date" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
+                </div>
+              </th>
+              <th style="min-width: 12rem">
+                <div class="flex justify-between items-center">
+                  Échéance
+                    <p-columnFilter type="date" field="date" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
+                </div>
+              </th>
+              <th style="min-width: 10rem">
+                <div class="flex justify-between items-center">
+                  Montant
+                    <p-columnFilter type="numeric" field="balance" display="menu" currency="USD"></p-columnFilter>
+                </div>
+              </th>
+              <th style="min-width: 12rem">
+                <div class="flex justify-between items-center">
+                    Status
+                    <p-columnFilter field="status" matchMode="equals" display="menu">
+                        <ng-template #filter let-value let-filter="filterCallback">
+                            <p-select [ngModel]="value" [options]="statutOptions" (onChange)="filter($event.value)" placeholder="Any" [style]="{ 'min-width': '12rem' }">
+                                <ng-template let-option #item>
+                                    <span [class]="'customer-badge status-' + option.value">{{ option.label }}</span>
+                                </ng-template>
+                            </p-select>
+                        </ng-template>
+                    </p-columnFilter>
+                </div>
+              </th>
+            </ng-template>
+          <ng-template #body let-facture >
+            <tr (click)="getDetail(facture.invoiceNumber)" style="cursor: pointer;"> 
+                <td>{{ facture.invoiceNumber }}</td>
+                <td>{{ facture.clientName }}</td>
+                <td>{{ facture.issueDate | date:'dd/MM/yyyy' }}</td>
+                <td>{{ facture.dueDate | date:'dd/MM/yyyy' }}</td>
+                <td>{{ facture.total | currency:'EUR' }}</td>
+                <td>
+                    <p-tag [value]="facture.status" [severity]="getSeverity(facture.status)" styleClass="dark:!bg-surface-900" />
+                </td>
+                
+            </tr>
+        </ng-template>
+        <ng-template #emptymessage>
+          <tr>
+              <td colspan="8">Aucune facture trouvée.</td>
+          </tr>
+        </ng-template>
+        <ng-template #loadingbody>
+            <tr>
+                <td colspan="8">Loading Invoice data. Please wait.</td>
+            </tr>
+        </ng-template>
+      </p-table>
+    </div>

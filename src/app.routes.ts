@@ -9,6 +9,7 @@ import { ClientsComponent } from './app/components/clients/clients.component';
 import { InvoiceListComponent } from './app/components/facture/list/list.component';
 import { DetailComponent } from './app/components/facture/detail/detail.component';
 import { NewInvoiceComponent } from './app/components/facture/new/new.component';
+import { InvoiceEditComponent } from './app/components/facture/update/update.component';
 
 export const appRoutes: Routes = [
     {
@@ -24,6 +25,7 @@ export const appRoutes: Routes = [
             { path:'factures', component:InvoiceListComponent },
             { path:'factures/nouveau', component:NewInvoiceComponent },
             { path:'factures/:id', component:DetailComponent },
+            { path:'factures/update/:id', component:InvoiceEditComponent },
 
 
         ]

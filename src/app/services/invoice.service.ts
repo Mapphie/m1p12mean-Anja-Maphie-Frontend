@@ -8,6 +8,13 @@ export interface InvoiceItem {
   amount: number
 }
 
+export enum StatutInvoice {
+  BROUILLON = "Brouillon",
+  CONFIRME = "Confirmée",
+  PAYE = "Payée",
+  ANNULE = "Annulée",
+}
+
 export interface Invoice {
   id: string
   clientName: string
@@ -23,7 +30,7 @@ export interface Invoice {
   taxRate: number
   taxAmount: number
   total: number
-  status: "En attente" | "Payée" | "En retard"
+  status: string
   notes?: string
 }
 
@@ -51,7 +58,7 @@ export class InvoiceService {
       taxRate: 0.2,
       taxAmount: 294,
       total: 1764,
-      status: "En attente",
+      status: StatutInvoice.BROUILLON,
     },
     {
       id: "2",
@@ -70,7 +77,7 @@ export class InvoiceService {
       taxRate: 0.2,
       taxAmount: 680,
       total: 4080,
-      status: "Payée",
+      status: StatutInvoice.PAYE,
     },
     {
       id: "3",
@@ -89,7 +96,7 @@ export class InvoiceService {
       taxRate: 0.2,
       taxAmount: 220,
       total: 1320,
-      status: "En retard",
+      status: StatutInvoice.CONFIRME,
     },
   ]
 

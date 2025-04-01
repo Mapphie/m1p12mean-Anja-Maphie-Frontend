@@ -3,8 +3,6 @@ import { Invoice, InvoiceService } from '../../../services/invoice.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
 
 @Component({
   selector: 'app-detail',
@@ -40,6 +38,7 @@ export class DetailComponent {
   constructor(
     private route: ActivatedRoute,
     private invoiceService: InvoiceService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -61,26 +60,7 @@ export class DetailComponent {
     window.print()
   }
 
-  generatePDF(): void {
-    const pdfPreview = document.getElementById("pdf-preview")
-    if (!pdfPreview) return
 
-    html2canvas(pdfPreview).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png")
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      })
-
-      const imgWidth = 210 // A4 width in mm
-      const pageHeight = 297 // A4 height in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
-      pdf.save(`facture-${this.invoice?.invoiceNumber}.pdf`)
-    })
-  }
 
   downloadInvoice(): void {
     // Logique pour télécharger la facture
@@ -90,6 +70,40 @@ export class DetailComponent {
   sendInvoice(): void {
     // Logique pour envoyer la facture par email
     console.log("Envoi de la facture par email:", this.invoice?.invoiceNumber)
+  }
+
+  registerPayment(): void {
+    alert("Fonctionnalité d'enregistrement de paiement à implémenter")
+  }
+
+  createCreditNote(): void {
+    alert("Fonctionnalité de création d'avoir à implémenter")
+  }
+
+  setDraft(): void {
+    this.router.navigate(["/factures/update", this.invoice?.invoiceNumber])
+  }
+
+  setActiveTab(tab: string): void {
+    this.activeTab = tab
+  }
+  getStatusLabel(): string {
+    if (!this.invoice || !this.invoice.status) return "En attente"
+    return this.invoice.status
+  }
+
+  getStatusClass(): string {
+    if (!this.invoice || !this.invoice.status) return "status-pending"
+
+    switch (this.invoice.status) {
+      case "Payée":
+        return "status-paid"
+      case "En retard":
+        return "status-overdue"
+      case "En attente":
+      default:
+        return "status-pending"
+    }
   }
 }
 
