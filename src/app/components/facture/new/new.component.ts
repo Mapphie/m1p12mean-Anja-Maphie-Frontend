@@ -160,5 +160,10 @@ export class NewInvoiceComponent {
   cancel(): void {
     this.router.navigate(["/factures"])
   }
+
+  updateItemTotal(item: InvoiceItem): void {
+    item.amount = item.quantity * item.price
+    this.calculateTotals()
+  }
 }
 

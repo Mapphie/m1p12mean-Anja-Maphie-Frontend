@@ -8,6 +8,7 @@ import { EmployeeComponent } from './app/components/employee/employee.component'
 import { ClientsComponent } from './app/components/clients/clients.component';
 import { InvoiceListComponent } from './app/components/facture/list/list.component';
 import { DetailComponent } from './app/components/facture/detail/detail.component';
+import { NewInvoiceComponent } from './app/components/facture/new/new.component';
 
 export const appRoutes: Routes = [
     {
@@ -21,6 +22,7 @@ export const appRoutes: Routes = [
             { path:'employes', component:EmployeeComponent },
             { path:'clients', component:ClientsComponent },
             { path:'factures', component:InvoiceListComponent },
+            { path:'factures/nouveau', component:NewInvoiceComponent },
             { path:'factures/:id', component:DetailComponent },
 
 

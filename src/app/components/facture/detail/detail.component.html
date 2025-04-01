@@ -1,117 +1,299 @@
-<div class="invoice-container" *ngIf="invoice">
-    <div class="invoice-actions print-hidden">
-      <button class="btn-print" (click)="printInvoice()">Imprimer</button>
-      <a [routerLink]="['/factures']" class="btn-back">Retour</a>
+<div class="invoice-detail-container">
+    <!-- Header -->
+    <div class="invoice-header">
+      <div class="breadcrumb">
+        <a [routerLink]="['/factures']">Factures</a> / {{ invoice?.invoiceNumber }}
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-icon" (click)="printInvoice()" title="Imprimer">
+          <i class="icon">🖨️</i> Imprimer
+        </button>
+        <button class="btn btn-icon" title="Actions">
+          <i class="icon">⚙️</i> Action
+        </button>
+        <span class="pagination">1 / 1</span>
+        <button class="btn btn-primary">Créer</button>
+      </div>
     </div>
-  
-    <div class="invoice-content">
-      <div class="invoice-header">
-        <div class="logo">LOGO</div>
-        <div class="invoice-info">
-          <h1>Facture n° {{ invoice.invoiceNumber }}</h1>
-          <div class="info-row">
-            <span class="label">Date :</span>
-            <span>{{ invoice.issueDate | date:'dd/MM/yyyy' }}</span>
+
+    <!-- Toolbar -->
+    <div class="invoice-toolbar">
+      <div class="toolbar-buttons">
+        <button class="toolbar-btn primary" (click)="sendInvoice()">ENVOYER & IMPRIMER</button>
+        <button class="toolbar-btn" (click)="registerPayment()">ENREGISTRER UN PAIEMENT</button>
+        <button class="toolbar-btn" [class.active]="showPreview" (click)="togglePreview()">APERÇU</button>
+        <button class="toolbar-btn" (click)="createCreditNote()">AJOUTER UN AVOIR</button>
+        <button class="toolbar-btn" (click)="setDraft()">REMETTRE EN BROUILLON</button>
+      </div>
+      <div class="toolbar-tabs">
+        <div class="tab" [class.active]="!invoice?.status || invoice?.status === 'En attente'">BROUILLON</div>
+        <div class="tab" [class.active]="invoice?.status === 'Payée'">COMPTABILISÉ</div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="invoice-content" *ngIf="invoice">
+      <div class="invoice-sidebar">
+        <div class="sidebar-info">
+          <div class="info-section">
+            <h3>Facture client</h3>
+            <h2 class="invoice-number">{{ invoice.invoiceNumber }}</h2>
           </div>
-          <div class="info-row">
-            <span class="label">Limite de paiement :</span>
-            <span>{{ invoice.dueDate | date:'dd/MM/yyyy' }}</span>
+
+          <div class="info-section">
+            <div class="info-label">Client</div>
+            <div class="info-value">{{ invoice.clientName }}</div>
+            <div class="info-value address">{{ invoice.clientAddress }}</div>
           </div>
-          <div class="info-row">
-            <span class="label">N° client :</span>
-            <span>CLI{{ invoice.id.padStart(3, '0') }}</span>
+
+          <div class="info-section">
+            <div class="info-row">
+              <div class="info-label">Numéro de PNR</div>
+              <div class="info-value">VCGHZD</div>
+            </div>
+          </div>
+
+          <div class="info-section">
+            <div class="info-row">
+              <div class="info-label">Date de facturation</div>
+              <div class="info-value">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Libellé Global</div>
+              <div class="info-value"></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Référence Commande</div>
+              <div class="info-value"></div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Conditions de règlement</div>
+              <div class="info-value">30 jours</div>
+            </div>
+            <div class="info-row">
+              <div class="info-label">Journal</div>
+              <div class="info-value">Factures clients</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-commands">
+          <div class="command-count">
+            <i class="icon">📋</i> 1 Commandes...
           </div>
         </div>
       </div>
-  
-      <div class="address-section">
-        <div class="address-box">
-          <h2>Emetteur</h2>
-          <div class="address-content">
-            <p>{{ companyInfo.name }}</p>
-            <p>{{ companyInfo.address }}</p>
-            <p>Tél : {{ companyInfo.phone }}</p>
-            <p>Email : {{ companyInfo.email }}</p>
+
+      <div class="invoice-details">
+        <!-- Tabs -->
+        <div class="detail-tabs">
+          <div class="tab" [class.active]="activeTab === 'invoice-lines'" (click)="setActiveTab('invoice-lines')">
+            Lignes de facture
+          </div>
+          <div class="tab" [class.active]="activeTab === 'accounting'" (click)="setActiveTab('accounting')">
+            Écritures comptables
+          </div>
+          <div class="tab" [class.active]="activeTab === 'other-info'" (click)="setActiveTab('other-info')">
+            Autres informations
           </div>
         </div>
-        <div class="address-box">
-          <h2>Destinataire</h2>
-          <div class="address-content">
-            <p>{{ invoice!.clientName }}</p>
-            <p>{{ invoice!.clientAddress }}</p>
-            <p>Tél : {{ invoice!.clientPhone || 'Non renseigné' }}</p>
-            <p>Email : {{ invoice!.clientEmail || 'Non renseigné' }}</p>
+
+        <!-- Tab content -->
+        <div class="tab-content" [ngSwitch]="activeTab">
+          <!-- Invoice lines tab -->
+          <div *ngSwitchCase="'invoice-lines'" class="invoice-lines">
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Article</th>
+                  <th>Libellé</th>
+                  <th>Compte</th>
+                  <th>PNR</th>
+                  <th>Fournisseur</th>
+                  <th>Passager</th>
+                  <th>Numéro</th>
+                  <th>Trajet</th>
+                  <th>Date</th>
+                  <th>Quantité</th>
+                  <th>Prix</th>
+                  <th>Taxe</th>
+                  <th>Montant</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of invoice.items; let i = index">
+                  <td>{{ i === 0 ? 'TKT' : i === 1 ? 'FRAIS DE SERVICE' : i === 2 ? 'EMD' : 'FRAIS DE SERVICE' }}</td>
+                  <td>{{ item.description }}</td>
+                  <td>{{ i === 0 || i === 3 ? '707100 Ventes billets' : i === 1 ? '707100 Ventes services' : '467000 Autres' }}</td>
+                  <td>VCGHZD</td>
+                  <td></td>
+                  <td>{{ i === 0 ? 'MR GIMAT J' : '' }}</td>
+                  <td>{{ i === 0 ? '7602405203' : '' }}</td>
+                  <td>{{ i === 0 ? 'RUN-DZA//PAR' : '' }}</td>
+                  <td>{{ i === 0 ? '04/03/2024' : i === 2 ? '01/04/2025' : '' }}</td>
+                  <td class="text-right">{{ item.quantity.toFixed(2) }}</td>
+                  <td class="text-right">{{ item.price.toFixed(2) }}</td>
+                  <td class="text-right">{{ (item.price * 0.2).toFixed(2) }}</td>
+                  <td class="text-right">{{ item.amount.toFixed(2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="invoice-totals">
+              <div class="conditions">Conditions générales</div>
+              <div class="total-section">
+                <div class="total-row">
+                  <span>Total:</span>
+                  <span class="amount">{{ invoice.total.toFixed(2) }} €</span>
+                </div>
+                <div class="total-row">
+                  <span>Montant dû:</span>
+                  <span class="amount">{{ invoice.total.toFixed(2) }} €</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accounting tab -->
+          <div *ngSwitchCase="'accounting'" class="accounting-entries">
+            <p>Écritures comptables associées à cette facture.</p>
+            <!-- Contenu à implémenter -->
+          </div>
+
+          <!-- Other info tab -->
+          <div *ngSwitchCase="'other-info'" class="other-info">
+            <p>Informations supplémentaires sur cette facture.</p>
+            <!-- Contenu à implémenter -->
           </div>
         </div>
       </div>
-  
-      <div class="vehicle-info">
-        <div class="vehicle-row">
-          <div class="vehicle-item">
-            <span class="label">Immatriculation :</span>
-            <span>{{ vehicleInfo.registration }}</span>
-          </div>
-          <div class="vehicle-item">
-            <span class="label">N° série :</span>
-            <span>{{ vehicleInfo.serialNumber }}</span>
-          </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div class="pdf-preview-modal" *ngIf="showPreview">
+      <div class="modal-header">
+        <h2>Aperçu de la facture</h2>
+        <div class="modal-actions">
+          <button class="btn btn-primary" (click)="generatePDF()">Télécharger PDF</button>
+          <button class="btn" (click)="togglePreview()">Fermer</button>
         </div>
-        <div class="vehicle-row">
-          <div class="vehicle-item">
-            <span class="label">Marque :</span>
-            <span>{{ vehicleInfo.brand }}</span>
+      </div>
+      <div class="modal-content">
+        <div id="pdf-preview" class="pdf-document">
+          <div class="pdf-header">
+            <div class="logo">LOGO</div>
+            <div class="invoice-info">
+              <h1>Facture n° {{ invoice?.invoiceNumber }}</h1>
+              <div class="info-row">
+                <span class="label">Date :</span>
+                <span>{{ invoice?.issueDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Limite de paiement :</span>
+                <span>{{ invoice?.dueDate | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">N° client :</span>
+                <span>CLI{{ invoice?.id!.padStart(3, '0') }}</span>
+              </div>
+            </div>
           </div>
-          <div class="vehicle-item">
-            <span class="label">Kilométrage :</span>
-            <span>{{ vehicleInfo.mileage }}</span>
+
+          <div class="pdf-address-section">
+            <div class="address-box">
+              <h2>Emetteur</h2>
+              <div class="address-content">
+                <p>{{ companyInfo.name }}</p>
+                <p>{{ companyInfo.address }}</p>
+                <p>{{ companyInfo.city }}</p>
+                <p>Tél : {{ companyInfo.phone }}</p>
+                <p>Email : {{ companyInfo.email }}</p>
+              </div>
+            </div>
+            <div class="address-box">
+              <h2>Destinataire</h2>
+              <div class="address-content">
+                <p>{{ invoice?.clientName }}</p>
+                <p>{{ invoice?.clientAddress }}</p>
+                <p>Tél : {{ invoice?.clientPhone || 'Non renseigné' }}</p>
+                <p>Email : {{ invoice?.clientEmail || 'Non renseigné' }}</p>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="vehicle-row">
-          <div class="vehicle-item">
-            <span class="label">Modèle :</span>
-            <span>{{ vehicleInfo.model }}</span>
+
+          <div class="pdf-vehicle-info">
+            <div class="vehicle-row">
+              <div class="vehicle-item">
+                <span class="label">Immatriculation :</span>
+                <span>{{ vehicleInfo.registration }}</span>
+              </div>
+              <div class="vehicle-item">
+                <span class="label">N° série :</span>
+                <span>{{ vehicleInfo.serialNumber }}</span>
+              </div>
+            </div>
+            <div class="vehicle-row">
+              <div class="vehicle-item">
+                <span class="label">Marque :</span>
+                <span>{{ vehicleInfo.brand }}</span>
+              </div>
+              <div class="vehicle-item">
+                <span class="label">Kilométrage :</span>
+                <span>{{ vehicleInfo.mileage }}</span>
+              </div>
+            </div>
+            <div class="vehicle-row">
+              <div class="vehicle-item">
+                <span class="label">Modèle :</span>
+                <span>{{ vehicleInfo.model }}</span>
+              </div>
+            </div>
+          </div>
+
+          <table class="pdf-items-table">
+            <thead>
+              <tr>
+                <th>Réf</th>
+                <th>Désignation</th>
+                <th>Prix u HT</th>
+                <th>Qté</th>
+                <th>Total HT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of invoice?.items; let i = index">
+                <td>{{ 'REF' + (i + 1).toString().padStart(3, '0') }}</td>
+                <td>{{ item.designation }}</td>
+                <td class="text-right">{{ item.price!.toFixed(2) }} €</td>
+                <td class="text-center">{{ item.quantity }}</td>
+                <td class="text-right">{{ item.amount!.toFixed(2) }} €</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3"></td>
+                <td class="total-label">Total HT</td>
+                <td class="total-value">{{ invoice?.subtotal!.toFixed(2) }} €</td>
+              </tr>
+              <tr>
+                <td colspan="3"></td>
+                <td class="total-label">TVA ({{ (invoice?.taxRate || 0) * 100 }}%)</td>
+                <td class="total-value">{{ invoice?.taxAmount!.toFixed(2) }} €</td>
+              </tr>
+              <tr>
+                <td colspan="3"></td>
+                <td class="total-label">Total TTC</td>
+                <td class="total-value">{{ invoice?.total!.toFixed(2) }} €</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div class="pdf-footer">
+            <p>{{ companyInfo.name }} - SIRET: 123 456 789 00012 - TVA: FR12 123456789</p>
+            <p>Merci pour votre confiance !</p>
           </div>
         </div>
       </div>
-  
-      <table class="invoice-table">
-        <thead>
-          <tr>
-            <th>Réf</th>
-            <th>Désignation</th>
-            <th>Prix u HT</th>
-            <th>Qté</th>
-            <th>Total HT</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of invoice.items">
-            <td>{{ 'REF' + (invoice.items.indexOf(item) + 1).toString().padStart(3, '0') }}</td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.price.toFixed(2) }} €</td>
-            <td>{{ item.quantity }}</td>
-            <td>{{ item.amount.toFixed(2) }} €</td>
-          </tr>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3"></td>
-            <td class="total-label">Total HT</td>
-            <td>{{ invoice.subtotal.toFixed(2) }} €</td>
-          </tr>
-          <tr>
-            <td colspan="3"></td>
-            <td class="total-label">TVA ({{ (invoice.taxRate * 100).toFixed(0) }}%)</td>
-            <td>{{ invoice.taxAmount.toFixed(2) }} €</td>
-          </tr>
-          <tr>
-            <td colspan="3"></td>
-            <td class="total-label">Total TTC</td>
-            <td>{{ invoice.total.toFixed(2) }} €</td>
-          </tr>
-        </tfoot>
-      </table>
     </div>
   </div>
-  
-  
+

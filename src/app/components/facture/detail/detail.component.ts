@@ -3,6 +3,8 @@ import { Invoice, InvoiceService } from '../../../services/invoice.service';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { jsPDF } from "jspdf";
+import html2canvas from "html2canvas";
 
 @Component({
   selector: 'app-detail',
@@ -11,6 +13,8 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './detail.component.scss'
 })
 export class DetailComponent {
+  activeTab = "invoice-lines"
+  showPreview = false
   invoice: Invoice | undefined
   companyInfo = {
     name: "Votre Entreprise SARL",
@@ -23,6 +27,7 @@ export class DetailComponent {
     iban: "FR76 1234 5678 9123 4567 8912 345",
     bic: "ABCDEFGHIJK",
   }
+  Math = Math;
 
   vehicleInfo = {
     registration: "AB-123-CD",
@@ -48,8 +53,33 @@ export class DetailComponent {
     })
   }
 
+  togglePreview(): void {
+    this.showPreview = !this.showPreview
+  }
+
   printInvoice(): void {
     window.print()
+  }
+
+  generatePDF(): void {
+    const pdfPreview = document.getElementById("pdf-preview")
+    if (!pdfPreview) return
+
+    html2canvas(pdfPreview).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png")
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      })
+
+      const imgWidth = 210 // A4 width in mm
+      const pageHeight = 297 // A4 height in mm
+      const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
+      pdf.save(`facture-${this.invoice?.invoiceNumber}.pdf`)
+    })
   }
 
   downloadInvoice(): void {
