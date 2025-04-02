@@ -19,6 +19,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Product, ProductService } from '../../pages/service/product.service';
+import { ClientDevis, ClientDevisService } from '../../services/client-devis.service';
 
 
 interface Column {
@@ -61,12 +62,16 @@ interface ExportColumn {
 })
 export class ClientDevisComponent implements OnInit {
     productDialog: boolean = false;
+    devisClientDialog: boolean = false;
 
     products = signal<Product[]>([]);
+    devisClients = signal<ClientDevis[]>([]);
 
     product!: Product;
+    devisClient!: ClientDevis;
 
     selectedProducts!: Product[] | null;
+    selectedDevisClients!: ClientDevis[] | null;
 
     submitted: boolean = false;
 
@@ -80,6 +85,7 @@ export class ClientDevisComponent implements OnInit {
 
     constructor(
         private productService: ProductService,
+        private clientDevisService: ClientDevisService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService
     ) { }
@@ -90,6 +96,7 @@ export class ClientDevisComponent implements OnInit {
 
     ngOnInit() {
         this.loadDemoData();
+        this.loadClientDevis();
     }
 
     loadDemoData() {
@@ -98,20 +105,22 @@ export class ClientDevisComponent implements OnInit {
         });
 
         this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
+            { label: 'En attente', value: 'En attente' },
+            { label: 'Reçu', value: 'Reçu' },
         ];
 
         this.cols = [
-            { field: 'code', header: 'Code', customExportHeader: 'Product Code' },
-            { field: 'name', header: 'Name' },
-            { field: 'image', header: 'Image' },
-            { field: 'price', header: 'Price' },
-            { field: 'category', header: 'Category' }
+            { field: 'libelle', header: 'Libelle', customExportHeader: 'Libelle devis' },
+            { field: 'totalDevis', header: 'Total devis' },
+            { field: 'datedemande', header: 'Date du devis' },
+            { field: 'validite', header: 'Validité' },
+            { field: 'status', header: 'Status' }
         ];
 
         this.exportColumns = this.cols.map((col) => ({ title: col.header, dataKey: col.field }));
+    }
+    loadClientDevis(): void {
+        this.clientDevisService.getAllClientDevis().subscribe(data => this.devisClients = data);
     }
 
     onGlobalFilter(table: Table, event: Event) {
@@ -193,12 +202,10 @@ export class ClientDevisComponent implements OnInit {
 
     getSeverity(status: string) {
         switch (status) {
-            case 'INSTOCK':
+            case 'Reçu':
                 return 'success';
-            case 'LOWSTOCK':
+            case 'En attente':
                 return 'warn';
-            case 'OUTOFSTOCK':
-                return 'danger';
             default:
                 return 'info';
         }
