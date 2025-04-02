@@ -22,15 +22,16 @@ export class AppMenu {
         this.model = [
             {
                 label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
+                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dash'] }]
             },
             {
                 label: 'Utilisateurs',
                 items: [
-                    { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/employes'] },
-                    { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/clients'] },
-                    { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/factures'] },
-                    
+                    { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/dash/employes'] },
+                    { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/dash/clients'] },
+                    { label: 'Devis', icon: 'pi pi-fw pi-file', routerLink: ['/dash/devis'] },
+                    { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/dash/factures'] },
+
                 ]
             },
             {
@@ -41,7 +42,7 @@ export class AppMenu {
                     {
                         label: 'Landing',
                         icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/landing']
+                        routerLink: ['/']
                     },
                     {
                         label: 'Auth',
@@ -82,50 +83,6 @@ export class AppMenu {
                 ]
             },
             {
-                label: 'Hierarchy',
-                items: [
-                    {
-                        label: 'Submenu 1',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            {
-                                label: 'Submenu 1.1',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [
-                                    { label: 'Submenu 1.1.1', icon: 'pi pi-fw pi-bookmark' },
-                                    { label: 'Submenu 1.1.2', icon: 'pi pi-fw pi-bookmark' },
-                                    { label: 'Submenu 1.1.3', icon: 'pi pi-fw pi-bookmark' }
-                                ]
-                            },
-                            {
-                                label: 'Submenu 1.2',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [{ label: 'Submenu 1.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Submenu 2',
-                        icon: 'pi pi-fw pi-bookmark',
-                        items: [
-                            {
-                                label: 'Submenu 2.1',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [
-                                    { label: 'Submenu 2.1.1', icon: 'pi pi-fw pi-bookmark' },
-                                    { label: 'Submenu 2.1.2', icon: 'pi pi-fw pi-bookmark' }
-                                ]
-                            },
-                            {
-                                label: 'Submenu 2.2',
-                                icon: 'pi pi-fw pi-bookmark',
-                                items: [{ label: 'Submenu 2.2.1', icon: 'pi pi-fw pi-bookmark' }]
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
                 label: 'Informations',
                 items: [
                     {
@@ -134,9 +91,15 @@ export class AppMenu {
                         routerLink: ['/documentation']
                     },
                     {
-                        label: 'Source',
+                        label: 'Source Front',
                         icon: 'pi pi-fw pi-github',
                         url: 'https://github.com/Mapphie/m1p12mean-Anja-Maphie-Frontend',
+                        target: '_blank'
+                    },
+                    {
+                        label: 'Source Back',
+                        icon: 'pi pi-fw pi-github',
+                        url: 'https://github.com/Mapphie/m1p12mean-Anja-Maphie-Backend',
                         target: '_blank'
                     }
                 ]
