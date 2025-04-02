@@ -16,6 +16,7 @@ import { DevisComponent } from './app/components/devis/details/devis.component';
 import { NewComponent } from './app/components/devis/new/new.component';
 import { UpdateQuoteComponent } from './app/components/devis/update/update.component';
 import { DetailsClientComponent } from './app/components/clients/details/details.component';
+import { ListInterventionComponent } from './app/components/intervention/list/list.component';
 
 export const appRoutes: Routes = [
     {
@@ -41,6 +42,9 @@ export const appRoutes: Routes = [
             { path:'devis/new', component:NewComponent },
             { path:'devis/:id', component:DevisComponent },
             { path:'devis/update/:id', component:UpdateQuoteComponent },
+
+            { path:'intervention', component:ListInterventionComponent },
+
 
         ]
     },

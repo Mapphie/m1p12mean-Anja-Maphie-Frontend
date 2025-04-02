@@ -1,0 +1,116 @@
+.intervention-form-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+    .intervention-form {
+      background-color: #fffde7; // Couleur jaune pâle comme dans l'image
+      border-radius: 12px;
+      padding: 25px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+
+      h2 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .form-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-bottom: 20px;
+
+        .vehicle-image {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            object-fit: cover;
+          }
+
+          span {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #666;
+          }
+        }
+      }
+
+      .form-group {
+        flex: 1;
+        min-width: 200px;
+
+        label {
+          display: block;
+          margin-bottom: 5px;
+          font-size: 0.9rem;
+          color: #333;
+        }
+
+        input, select {
+          width: 100%;
+          padding: 8px 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 0.9rem;
+        }
+
+        .error-message {
+          color: #f44336;
+          font-size: 0.8rem;
+          margin-top: 5px;
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-start;
+        gap: 15px;
+        margin-top: 30px;
+
+        button {
+          padding: 8px 20px;
+          border-radius: 4px;
+          font-size: 0.9rem;
+          cursor: pointer;
+        }
+
+        .btn-save {
+          background-color: #4caf50;
+          color: white;
+          border: none;
+
+          &:hover {
+            background-color: #388e3c;
+          }
+        }
+
+        .btn-cancel {
+          background-color: #f44336;
+          color: white;
+          border: none;
+
+          &:hover {
+            background-color: #d32f2f;
+          }
+        }
+      }
+    }
+  }
+

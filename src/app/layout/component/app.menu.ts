@@ -38,6 +38,7 @@ export class AppMenu {
                 routerLink: ['/pages'],
                 items: [
                     { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/dash/rendez-vous'] },
+                    { label: 'Intervention', icon: 'pi pi-fw pi-wrench', routerLink: ['/dash/intervention'] },
                     { label: 'Devis', icon: 'pi pi-fw pi-file', routerLink: ['/dash/devis'] },
                     { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/dash/factures'] },
 

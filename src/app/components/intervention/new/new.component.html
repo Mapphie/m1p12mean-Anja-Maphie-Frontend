@@ -1,0 +1,97 @@
+<div class="intervention-form-container">
+    <div class="intervention-form">
+      <h2>{{ formTitle }}</h2>
+
+      <form [formGroup]="interventionForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="vehicle-image">
+            <img src="assets/images/vehicle-placeholder.png" alt="Image du véhicule">
+            <span>Image du véhicule</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="client">Client</label>
+            <select id="client" formControlName="client">
+              <option value="">Combo Box</option>
+              <option *ngFor="let client of clients" [value]="client">{{ client }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vehicule">Véhicule</label>
+            <select id="vehicule" formControlName="vehicule">
+              <option value="">Combo Box</option>
+              <option *ngFor="let vehicule of vehicules" [value]="vehicule">{{ vehicule }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" formControlName="type">
+              <option value="">Combo Box</option>
+              <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="mecanicien">Mécanicien</label>
+            <select id="mecanicien" formControlName="mecanicien">
+              <option value="">Combo Box</option>
+              <option *ngFor="let mecanicien of mecaniciens" [value]="mecanicien">{{ mecanicien }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dateDemande">Date de demande</label>
+            <input type="date" id="dateDemande" formControlName="dateDemande">
+          </div>
+
+          <div class="form-group">
+            <label for="dateDebut">Date début</label>
+            <input type="date" id="dateDebut" formControlName="dateDebut">
+          </div>
+
+          <div class="form-group">
+            <label for="estimation">Estimation</label>
+            <input type="text" id="estimation" placeholder="Champ rempli par le mécanicien" formControlName="dureeEstimee">
+          </div>
+
+          <div class="form-group">
+            <label for="dateFin">Date fin</label>
+            <input type="date" id="dateFin" formControlName="dateFin">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="coutEstime">Coût estimé</label>
+            <input type="number" id="coutEstime" formControlName="coutEstime">
+          </div>
+
+          <div class="form-group">
+            <label for="coutFinal">Coût final</label>
+            <input type="number" id="coutFinal" formControlName="coutFinal">
+          </div>
+
+          <div class="form-group">
+            <label for="status">Statut</label>
+            <select id="status" formControlName="status">
+              <option value="En cours">En cours</option>
+              <option value="Fini">Fini</option>
+              <option value="Statut 3">Statut 3</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save">{{ isEditMode ? 'Mettre à jour' : 'Enregistrer' }}</button>
+          <button type="button" class="btn-cancel" (click)="onCancel()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+

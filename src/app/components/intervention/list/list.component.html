@@ -1,0 +1,108 @@
+<div class="intervention-container">
+    <header>
+      <h1>Suivi des interventions</h1>
+    </header>
+
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Total</h3>
+          <p>{{ stats.total }} interventions</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Statut 3</h3>
+          <p>{{ stats.enAttente }} interventions</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <h3>Fini</h3>
+          <p>{{ stats.fini }} interventions</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3>En cours</h3>
+          <p>{{ stats.enCours }} interventions</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <div class="search-input">
+        <i class="fas fa-search"></i>
+        <input type="text" [formControl]="searchControl" placeholder="Search">
+      </div>
+
+      <div class="filter-dropdown">
+        <select [formControl]="siteFilter">
+          <option value="">Site</option>
+          <option value="site1">Site 1</option>
+          <option value="site2">Site 2</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" (click)="toggleNewInterventionForm()">Ajouter</button>
+    </div>
+
+    <div class="interventions-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Type</th>
+            <th>Client</th>
+            <th>Véhicule</th>
+            <th>Date de demande</th>
+            <th>Date de début</th>
+            <th>Durée estimée</th>
+            <th>Date de fin</th>
+            <th>Mécanicien</th>
+            <th>Coût estimé</th>
+            <th>Coût final</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let intervention of filteredInterventions">
+            <td>{{ intervention.id }}</td>
+            <td>{{ intervention.type }}</td>
+            <td>{{ intervention.client }}</td>
+            <td>{{ intervention.vehicule }}</td>
+            <td>{{ intervention.dateDemande | date:'dd/MM/yyyy' }}</td>
+            <td>{{ intervention.dateDebut | date:'dd/MM/yyyy' }}</td>
+            <td>{{ intervention.dureeEstimee }}</td>
+            <td>{{ intervention.dateFin | date:'dd/MM/yyyy' }}</td>
+            <td>{{ intervention.mecanicien }}</td>
+            <td>{{ intervention.coutEstime | currency:'EUR' }}</td>
+            <td>{{ intervention.coutFinal | currency:'EUR' }}</td>
+            <td>{{ intervention.status }}</td>
+            <td>
+              <button class="btn-action"><i class="fas fa-edit"></i></button>
+              <button class="btn-action"><i class="fas fa-trash"></i></button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <app-new-intervention *ngIf="showNewInterventionForm" (close)="toggleNewInterventionForm()"></app-new-intervention>
+  </div>
