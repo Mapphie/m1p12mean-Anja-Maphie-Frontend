@@ -29,9 +29,9 @@ export class AppMenu {
                 items: [
                     { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/dash/employes'] },
                     { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/dash/clients'] },
+                    { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/dash/rendez-vous'] },
                     { label: 'Devis', icon: 'pi pi-fw pi-file', routerLink: ['/dash/devis'] },
                     { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/dash/factures'] },
-                    { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/dash/rendez-vous'] },
 
                 ]
             },
