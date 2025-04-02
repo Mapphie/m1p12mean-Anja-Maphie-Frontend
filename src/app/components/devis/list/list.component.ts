@@ -70,15 +70,15 @@ export class ListComponent {
 
 
   nouveauDevis(): void {
-    this.router.navigate(["/devis/new"])
+    this.router.navigate(["/dash/devis/new"])
   }
 
   voirDevis(id: string): void {
-    this.router.navigate(["/devis", id])
+    this.router.navigate(["/dash/devis", id])
   }
 
   modifierDevis(id: number): void {
-    this.router.navigate(["/devis", id, "modifier"])
+    this.router.navigate(["/dash/devis", id, "modifier"])
   }
 
   onGlobalFilter(table: Table, event: Event) {

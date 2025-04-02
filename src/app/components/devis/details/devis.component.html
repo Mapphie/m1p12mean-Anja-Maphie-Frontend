@@ -2,24 +2,24 @@
     <div class="devis-header">
       <div class="devis-status">
         <div class="status-indicators">
-          
-          <p-button 
-            label="Brouillon" 
+
+          <p-button
+            label="Brouillon"
             [styleClass]="devis?.etat === 'Brouillon' ? 'p-button-info' : 'p-button-outlined p-button-secondary'"
             [disabled]="true">
           </p-button>
-          <p-button 
-            label="Confirmé" 
+          <p-button
+            label="Confirmé"
             [styleClass]="devis?.etat === 'Confirmé' ? 'p-button-success' : 'p-button-outlined p-button-secondary'"
             [disabled]="true">
           </p-button>
-          <p-button 
-            label="Facturé" 
+          <p-button
+            label="Facturé"
             [styleClass]="devis?.etat === 'Facturé' ? 'p-button-success' : 'p-button-outlined p-button-secondary'"
             [disabled]="true">
           </p-button>
-          <p-button 
-            label="Annulé" 
+          <p-button
+            label="Annulé"
             [styleClass]="devis?.etat === 'Annulé' ? 'p-button-danger' : 'p-button-outlined p-button-secondary'"
             [disabled]="true">
           </p-button>
@@ -27,19 +27,19 @@
       </div>
 
       <h1>DEVIS N° {{ devis?.numero || '00000' }}</h1>
-      
+
       <div class="devis-info">
         <div class="client-info">
           <p><strong>Client :</strong> {{ devis?.client?.nom }}</p>
           <p><strong>Adresse de facturation :</strong> {{ devis?.adresseFacturation || 'Non spécifiée' }}</p>
         </div>
-        
+
         <div class="devis-details">
           <p><strong>Date du devis :</strong> {{ devis?.dateCreation | date:'dd/MM/yyyy' }}</p>
           <p><strong>Condition de paiement :</strong> {{ devis?.conditionPaiement }}</p>
         </div>
       </div>
-      
+
       <div *ngIf="devis?.vehiculeInfo" class="vehicule-info">
         <div class="info-row">
           <div class="info-item">
@@ -63,7 +63,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="devis-content">
       <table class="lignes-table">
         <thead>
@@ -94,7 +94,7 @@
           </tr>
         </tbody>
       </table>
-      
+
       <div class="totals">
         <div class="total-item">
           <span>Montant HT :</span>
@@ -110,17 +110,17 @@
         </div>
       </div>
     </div>
-    
-    
-    
+
+
+
     <div class="devis-actions">
       <button class="btn-action" (click)="confirmerDevis()" *ngIf="devis?.etat === 'Brouillon'">Confirmer le devis</button>
-      <button class="btn-action" (click)="modifierDevis()">Modifier</button>
+      <button class="btn-action" *ngIf="devis?.etat !== 'Facturé'" (click)="modifierDevis()">Modifier</button>
       <button class="btn-action" (click)="facturerDevis()" *ngIf="devis?.etat === 'Confirmé'">Facturer</button>
       <button class="btn-action btn-danger" (click)="annulerDevis()" *ngIf="devis?.etat !== 'Annulé'">Annuler</button>
     </div>
   </div>
 
   <p-confirmDialog></p-confirmDialog>
-  
-  
+
+

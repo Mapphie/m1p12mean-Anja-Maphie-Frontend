@@ -1,13 +1,13 @@
 <div class="devis-container">
     <h1>Devis</h1>
-    
+
     <div class="action-buttons">
       <button class="btn-add" (click)="nouveauDevis()">
-        <i class="fa fa-plus-circle"></i> Nouveau devis
+        <i class="pi pi-plus-circle"></i> Nouveau devis
       </button>
     </div>
 
-    <div class="font-semibold text-xl mb-4">Devis</div>
+
             <p-table
                 #dt1
                 [value]="devis"
@@ -45,7 +45,7 @@
                                 <p-columnFilter type="text" field="country.name" display="menu" placeholder="Search by country"></p-columnFilter>
                             </div>
                         </th>
-                        
+
                         <th style="min-width: 10rem">
                             <div class="flex justify-between items-center">
                                 Date de création
@@ -73,7 +73,7 @@
                                 <p-columnFilter type="text" field="country.name" display="menu" placeholder="Search by country"></p-columnFilter>
                             </div>
                         </th>
-                        
+
                         <th style="min-width: 10rem">
                             <div class="flex justify-between items-center">
                                 Total
@@ -110,7 +110,7 @@
                         <td>
                             <p-tag [value]="devis.etat" [severity]="getSeverity(devis.etat)" styleClass="dark:!bg-surface-900" />
                         </td>
-                        
+
                     </tr>
                 </ng-template>
                 <ng-template #emptymessage>
@@ -125,6 +125,5 @@
                 </ng-template>
             </p-table>
 </div>
-    
-  
-  
+
+

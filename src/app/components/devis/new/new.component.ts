@@ -173,13 +173,13 @@ export class NewComponent {
       }
 
       this.devisService.ajouterDevis(nouveauDevis).subscribe((devis) => {
-        this.router.navigate(["/devis", devis.id])
+        this.router.navigate(["/dash/devis", devis.id])
       })
     }
   }
 
   annuler(): void {
-    this.router.navigate(["/devis"])
+    this.router.navigate(["/dash/devis"])
   }
 }
 
