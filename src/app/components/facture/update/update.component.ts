@@ -151,7 +151,7 @@ export class InvoiceEditComponent implements OnInit {
 }
 
   cancel(): void {
-    this.router.navigate(["/factures", this.invoice.id])
+    this.router.navigate(["/factures", this.invoice.invoiceNumber])
   }
 }
 
