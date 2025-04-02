@@ -74,10 +74,9 @@ export class RendezVousComponent {
   clientOptions: any[] = []
   serviceOptions: any[] = []
   statuses: any[] = [
-    { name: "Planifié", code: "planifie" },
-    { name: "En cours", code: "en_cours" },
-    { name: "Terminé", code: "termine" },
-    { name: "Annulé", code: "annule" },
+    { label: "Confirmé", value: "confirmé" },
+    { label: "En attenta", value: "en attenta" },
+    { label: "Annulé", value: "annule" },
   ]
 
   constructor(

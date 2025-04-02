@@ -29,9 +29,6 @@ export class AppMenu {
                 items: [
                     { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/dash/employes'] },
                     { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/dash/clients'] },
-                    { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/dash/rendez-vous'] },
-                    { label: 'Devis', icon: 'pi pi-fw pi-file', routerLink: ['/dash/devis'] },
-                    { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/dash/factures'] },
 
                 ]
             },
@@ -40,47 +37,10 @@ export class AppMenu {
                 icon: 'pi pi-fw pi-briefcase',
                 routerLink: ['/pages'],
                 items: [
-                    {
-                        label: 'Landing',
-                        icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/']
-                    },
-                    {
-                        label: 'Auth',
-                        icon: 'pi pi-fw pi-user',
-                        items: [
-                            {
-                                label: 'Login',
-                                icon: 'pi pi-fw pi-sign-in',
-                                routerLink: ['/auth/login']
-                            },
-                            {
-                                label: 'Error',
-                                icon: 'pi pi-fw pi-times-circle',
-                                routerLink: ['/auth/error']
-                            },
-                            {
-                                label: 'Access Denied',
-                                icon: 'pi pi-fw pi-lock',
-                                routerLink: ['/auth/access']
-                            }
-                        ]
-                    },
-                    {
-                        label: 'Crud',
-                        icon: 'pi pi-fw pi-pencil',
-                        routerLink: ['/pages/crud']
-                    },
-                    {
-                        label: 'Not Found',
-                        icon: 'pi pi-fw pi-exclamation-circle',
-                        routerLink: ['/pages/notfound']
-                    },
-                    {
-                        label: 'Empty',
-                        icon: 'pi pi-fw pi-circle-off',
-                        routerLink: ['/pages/empty']
-                    }
+                    { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/dash/rendez-vous'] },
+                    { label: 'Devis', icon: 'pi pi-fw pi-file', routerLink: ['/dash/devis'] },
+                    { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/dash/factures'] },
+
                 ]
             },
             {
