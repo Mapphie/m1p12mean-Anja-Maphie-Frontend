@@ -45,7 +45,6 @@ export const appRoutes: Routes = [
 
             { path:'intervention', component:ListInterventionComponent },
 
-
         ]
     },
     { path: '', component: Landing },

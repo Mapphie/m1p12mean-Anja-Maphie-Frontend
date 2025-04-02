@@ -6,7 +6,7 @@
     <div class="stats-cards">
       <div class="stat-card">
         <div class="icon">
-          <i class="fas fa-clipboard-list"></i>
+          <i class="pi fa-clipboard-list"></i>
         </div>
         <div class="stat-info">
           <h3>Total</h3>
@@ -16,17 +16,27 @@
 
       <div class="stat-card">
         <div class="icon">
-          <i class="fas fa-exclamation-triangle"></i>
+          <i class="pi pi-exclamation-triangle"></i>
         </div>
         <div class="stat-info">
-          <h3>Statut 3</h3>
+          <h3>En Attente</h3>
           <p>{{ stats.enAttente }} interventions</p>
         </div>
       </div>
 
       <div class="stat-card">
         <div class="icon">
-          <i class="fas fa-check-circle"></i>
+          <i class="pi pi-clock"></i>
+        </div>
+        <div class="stat-info">
+          <h3>En cours</h3>
+          <p>{{ stats.enCours }} interventions</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="icon">
+          <i class="pi pi-check-circle"></i>
         </div>
         <div class="stat-info">
           <h3>Fini</h3>
@@ -34,20 +44,12 @@
         </div>
       </div>
 
-      <div class="stat-card">
-        <div class="icon">
-          <i class="fas fa-clock"></i>
-        </div>
-        <div class="stat-info">
-          <h3>En cours</h3>
-          <p>{{ stats.enCours }} interventions</p>
-        </div>
-      </div>
+      
     </div>
 
     <div class="search-bar">
       <div class="search-input">
-        <i class="fas fa-search"></i>
+        <i class="pi pi-search"></i>
         <input type="text" [formControl]="searchControl" placeholder="Search">
       </div>
 
@@ -59,7 +61,7 @@
         </select>
       </div>
 
-      <button class="btn-primary" (click)="toggleNewInterventionForm()">Ajouter</button>
+      <button class="btn-primary" (click)="openNewInterventionForm()">Ajouter</button>
     </div>
 
     <div class="interventions-table">
@@ -96,13 +98,17 @@
             <td>{{ intervention.coutFinal | currency:'EUR' }}</td>
             <td>{{ intervention.status }}</td>
             <td>
-              <button class="btn-action"><i class="fas fa-edit"></i></button>
-              <button class="btn-action"><i class="fas fa-trash"></i></button>
+              <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openEditInterventionForm(intervention.id)" />
+                        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" (click)="deleteIntervention(intervention.id)" [outlined]="true" />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <app-new-intervention *ngIf="showNewInterventionForm" (close)="toggleNewInterventionForm()"></app-new-intervention>
+    <app-new-intervention 
+      *ngIf="showInterventionForm" 
+      [interventionId]="selectedInterventionId"
+      (close)="closeInterventionForm()">
+    </app-new-intervention>
   </div>

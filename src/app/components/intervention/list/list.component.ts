@@ -13,6 +13,8 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NewInterventionComponent } from '../new/new.component';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-list',
@@ -38,57 +40,84 @@ import { NewInterventionComponent } from '../new/new.component';
   styleUrl: './list.component.scss'
 })
 export class ListInterventionComponent {
-    interventions: Intervention[] = [];
-    filteredInterventions: Intervention[] = [];
-    stats: InterventionStats = { total: 0, enCours: 0, fini: 0, enAttente: 0 };
-    searchControl = new FormControl('');
-    siteFilter = new FormControl('');
-    showNewInterventionForm = false;
+  interventions: Intervention[] = []
+  filteredInterventions: Intervention[] = []
+  stats: InterventionStats = { total: 0, enCours: 0, fini: 0, enAttente: 0 }
+  searchControl = new FormControl("")
+  siteFilter = new FormControl("")
 
-    constructor(private interventionService: InterventionService) {}
+  showInterventionForm = false
+  selectedInterventionId?: number
 
-    ngOnInit(): void {
-      this.loadInterventions();
-      this.loadStats();
-      this.searchControl.valueChanges.subscribe(value => {
-        this.filterInterventions();
-      });
+  constructor(private interventionService: InterventionService) {}
 
-      this.siteFilter.valueChanges.subscribe(value => {
-        this.filterInterventions();
-      });
-    }
+  ngOnInit(): void {
+    this.loadInterventions()
+    this.loadStats()
 
-    loadInterventions(): void {
-      this.interventionService.getInterventions().subscribe(data => {
-        this.interventions = data;
-        this.filteredInterventions = data;
-      });
-    }
+    this.searchControl.valueChanges.subscribe((value) => {
+      this.filterInterventions()
+    })
 
-    loadStats(): void {
-        this.interventionService.getInterventionStats().subscribe(stats => {
-          this.stats = stats;
-        });
-    }
+    this.siteFilter.valueChanges.subscribe((value) => {
+      this.filterInterventions()
+    })
+  }
 
-    filterInterventions(): void {
-      const searchTerm = this.searchControl.value?.toLowerCase() || '';
-      const site = this.siteFilter.value;
+  loadInterventions(): void {
+    this.interventionService.getInterventions().subscribe((data) => {
+      this.interventions = data
+      this.filteredInterventions = data
+    })
+  }
 
-      this.filteredInterventions = this.interventions.filter(intervention => {
-        const matchesSearch = !searchTerm ||
-          intervention.client.toLowerCase().includes(searchTerm) ||
-          intervention.vehicule.toLowerCase().includes(searchTerm) ||
-          intervention.type.toLowerCase().includes(searchTerm);
+  loadStats(): void {
+    this.interventionService.getInterventionStats().subscribe((stats) => {
+      this.stats = stats
+    })
+  }
 
-        const matchesSite = !site || true; // Ajoutez la logique de filtrage par site si nécessaire
+  filterInterventions(): void {
+    const searchTerm = this.searchControl.value?.toLowerCase() || ""
+    const site = this.siteFilter.value
 
-        return matchesSearch && matchesSite;
-      });
-    }
+    this.filteredInterventions = this.interventions.filter((intervention) => {
+      const matchesSearch =
+        !searchTerm ||
+        intervention.client.toLowerCase().includes(searchTerm) ||
+        intervention.vehicule.toLowerCase().includes(searchTerm) ||
+        intervention.type.toLowerCase().includes(searchTerm)
 
-    toggleNewInterventionForm(): void {
-      this.showNewInterventionForm = !this.showNewInterventionForm;
+      const matchesSite = !site || true // Ajoutez la logique de filtrage par site si nécessaire
+
+      return matchesSearch && matchesSite
+    })
+  }
+
+  openNewInterventionForm(): void {
+    this.selectedInterventionId = undefined
+    this.showInterventionForm = true
+  }
+
+  openEditInterventionForm(id: number): void {
+    this.selectedInterventionId = id
+    this.showInterventionForm = true
+  }
+
+  closeInterventionForm(): void {
+    this.showInterventionForm = false
+    this.selectedInterventionId = undefined
+    this.loadInterventions()
+    this.loadStats()
+  }
+
+  deleteIntervention(id: number): void {
+    if (confirm("Êtes-vous sûr de vouloir supprimer cette intervention ?")) {
+      this.interventionService.deleteIntervention(id).subscribe(() => {
+        this.loadInterventions()
+        this.loadStats()
+      })
     }
   }
+}
+
