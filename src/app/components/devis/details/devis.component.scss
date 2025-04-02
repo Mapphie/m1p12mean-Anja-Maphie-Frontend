@@ -1,0 +1,148 @@
+.detail-devis-container {
+    padding: 20px;
+    
+    .devis-header {
+      margin-bottom: 30px;
+      
+      h1 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      
+      .devis-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        
+        @media (max-width: 768px) {
+          flex-direction: column;
+          gap: 15px;
+        }
+        
+        .client-info, .devis-details {
+          p {
+            margin-bottom: 5px;
+          }
+        }
+      }
+      
+      .vehicule-info {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        
+        .info-row {
+          display: flex;
+          margin-bottom: 10px;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+          
+          .info-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            
+            span:first-child {
+              font-weight: 500;
+              margin-bottom: 5px;
+            }
+          }
+        }
+      }
+    }
+    
+    .devis-content {
+      margin-bottom: 30px;
+      
+      .lignes-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        
+        th, td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+        }
+        
+        th {
+          background-color: #f2f2f2;
+        }
+        
+        .no-data {
+          text-align: center;
+          padding: 20px;
+        }
+      }
+      
+      .totals {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        
+        .total-item {
+          display: flex;
+          gap: 20px;
+          margin-bottom: 5px;
+          
+          span:first-child {
+            font-weight: 500;
+          }
+          
+          &.total-ttc {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 5px;
+          }
+        }
+      }
+    }
+    
+    .devis-status {
+      float: right;
+      margin-bottom: 50px;
+    }
+    
+    .devis-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      
+      .btn-action {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+        background-color: #f2f2f2;
+        
+        &:hover {
+          background-color: #e0e0e0;
+        }
+        
+        &.btn-primary {
+          background-color: #4285f4;
+          color: white;
+          
+          &:hover {
+            background-color: #3367d6;
+          }
+        }
+        
+        &.btn-danger {
+          background-color: #f44336;
+          color: white;
+          
+          &:hover {
+            background-color: #d32f2f;
+          }
+        }
+      }
+    }
+  }
+  
+  

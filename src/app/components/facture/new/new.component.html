@@ -1,0 +1,253 @@
+<div class="container">
+    <form (ngSubmit)="onSubmit()" #invoiceForm="ngForm">
+      <div class="card">
+        <div class="card-header">
+          <h1 class="card-title">Créer une nouvelle facture</h1>
+        </div>
+        <div class="card-content">
+          <div class="form-section">
+            <h2>Informations de la facture</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="invoice-number">Numéro de facture</label>
+                <input
+                  type="text"
+                  id="invoice-number"
+                  name="invoiceNumber"
+                  [(ngModel)]="invoice.invoiceNumber"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="invoice-date">Date</label>
+                <input
+                  type="text"
+                  id="invoice-date"
+                  name="date"
+                  [(ngModel)]="invoice.issueDate"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="payment-due-date">Limite de paiement</label>
+                <input
+                  type="text"
+                  id="payment-due-date"
+                  name="paymentDueDate"
+                  [(ngModel)]="invoice.dueDate"
+                  required
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Client</h2>
+            <div class="form-group">
+              <label for="client">Sélectionner un client</label>
+              <select
+                id="client"
+                name="client"
+                [(ngModel)]="selectedClient"
+                (change)="onClientChange()"
+                required
+              >
+                <option value="">-- Sélectionner un client --</option>
+                <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+              </select>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="client-name">Nom du client</label>
+                <input
+                  type="text"
+                  id="client-name"
+                  name="clientName"
+                  [(ngModel)]="invoice.clientName"
+                  required
+                >
+              </div>
+
+              <div class="form-group">
+                <label for="client-address">Adresse</label>
+                <input
+                  type="text"
+                  id="client-address"
+                  name="clientAddress"
+                  [(ngModel)]="invoice.clientAddress"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="client-phone">Téléphone</label>
+                <input
+                  type="text"
+                  id="client-phone"
+                  name="clientPhone"
+                  [(ngModel)]="invoice.clientPhone"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="client-email">Email</label>
+                <input
+                  type="email"
+                  id="client-email"
+                  name="clientEmail"
+                  [(ngModel)]="invoice.clientEmail"
+                  required
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Informations du véhicule</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="registration">Immatriculation</label>
+                <input
+                  type="text"
+                  id="registration"
+                  name="registration"
+                  [(ngModel)]="vehicleInfo.registration"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="brand">Marque</label>
+                <input
+                  type="text"
+                  id="brand"
+                  name="brand"
+                  [(ngModel)]="vehicleInfo.brand"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="model">Modèle</label>
+                <input
+                  type="text"
+                  id="model"
+                  name="model"
+                  [(ngModel)]="vehicleInfo.model"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="serial-number">N° série</label>
+                <input
+                  type="text"
+                  id="serial-number"
+                  name="serialNumber"
+                  [(ngModel)]="vehicleInfo.serialNumber"
+                  required
+                >
+              </div>
+              <div class="form-group">
+                <label for="mileage">Kilométrage</label>
+                <input
+                  type="text"
+                  id="mileage"
+                  name="mileage"
+                  [(ngModel)]="vehicleInfo.mileage"
+                  required
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <h2>Articles</h2>
+
+            <div class="items-header">
+              <div class="item-col reference">Référence</div>
+              <div class="item-col designation">Désignation</div>
+              <div class="item-col price">Prix u HT</div>
+              <div class="item-col quantity">Qté</div>
+              <div class="item-col total">Total HT</div>
+              <div class="item-col actions">Actions</div>
+            </div>
+
+            <div class="item-row" *ngFor="let item of invoice.items; let i = index">
+              <div class="item-col reference">
+
+              </div>
+              <div class="item-col designation">
+                <input
+                  type="text"
+                  [name]="'item-desc-' + i"
+                  [(ngModel)]="item.designation"
+                  placeholder="Désignation"
+                  required
+                >
+              </div>
+              <div class="item-col price">
+                <input
+                  type="number"
+                  [name]="'item-price-' + i"
+                  [(ngModel)]="item.price"
+                  min="0"
+                  step="0.01"
+                  (change)="updateItemTotal(item)"
+                  required
+                >
+              </div>
+              <div class="item-col quantity">
+                <input
+                  type="number"
+                  [name]="'item-qty-' + i"
+                  [(ngModel)]="item.quantity"
+                  min="0.5"
+                  step="0.5"
+                  (change)="updateItemTotal(item)"
+                  required
+                >
+              </div>
+              <div class="item-col total">
+                <input
+                  type="text"
+                  [name]="'item-total-' + i"
+                  [value]="item.amount.toFixed(2) + ' €'"
+                  readonly
+                >
+              </div>
+              <div class="item-col actions">
+                <button
+                  type="button"
+                  class="btn btn-icon"
+                  (click)="removeItem(i)"
+                  [disabled]="invoice.items.length === 1"
+                >
+                  <span class="icon">🗑️</span>
+                </button>
+              </div>
+            </div>
+            <p-button icon="pi pi-plus" severity="help" label="Ajouter un service" (click)="addItem()" outlined />
+
+
+            <div class="totals-section">
+              <div class="total-row">
+                <span>Total HT:</span>
+                <span>{{ invoice.total.toFixed(2) }} €</span>
+              </div>
+              <div class="total-row">
+                <span>TVA (20%):</span>
+                <span>{{ invoice.taxAmount.toFixed(2) }} €</span>
+              </div>
+              <div class="total-row total">
+                <span>Total TTC:</span>
+                <span>{{ invoice.total.toFixed(2) }} €</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+            <p-button label="Annuler" severity="danger" (click)="cancel()" outlined />
+            <p-button label="Créer la facture" type="submit" severity="primary"  />
+
+        </div>
+      </div>
+    </form>
+  </div>
+

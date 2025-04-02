@@ -22,14 +22,17 @@ export class AppMenu {
         this.model = [
             {
                 label: 'Home',
-                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] }]
+                items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/dash'] }]
             },
             {
                 label: 'Utilisateurs',
                 items: [
-                    { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/employes'] },
-                    { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/clients'] },
-                    { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/rendez-vous'] },
+                    { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/dash/employes'] },
+                    { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/dash/clients'] },
+                    { label: 'Devis', icon: 'pi pi-fw pi-file', routerLink: ['/dash/devis'] },
+                    { label: 'Factures', icon: 'pi pi-receipt', routerLink: ['/dash/factures'] },
+                    { label: 'Rendez-vous', icon: 'pi pi-fw pi-calendar-clock', routerLink: ['/dash/rendez-vous'] },
+
                 ]
             },
             {
@@ -40,7 +43,7 @@ export class AppMenu {
                     {
                         label: 'Landing',
                         icon: 'pi pi-fw pi-globe',
-                        routerLink: ['/landing']
+                        routerLink: ['/']
                     },
                     {
                         label: 'Auth',
