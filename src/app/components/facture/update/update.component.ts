@@ -132,7 +132,7 @@ export class InvoiceEditComponent implements OnInit {
   onSubmit(): void {
     if (this.isFormValid()) {
       this.invoiceService.updateInvoice(this.invoice).subscribe(() => {
-        this.router.navigate(["/factures", this.invoice.id])
+        this.router.navigate(["/dash/factures", this.invoice.id])
       })
     } else {
       alert("Veuillez remplir tous les champs obligatoires.")
@@ -151,7 +151,7 @@ export class InvoiceEditComponent implements OnInit {
 }
 
   cancel(): void {
-    this.router.navigate(["/factures", this.invoice.invoiceNumber])
+    this.router.navigate(["/dash/factures", this.invoice.invoiceNumber])
   }
 }
 

@@ -223,10 +223,8 @@
                 </button>
               </div>
             </div>
+            <p-button icon="pi pi-plus" severity="help" label="Ajouter un service" (click)="addItem()" outlined />
 
-            <button type="button" class="btn btn-outline" (click)="addItem()">
-              <span class="icon">+</span> Ajouter un article
-            </button>
 
             <div class="totals-section">
               <div class="total-row">
@@ -245,12 +243,9 @@
           </div>
         </div>
         <div class="card-footer">
-          <button type="button" class="btn btn-outline" (click)="cancel()">
-            Annuler
-          </button>
-          <button type="submit" class="btn btn-primary">
-            Créer la facture
-          </button>
+            <p-button label="Annuler" severity="danger" (click)="cancel()" outlined />
+            <p-button label="Créer la facture" type="submit" severity="primary"  />
+
         </div>
       </div>
     </form>

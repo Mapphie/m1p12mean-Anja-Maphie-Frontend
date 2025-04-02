@@ -1,15 +1,14 @@
-<div class="container">
     <div class="card">
       <div class="card-header">
         <div>
           <h1 class="card-title">Factures</h1>
           <p class="card-description">Gérez vos factures et suivez les paiements</p>
         </div>
-        <a [routerLink]="['/factures/nouveau']" class="btn btn-primary">
+        <a [routerLink]="['/dash/factures/nouveau']" class="btn btn-primary">
           <span class="icon">+</span> Nouvelle facture
         </a>
       </div>
-      <div class="card">
+      <div class="card-body">
         <p-table
             #dt1
             [value]="invoices"
@@ -63,7 +62,7 @@
               <th style="min-width: 10rem">
                 <div class="flex justify-between items-center">
                   Montant
-                    <p-columnFilter type="numeric" field="balance" display="menu" currency="USD"></p-columnFilter>
+                    <p-columnFilter type="numeric" field="balance" display="menu" currency="MGA"></p-columnFilter>
                 </div>
               </th>
               <th style="min-width: 12rem">
@@ -82,16 +81,16 @@
               </th>
             </ng-template>
           <ng-template #body let-facture >
-            <tr (click)="getDetail(facture.invoiceNumber)" style="cursor: pointer;"> 
+            <tr (click)="getDetail(facture.invoiceNumber)" style="cursor: pointer;">
                 <td>{{ facture.invoiceNumber }}</td>
                 <td>{{ facture.clientName }}</td>
                 <td>{{ facture.issueDate | date:'dd/MM/yyyy' }}</td>
                 <td>{{ facture.dueDate | date:'dd/MM/yyyy' }}</td>
-                <td>{{ facture.total | currency:'EUR' }}</td>
+                <td>{{ facture.total | currency:'AR' }}</td>
                 <td>
                     <p-tag [value]="facture.status" [severity]="getSeverity(facture.status)" styleClass="dark:!bg-surface-900" />
                 </td>
-                
+
             </tr>
         </ng-template>
         <ng-template #emptymessage>

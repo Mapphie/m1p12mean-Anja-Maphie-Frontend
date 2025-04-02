@@ -139,7 +139,7 @@ export class NewInvoiceComponent {
       const invoiceToSave: Invoice = { ...this.invoice }
 
       this.invoiceService.addInvoice(invoiceToSave).subscribe(() => {
-        this.router.navigate(["/factures"])
+        this.router.navigate(["/dash/factures"])
       })
     } else {
       alert("Veuillez remplir tous les champs obligatoires.")
@@ -158,7 +158,7 @@ export class NewInvoiceComponent {
   }
 
   cancel(): void {
-    this.router.navigate(["/factures"])
+    this.router.navigate(["/dash/factures"])
   }
 
   updateItemTotal(item: InvoiceItem): void {

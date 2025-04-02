@@ -81,7 +81,7 @@ export class DetailComponent {
   }
 
   setDraft(): void {
-    this.router.navigate(["/factures/update", this.invoice?.invoiceNumber])
+    this.router.navigate(["/dash/factures/update", this.invoice?.invoiceNumber])
   }
 
   setActiveTab(tab: string): void {

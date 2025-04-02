@@ -72,7 +72,7 @@ export class InvoiceListComponent {
   }
 
   getDetail(invoiceNumber: string){
-    this.router.navigate(['/factures', invoiceNumber]);
+    this.router.navigate(['/dash/factures', invoiceNumber]);
   }
 
   clear(table: Table) {
