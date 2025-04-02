@@ -6,6 +6,10 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { EmployeeComponent } from './app/components/employee/employee.component';
 import { ClientsComponent } from './app/components/clients/clients.component';
+import { ListComponent } from './app/components/devis/list/list.component';
+import { DevisComponent } from './app/components/devis/details/devis.component';
+import { NewComponent } from './app/components/devis/new/new.component';
+import { UpdateQuoteComponent } from './app/components/devis/update/update.component';
 
 export const appRoutes: Routes = [
     {
@@ -17,7 +21,11 @@ export const appRoutes: Routes = [
             { path: 'documentation', component: Documentation },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
             { path:'employes', component:EmployeeComponent },
-            { path:'clients', component:ClientsComponent }
+            { path:'clients', component:ClientsComponent },
+            { path:'devis', component:ListComponent },
+            { path:'devis/new', component:NewComponent },
+            { path:'devis/:id', component:DevisComponent },
+            { path:'devis/update/:id', component:UpdateQuoteComponent },
 
         ]
     },
