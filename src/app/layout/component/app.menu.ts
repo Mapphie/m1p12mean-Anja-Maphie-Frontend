@@ -27,8 +27,8 @@ export class AppMenu {
             {
                 label: 'Utilisateurs',
                 items: [
-                    { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/employes'] },
-                    { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/clients'] },
+                    { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/dash/employes'] },
+                    { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/dash/clients'] },
                     // { label: 'Input', icon: 'pi pi-fw pi-check-square', routerLink: ['/uikit/input'] },
                     // { label: 'Button', icon: 'pi pi-fw pi-mobile', class: 'rotated-icon', routerLink: ['/uikit/button'] },
                     // { label: 'Table', icon: 'pi pi-fw pi-table', routerLink: ['/uikit/table'] },
