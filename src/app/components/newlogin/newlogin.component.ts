@@ -11,6 +11,7 @@ import { MessageModule } from 'primeng/message';
 import { Router, RouterModule } from '@angular/router';
 import { User, UserService } from './../../services/user.service';
 
+
 @Component({
     selector: 'app-newlogin',
     imports: [ButtonModule, CheckboxModule, InputTextModule, PasswordModule, FormsModule, RouterModule, RippleModule, AppFloatingConfigurator,
@@ -25,7 +26,7 @@ import { User, UserService } from './../../services/user.service';
 })
 export class NewloginComponent {
     users: any[] = [];
-    constructor(private userService: UserService) { }
+    constructor(private userService: UserService, private router: Router) { }
 
     datalog = { email: '', password: '' };
     errorMessage = "";
@@ -38,7 +39,7 @@ export class NewloginComponent {
                     if (response.success) {
                         console.log('Connexion réussie:', response.message);
                         // Ici tu peux par exemple rediriger l'utilisateur ou stocker des données dans le sessionStorage/localStorage
-                        // this.router.navigate(['/dashboard']);
+                        this.router.navigate(['/dash-client']);
                     } else {
                         console.error('Erreur de connexion:', response.message);
                         // Afficher un message d'erreur à l'utilisateur
