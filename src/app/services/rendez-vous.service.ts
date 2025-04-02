@@ -24,7 +24,7 @@ export class RendezVousService {
 
   getData(){
     return [
-      { 
+      {
         number: "RDV001",
         service: ["Changement d'huile","Remplacement des freins"],
         client: "CLT0001",
@@ -68,6 +68,6 @@ export class RendezVousService {
 
   getRdvByClient(clientNumber: string){
     const rdvs = this.getData();
-    return rdvs.find(rdv => rdv.client === clientNumber ) || null;
+    return rdvs.filter(rdv => rdv.client === clientNumber ) || null;
   }
 }

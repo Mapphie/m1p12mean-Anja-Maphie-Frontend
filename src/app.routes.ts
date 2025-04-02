@@ -6,6 +6,7 @@ import { Landing } from './app/pages/landing/landing';
 import { Notfound } from './app/pages/notfound/notfound';
 import { EmployeeComponent } from './app/components/employee/employee.component';
 import { ClientsComponent } from './app/components/clients/clients.component';
+import { RendezVousComponent } from './app/components/rendez-vous/rendez-vous.component';
 
 export const appRoutes: Routes = [
     {
@@ -17,7 +18,9 @@ export const appRoutes: Routes = [
             { path: 'documentation', component: Documentation },
             { path: 'pages', loadChildren: () => import('./app/pages/pages.routes') },
             { path:'employes', component:EmployeeComponent },
-            { path:'clients', component:ClientsComponent }
+            { path:'clients', component:ClientsComponent },
+            { path:'rendez-vous', component: RendezVousComponent}
+
 
         ]
     },

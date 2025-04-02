@@ -54,7 +54,7 @@ import { ChipModule } from 'primeng/chip';
     CalendarModule,
     ReactiveFormsModule,
     ConfirmDialogModule,
-    ChipModule 
+    ChipModule
   ],
   providers: [ConfirmationService, MessageService],
   templateUrl: './rendez-vous.component.html',
@@ -113,10 +113,14 @@ export class RendezVousComponent {
 
     // Exemple de données - à remplacer par votre appel API
     setTimeout(() => {
-      const rdvData = this.rdvService.getRdvByClient(this.clientNumber);
+        let rdvData = this.rdvService.getData();
+        if(this.clientNumber){
+            rdvData = this.rdvService.getRdvByClient(this.clientNumber);
+        }
+
       console.log('RDV DATA : ', rdvData);
-      
-      this.rendezVous = rdvData ? [rdvData] : [];
+
+      this.rendezVous = rdvData ? rdvData : [];
 
       this.loading = false
     }, 1000)
@@ -150,9 +154,7 @@ export class RendezVousComponent {
   }
 
   getSeverity(status: string){
-    switch (status) {
-      case 'en cours':
-        return 'warn'
+    switch (status.toLowerCase()) {
       case 'confirmé':
         return 'success'
       case 'annulé':
@@ -163,17 +165,13 @@ export class RendezVousComponent {
   }
 
   getSeverityIcon(status: string){
-    switch (status) {
+    switch (status.toLowerCase()) {
       case "confirmé":
-        return "pi-calendar"
-      case "en cours":
-        return "pi-sync"
-      case "terminé":
-        return "pi-check-circle"
+        return "pi pi-check"
       case "annulé":
-        return "pi-times-circle"
+        return "pi pi-times-circle"
       default:
-        return "pi-calendar"
+        return "pi pi-clock"
     }
   }
 
@@ -222,7 +220,7 @@ export class RendezVousComponent {
         this.rdvForm.get('client')?.disable();
       }
     }
-    
+
 
     this.updatingDialog = true
     if (this.rdvDialog) {
