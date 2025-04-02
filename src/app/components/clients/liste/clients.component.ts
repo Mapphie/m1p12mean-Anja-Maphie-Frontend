@@ -15,7 +15,7 @@ import { RippleModule } from 'primeng/ripple';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { TagModule } from 'primeng/tag';
-import { Client, ClientsService } from '../../services/clients.service';
+import { Client, ClientsService } from '../../../services/clients.service';
 import { Router } from '@angular/router';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
@@ -48,7 +48,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
     DropdownModule,
   ],
   providers: [ConfirmationService, MessageService],
-  
+
   templateUrl: './clients.component.html',
   styleUrl: './clients.component.scss'
 })
@@ -89,7 +89,7 @@ export class ClientsComponent {
         }
 
     ngOnInit() {
-        
+
         this.loadClient()
         this.statuses = [
             { label: 'Actif', value: 'actif' },
@@ -127,7 +127,7 @@ export class ClientsComponent {
     }
 
     goToCustomerDetails(ClientNumber : string) {
-        this.router.navigate(['/pages/customer', ClientNumber]); 
+        this.router.navigate(['/dash/client', ClientNumber]);
     }
 
     openNewClient() {
@@ -144,7 +144,7 @@ export class ClientsComponent {
         this.clientDialog = true;
     }
 
-    
+
     editClient(client: Client) {
         this.client = { ...client };
         this.clientDialog = true;
@@ -216,8 +216,8 @@ export class ClientsComponent {
         this.clientDialog = false;
 
     }
-    
-    
+
+
     closeDialog(){
         this.clientDialog = false;
         this.submitted = false;
