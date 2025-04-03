@@ -25,11 +25,8 @@
 
                 <div>
                     <form (ngSubmit)="loginregister()" #UserForm="ngForm">
-
-                        <label for="nom"
-                            class="block text-surface-900 dark:text-surface-0 text-xl font-medium mb-2">Nom</label>
-                        <input pInputText id="nom" type="text" placeholder="Nom" class="w-full md:w-[30rem] mb-8"
-                            name="nom" [(ngModel)]="datalog.email" />
+                        <input pInputText id="email" type="text" placeholder="Adresse mail" class="w-full md:w-[30rem] mb-8"
+                            name="email" [(ngModel)]="datalog.email" />
 
                         <p-password id="password" [(ngModel)]="datalog.password" placeholder="Mot de passe"
                             [toggleMask]="true" styleClass="mb-4" name="password" [fluid]="true"

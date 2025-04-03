@@ -10,7 +10,7 @@ export interface Service {
     description: string;
     duree: string;
     prix: string;
-    image: Date;
+    image: string;
 }
 
 @Injectable({

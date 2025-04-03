@@ -33,7 +33,7 @@ import { User, UserService } from './../../services/user.service';
 export class LoginRegisterComponent implements OnInit {
     users: any[] = [];
     action: string | null = "";
-    constructor(private userService: UserService, private route: ActivatedRoute) { }
+    constructor(private userService: UserService, private route: ActivatedRoute, private router: Router) { }
 
     datalog = { email: '', password: '' };
     errorMessage = "";
@@ -55,7 +55,7 @@ export class LoginRegisterComponent implements OnInit {
                     if (response.success) {
                         console.log('Connexion réussie:', response.message);
                         // Ici tu peux par exemple rediriger l'utilisateur ou stocker des données dans le sessionStorage/localStorage
-                        // this.router.navigate(['/dashboard']);
+                        this.router.navigate(['/dash-client/devis']);
                     } else {
                         console.error('Erreur de connexion:', response.message);
                         // Afficher un message d'erreur à l'utilisateur
