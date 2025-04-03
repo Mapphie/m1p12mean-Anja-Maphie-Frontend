@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ClientVehicule } from './client-vehicule.service';
 import { Service } from './service.service';
-import { Client } from './clients.service';
+import { User } from './user.service';
 
 export interface ClientDevis {
     _id?: string;
-    client: { User: Client, clientId: string };
+    client: { User: User, clientId: string };
     vehicule: ClientVehicule;
     datedemande: Date;
     services: [{
@@ -18,9 +18,9 @@ export interface ClientDevis {
         serviceId: String,
     }],
     totalDevis: Number,
-    status: String,
+    status: string,
     validite: Date,
-    libelle : String
+    libelle: string
 }
 
 @Injectable({
@@ -29,6 +29,7 @@ export interface ClientDevis {
 export class ClientDevisService {
 
     private apiUrl = environment.url + "devis";
+    private apiUrlClient = environment.url + "client/devis";
 
     constructor(private http: HttpClient) { }
 
@@ -37,7 +38,7 @@ export class ClientDevisService {
     }
 
     getAllClientDevis(): Observable<any> {
-        return this.http.get(this.apiUrl+"/clientdevis");
+        return this.http.get(this.apiUrlClient + "/clientdevis", { withCredentials: true });
     }
 
     addClientDevis(clientDevis: any): Observable<any> {

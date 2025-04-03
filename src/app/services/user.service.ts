@@ -11,7 +11,7 @@ export interface User {
         _idrole: string;
         role: string
     };
-    adresse : string;
+    adresse: string;
     email: string;
     contact: string;
     password: string;
@@ -48,7 +48,7 @@ export class UserService {
     }
 
     sendtolog(email: string, password: string): Observable<any> {
-        return this.http.post(`${this.apiUrl}/login`, { email: email, password: password });
+        return this.http.post(`${this.apiUrl}/login`, { email: email, password: password }, { withCredentials: true });
     }
 
 

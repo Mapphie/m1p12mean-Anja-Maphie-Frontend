@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
@@ -58,14 +58,15 @@ interface ExportColumn {
     ],
     templateUrl: './client-devis.component.html',
     styleUrl: './client-devis.component.scss',
-    providers: [MessageService, ProductService, ConfirmationService]
+    providers: [MessageService, ProductService, ConfirmationService, DatePipe]
 })
 export class ClientDevisComponent implements OnInit {
     productDialog: boolean = false;
     devisClientDialog: boolean = false;
 
     products = signal<Product[]>([]);
-    devisClients = signal<ClientDevis[]>([]);
+    // devisClients = signal<ClientDevis[]>([]);
+    devisClients: ClientDevis[] = [];
 
     product!: Product;
     devisClient!: ClientDevis;
@@ -133,6 +134,32 @@ export class ClientDevisComponent implements OnInit {
         this.productDialog = true;
     }
 
+    newdemandedevis = {
+        libelle: '',
+        client: '',
+        vehicule: '',
+        datedemande: new Date(),
+        services: [{ service: '', quantite: 0 }],
+        totalDevis: 0,
+        status: 'En Attente',
+        validité: ''
+    };
+
+    openNewClientDevis() {
+        this.newdemandedevis = {
+            libelle: '',
+            client: '',
+            vehicule: '',
+            datedemande: new Date(),
+            services: [{ service: '', quantite: 0 }],
+            totalDevis: 0,
+            status: 'En Attente',
+            validité: ''
+        };
+        this.submitted = false;
+        this.productDialog = true;
+    }
+
     editProduct(product: Product) {
         this.product = { ...product };
         this.productDialog = true;
@@ -154,6 +181,23 @@ export class ClientDevisComponent implements OnInit {
                 });
             }
         });
+    }
+    addDemandeDevis(): void {
+        console.log('add demande devis');
+
+        if (this.newdemandedevis.client && this.newdemandedevis.datedemande && this.newdemandedevis.services && this.newdemandedevis.totalDevis && this.newdemandedevis.vehicule && this.newdemandedevis.totalDevis) {
+            if (this.newdemandedevis.services.length <= 0) {
+                return this.messageService.add({
+                    severity: 'success',
+                    summary: 'Successful',
+                    detail: 'Products Deleted',
+                    life: 3000
+                });
+            }
+            this.clientDevisService.addClientDevis(this.newdemandedevis).subscribe(() => {
+                this.loadClientDevis();
+            });
+        }
     }
 
     hideDialog() {
