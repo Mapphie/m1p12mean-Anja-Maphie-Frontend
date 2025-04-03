@@ -40,4 +40,8 @@ export class ClientVehiculeService {
         return this.http.delete(`${this.apiUrl}/${id}`);
     }
 
+    getVehiculeById(id: string): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}`)
+    }
+
 }

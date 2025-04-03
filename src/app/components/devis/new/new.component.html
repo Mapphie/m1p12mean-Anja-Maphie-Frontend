@@ -1,6 +1,6 @@
 <div class="nouveau-devis-container">
     <h1>Nouveau Devis</h1>
-    
+
     <form [formGroup]="devisForm" (ngSubmit)="onSubmit()">
       <div class="form-sections">
         <div class="form-section">
@@ -9,10 +9,10 @@
             <label for="client">Client</label>
             <select id="client" formControlName="clientId">
               <option value="">Sélectionner un client</option>
-              <option *ngFor="let client of clients" [value]="client.id">{{ client.nom }}</option>
+              <option *ngFor="let client of clients" [value]="client._id">{{ client.nom }}</option>
             </select>
           </div>
-          
+
           <div class="form-group">
             <label for="vehicule">Véhicule</label>
             <select id="vehicule" formControlName="vehicule">
@@ -22,31 +22,21 @@
             </select>
           </div>
         </div>
-        
+
         <div class="form-section">
           <h2>Informations générales</h2>
           <div class="form-group">
             <label for="dateCommande">Date de la commande</label>
             <input type="date" id="dateCommande" formControlName="dateCommande">
           </div>
-          
-          <div class="form-group">
-            <label for="conditionPaiement">Condition de paiement</label>
-            <select id="conditionPaiement" formControlName="conditionPaiement">
-              <option value="">Sélectionner une condition</option>
-              <option value="comptant">Comptant</option>
-              <option value="30jours">30 jours</option>
-              <option value="60jours">60 jours</option>
-            </select>
-          </div>
+
         </div>
       </div>
-      
+
       <div class="lignes-devis">
         <table class="lignes-table">
           <thead>
             <tr>
-              <th>Référence</th>
               <th>Article</th>
               <th>Description</th>
               <th>Remise</th>
@@ -60,13 +50,10 @@
           <tbody formArrayName="lignes">
             <tr *ngFor="let ligne of lignesArray.controls; let i = index" [formGroupName]="i">
               <td>
-                <input type="text" formControlName="reference">
-              </td>
-              <td>
-                <select formControlName="articleId" (change)="onArticleChange(i)">
+                <select formControlName="serviceId" (change)="onServiceChange(i)">
                   <option value="">Sélectionner</option>
-                  <option *ngFor="let article of articles" [value]="article.reference">
-                    {{ article.designation }}
+                  <option *ngFor="let article of services" [value]="article._id">
+                    {{ article.nom }}
                   </option>
                 </select>
               </td>
@@ -96,12 +83,12 @@
             </tr>
           </tbody>
         </table>
-        
+
         <button type="button" class="btn-add-line" (click)="ajouterLigne()">
           <i class="pi pi-plus-circle"></i> Ajouter une ligne
         </button>
       </div>
-      
+
       <div class="totals">
         <div class="total-item">
           <span>Montant HT :</span>
@@ -116,12 +103,11 @@
           <span>{{ totalTTC | currency:'EUR' }}</span>
         </div>
       </div>
-      
+
       <div class="form-actions">
         <button type="button" class="btn-cancel" (click)="annuler()">Annuler</button>
         <button type="submit" class="btn-create" [disabled]="devisForm.invalid">Créer le devis</button>
       </div>
     </form>
   </div>
-  
-  
+

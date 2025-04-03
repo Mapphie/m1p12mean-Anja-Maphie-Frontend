@@ -127,7 +127,9 @@ export class RendezVousComponent {
 
   loadClients(): void {
     // Exemple de données - à remplacer par votre appel API
-    this.clientOptions = this.clientService.getData()
+    this.clientService.getClients().subscribe((customers) => {
+        this.clientOptions = customers
+    })
   }
 
   loadServices(): void {

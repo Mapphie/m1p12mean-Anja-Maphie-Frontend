@@ -42,4 +42,8 @@ export class ServiceService {
         return this.http.delete(`${this.apiUrl}/${id}`);
     }
 
+    getServiceById(id: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/${id}`)
+      }
+
 }

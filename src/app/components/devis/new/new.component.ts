@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { Article, Client, DevisService, StatutDevis } from '../../../services/devis.service';
+import { DevisService, StatutDevis } from '../../../services/devis.service';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
+import { Service, ServiceService } from '../../../services/service.service';
+import { Client,ClientsService } from '../../../services/clients.service';
 
 
 @Component({
@@ -17,7 +19,7 @@ import { ButtonModule } from 'primeng/button';
 export class NewComponent {
   devisForm: FormGroup
   clients: Client[] = []
-  articles: Article[] = []
+  services: Service[] = []
   totalHT = 0
   totalTaxes = 0
   totalTTC = 0
@@ -25,6 +27,8 @@ export class NewComponent {
   constructor(
     private fb: FormBuilder,
     private devisService: DevisService,
+    private clientService: ClientsService,
+    private serviceService: ServiceService,
     private router: Router,
   ) {
     this.devisForm = this.fb.group({
@@ -38,7 +42,7 @@ export class NewComponent {
 
   ngOnInit(): void {
     this.chargerClients()
-    this.chargerArticles()
+    this.chargerServices()
     this.ajouterLigne()
   }
 
@@ -47,21 +51,21 @@ export class NewComponent {
   }
 
   chargerClients(): void {
-    this.devisService.getClients().subscribe((clients) => {
+    this.clientService.getClients().subscribe((clients) => {
       this.clients = clients
     })
   }
 
-  chargerArticles(): void {
-    this.devisService.getArticles().subscribe((articles) => {
-      this.articles = articles
+  chargerServices(): void {
+    this.serviceService.getAllServices().subscribe((services) => {
+      this.services = services
     })
   }
 
   creerLigneForm(): FormGroup {
     return this.fb.group({
       reference: [""],
-      articleId: [""],
+      serviceId: [""],
       description: [""],
       remise: [0],
       prixUnitaireHT: [0],
@@ -80,21 +84,23 @@ export class NewComponent {
     this.calculerTotaux()
   }
 
-  onArticleChange(index: number): void {
+  onServiceChange(index: number): void {
     const ligneForm = this.lignesArray.at(index) as FormGroup
-    const articleId = ligneForm.get("articleId")?.value
+    const serviceId = ligneForm.get("serviceId")?.value
 
-    if (articleId) {
-      const article = this.articles.find((a) => a.reference === articleId)
-      if (article) {
-        ligneForm.patchValue({
-          reference: article.reference,
-          description: article.designation,
-          prixUnitaireHT: article.prixUnitaire,
-          taxe: article.taxe,
+    if (serviceId) {
+      this.serviceService.getServiceById(serviceId).subscribe(service => {
+        if (service) {
+            ligneForm.patchValue({
+              description: service.description,
+              prixUnitaireHT: service.prix,
+              taxe: 20,
+            })
+            this.calculerTotal(index)
+          }
+        }, error => {
+            console.error('Erreur lors de la récupération du service:', error);
         })
-        this.calculerTotal(index)
-      }
     }
   }
 
@@ -142,7 +148,7 @@ export class NewComponent {
   onSubmit(): void {
     if (this.devisForm.valid) {
       const formValue = this.devisForm.value
-      const client = this.clients.find((c) => c.id === Number.parseInt(formValue.clientId))
+      const client = this.clientService.getClientById(formValue.clientId)
 
       if (!client) {
         return
@@ -150,7 +156,7 @@ export class NewComponent {
 
       const lignes = formValue.lignes.map((ligne: any) => ({
         reference: ligne.reference,
-        article: ligne.articleId,
+        service: ligne.serviceId,
         description: ligne.description,
         remise: ligne.remise,
         prixUnitaireHT: ligne.prixUnitaireHT,
@@ -162,13 +168,11 @@ export class NewComponent {
       const nouveauDevis = {
         client: client,
         dateCreation: new Date(),
-        datePrevue: null,
         manager: null,
         facture: null,
         total: this.totalTTC,
         etat: StatutDevis.BROUILLON,
-        conditionPaiement: formValue.conditionPaiement,
-        adresseFacturation: "",
+
         lignes: lignes,
       }
 

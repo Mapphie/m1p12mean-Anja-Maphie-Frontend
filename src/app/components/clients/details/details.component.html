@@ -1,6 +1,6 @@
 <div class="flex flex-col">
     <div class="card">
-        <div class="font-semibold text-xl mb-4">{{ client?.nom }}</div>
+        <div class="font-semibold text-xl mb-4">{{ client?.nom }} {{ client?.prenom }}</div>
 
     </div>
 
@@ -9,12 +9,6 @@
         <div class="md:w-1/4 h-full">
             <div class="bg-white shadow-lg rounded-lg p-6 border border-gray-200 h-full">
                 <h2 class="text-xl font-bold text-blue-600 mb-4">Informations</h2>
-
-                <div class="space-y-4">
-                <div class="flex items-center space-x-2">
-                    <p-button icon="pi pi-map" severity="info" text raised rounded />
-                    <span class="font-semibold text-lg text-black-700">Ville : {{ client?.ville }}</span>
-                </div>
 
                 <div class="flex items-center space-x-2">
                     <p-button icon="pi pi-map-marker" severity="info" text raised rounded />

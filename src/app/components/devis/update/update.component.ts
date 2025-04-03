@@ -160,7 +160,7 @@ export class UpdateQuoteComponent implements OnInit {
     addLigne(ligne: LigneDevis | null = null): void {
       const ligneForm = this.fb.group({
         reference: [ligne ? ligne.reference : ""],
-        article: [ligne ? ligne.article : "", Validators.required],
+        service: [ligne ? ligne.service : "", Validators.required],
         description: [ligne ? ligne.description : ""],
         remise: [ligne ? ligne.remise : 0],
         prixUnitaireHT: [ligne ? ligne.prixUnitaireHT : 0, Validators.required],
@@ -260,7 +260,7 @@ export class UpdateQuoteComponent implements OnInit {
 
       if (this.quoteId) {
         this.quoteService
-          .updateQuote(this.quoteId, quoteData)
+          .mettreAJourDevis(this.quoteId, quoteData)
           .subscribe(
             (response) => {
               this.messageService.add({
@@ -283,7 +283,7 @@ export class UpdateQuoteComponent implements OnInit {
           })
       } else {
         this.quoteService
-          .createQuote(quoteData)
+          .ajouterDevis(quoteData)
           .subscribe(
             (response) => {
               this.messageService.add({

@@ -99,11 +99,10 @@ export class ClientsComponent {
     }
 
     loadClient(){
-        this.clientsService.getCustomers().then((customers) => {
+        this.clientsService.getClients().subscribe((customers) => {
             this.customers1 = customers;
             this.loading = false;
 
-            this.customers1.forEach((customer) => (customer.date = new Date(customer.date)));
         });
     }
 
@@ -135,11 +134,12 @@ export class ClientsComponent {
         email: '',
         contact: '',
         adresse: '',
-        ville: '',
-        code_postal: 0,
-        date: new Date(),
-        etat: 'Active',
-        type: ''}
+        prenom: '',
+        idrole: {
+            _idrole: '',
+            role: ''
+        },
+        password:''}
         this.submitted = false;
         this.clientDialog = true;
     }

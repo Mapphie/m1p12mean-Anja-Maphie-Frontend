@@ -7,6 +7,8 @@ import { Devis, DevisService, StatutDevis } from '../../../services/devis.servic
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { Client, ClientsService } from '../../../services/clients.service';
+import { ClientVehicule, ClientVehiculeService } from '../../../services/client-vehicule.service';
 
 
 @Component({
@@ -20,13 +22,17 @@ export class DevisComponent implements OnInit{
   devis: Devis | undefined
   totalHT = 0
   totalTaxes = 0
+  client : Client | undefined
+  vehicule : ClientVehicule | undefined
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private devisService: DevisService,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private clientService : ClientsService,
+    private vehiculeService : ClientVehiculeService,
   ) {}
 
   ngOnInit(): void {
@@ -79,6 +85,18 @@ export class DevisComponent implements OnInit{
         this.devis = devis
       })
     }
+  }
+
+  getClient(clientId : string): void{
+    this.clientService.getClientById(clientId).subscribe((client) =>{
+        this.client = client
+    })
+  }
+
+  getVehicule(vehiculeId : string): void{
+    this.vehiculeService.getVehiculeById(vehiculeId).subscribe((vehicule) =>{
+        this.vehicule = vehicule
+    })
   }
 
 

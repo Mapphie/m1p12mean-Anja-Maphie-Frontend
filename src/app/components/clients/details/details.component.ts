@@ -60,7 +60,9 @@ showStatClient: boolean = true;
 
     ngOnInit() :void{
         this.clientNumber = this.route.snapshot.paramMap.get('id')!;
-        this.client = this.clientService.getById(this.clientNumber);
+        this.clientService.getClientById(this.clientNumber).subscribe(client => {
+            this.client = client
+        })
     }
 
     nestedMenuItems = [

@@ -62,8 +62,11 @@ export class RendezVousService {
   }
 
   getClientDetails(clientNumber: string) {
-    const clients = this.clientsService.getData();
-    return clients.find(client => client.number === clientNumber) || null;
+    const client = null;
+    this.clientsService.getClientById(clientNumber).subscribe((client) =>{
+        client = client
+    })
+    return client
   }
 
   getRdvByClient(clientNumber: string){
