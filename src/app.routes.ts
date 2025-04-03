@@ -51,6 +51,14 @@ export const appRoutes: Routes = [
 
         ]
     },
+    {
+        path: 'dash-client',
+        component: ClientLayout,
+        children: [
+            { path: '', component: DashClientComponent },
+            { path:'devis', component:ClientDevisComponent },
+        ]
+    },
     { path: '', component: Landing },
     { path: 'notfound', component: Notfound },
     { path: 'auth', loadChildren: () => import('./app/pages/auth/auth.routes') },
