@@ -29,7 +29,6 @@ export class AppMenu {
                 items: [
                     { label: 'Employés', icon: 'pi pi-fw pi-users', routerLink: ['/dash/employes'] },
                     { label: 'Clients', icon: 'pi pi-fw pi-address-book', routerLink: ['/dash/clients'] },
-
                 ]
             },
             {
