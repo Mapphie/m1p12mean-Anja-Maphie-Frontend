@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 export interface User {
     _id?: string;
     nom: string;
-    prenom: string;
     idrole: {
         _idrole: string;
         role: string
@@ -48,7 +47,7 @@ export class UserService {
     }
 
     sendtolog(email: string, password: string): Observable<any> {
-        return this.http.post(`${this.apiUrl}/login`, { email: email, password: password }, { withCredentials: true });
+        return this.http.post(`${this.apiUrl}/login`, { email: email, password: password });
     }
 
 

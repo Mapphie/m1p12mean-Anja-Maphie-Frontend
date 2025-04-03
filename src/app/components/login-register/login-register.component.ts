@@ -51,22 +51,18 @@ export class LoginRegisterComponent implements OnInit {
         if (this.datalog.email && this.datalog.password) {
             this.userService.sendtolog(this.datalog.email, this.datalog.password).subscribe({
                 next: (response) => {
-                    // Si la réponse est réussie (code 200)
                     if (response.success) {
                         console.log('Connexion réussie:', response.message);
-                        // Tu peux stocker les informations de l'utilisateur dans le sessionStorage ou localStorage, si nécessaire
-                        sessionStorage.setItem('user', JSON.stringify(response.user));  // Par exemple
+                        sessionStorage.setItem('user', JSON.stringify(response.user));
                         this.router.navigate(['/dash-client/devis']);
                     } else {
                         console.error('Erreur de connexion:', response.message);
-                        this.errorMessage = response.message;  // Afficher le message d'erreur sur l'interface utilisateur
+                        this.errorMessage = response.message;
                     }
                 },
                 error: (err) => {
-                    // Si une erreur se produit lors de la requête HTTP (par exemple, problème de réseau, CORS)
                     console.error('Erreur lors de la requête:', err);
 
-                    // Vérification du type d'erreur
                     if (err.status === 0) {
                         this.errorMessage = 'Impossible de se connecter au serveur. Vérifie ta connexion réseau.';
                     } else if (err.status === 401) {
@@ -75,13 +71,12 @@ export class LoginRegisterComponent implements OnInit {
                         this.errorMessage = 'Une erreur s\'est produite lors de la connexion. Veuillez réessayer plus tard.';
                     }
 
-                    // Affichage de l'erreur sur l'interface utilisateur
                     alert(this.errorMessage);
                 }
             });
         } else {
             this.errorMessage = 'Veuillez entrer votre email et mot de passe.';
-            alert(this.errorMessage);  // Afficher un message d'erreur si les champs sont vides
+            alert(this.errorMessage);
         }
     }
 

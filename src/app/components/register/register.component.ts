@@ -31,7 +31,6 @@ export class RegisterComponent {
     newArticle = { title: '', content: '' };
     newuser: User = {
         nom: "",
-        prenom: "",
         idrole: {
             _idrole: "67debb557b42f032f5ce03f9",
             role: "Client"

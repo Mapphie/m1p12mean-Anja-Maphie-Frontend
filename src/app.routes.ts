@@ -19,7 +19,11 @@ import { UpdateQuoteComponent } from './app/components/devis/update/update.compo
 import { DetailsClientComponent } from './app/components/clients/details/details.component';
 import { ListInterventionComponent } from './app/components/intervention/list/list.component';
 import { DashClientComponent } from './app/components/dash-client/dash-client.component';
-import { ClientDevisComponent } from './app/components/client-devis/client-devis.component';
+
+import { ListComponent as ClientListComponent } from './app/components/clientdevis/list/list.component';
+import { NewComponent as ClientNewComponent } from './app/components/clientdevis/new/new.component';
+import { DevisComponent as ClientDevisComponent } from './app/components/clientdevis/details/devis.component';
+import { UpdateQuoteComponent as ClientUpdateQuoteComponent } from './app/components/clientdevis/update/update.component';
 
 
 export const appRoutes: Routes = [
@@ -56,7 +60,10 @@ export const appRoutes: Routes = [
         component: ClientLayout,
         children: [
             { path: '', component: DashClientComponent },
-            { path:'devis', component:ClientDevisComponent },
+            { path:'devis', component:ClientListComponent },
+            { path:'devis/new', component:ClientNewComponent },
+            { path:'devis/:id', component:ClientDevisComponent },
+            { path:'devis/update/:id', component:ClientUpdateQuoteComponent },
         ]
     },
     { path: '', component: Landing },
