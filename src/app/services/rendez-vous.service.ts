@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ClientsService } from './clients.service';
+import { map, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { Service } from './service.service';
+import { User } from './user.service';
 
 export interface RendezVous {
   _id?: string;
   number: string;
-  service: string[];
-  client: string;
+  service: Service[];
+  client: User;
   startTime: string;
   endTime:string;
   description:string;
@@ -17,60 +22,45 @@ export interface RendezVous {
   providedIn: 'root'
 })
 export class RendezVousService {
+    private apiUrl = environment.url + "rendezVous";
 
   constructor(
-    private clientsService: ClientsService
+    private clientsService: ClientsService,
+    private http: HttpClient
   ) { }
 
-  getData(){
-    return [
-      {
-        number: "RDV001",
-        service: ["Changement d'huile","Remplacement des freins"],
-        client: "CLT0001",
-        startTime: "08:30",
-        endTime: "09:30",
-        description: "Vidange complète avec changement de filtre",
-        date: new Date("2025-03-25"),
-        etat: "Confirmé"
-      },
-      {
-        number: "RDV002",
-        service: ["Révision"],
-        client: "CLT0002",
-        startTime: "10:00",
-        endTime: "15:30",
-        description: "Contrôle général du véhicule avec diagnostic",
-        date: new Date("2025-03-26"),
-        etat: "En attente"
-      },
-      {
-        number: "RDV003",
-        service: ["Remplacement des freins"],
-        client: "CLT0003",
-        startTime: "14:00",
-        endTime: "15:30",
-        description: "Changement des plaquettes et disques avant",
-        date: new Date("2025-03-27"),
-        etat: "Annulé"
-      }
-    ];
-  }
 
-  getAllData() {
-    return Promise.resolve(this.getData());
-  }
+    getClientDetails(clientNumber: string) {
+        const client = null;
+        this.clientsService.getClientById(clientNumber).subscribe((client) =>{
+            client = client
+        })
+        return client
+    }
 
-  getClientDetails(clientNumber: string) {
-    const client = null;
-    this.clientsService.getClientById(clientNumber).subscribe((client) =>{
-        client = client
-    })
-    return client
-  }
+    getRdvByClient(clientNumber: string){
+        return this.getRdv().pipe(
+            map((rdvs: RendezVous[]) => rdvs.filter(rdv => rdv.client._id === clientNumber))
+          );
+    }
 
-  getRdvByClient(clientNumber: string){
-    const rdvs = this.getData();
-    return rdvs.filter(rdv => rdv.client === clientNumber ) || null;
-  }
+    getRdv(): Observable<any> {
+      return this.http.get(this.apiUrl);
+    }
+
+    getRdvById(id: string): Observable<any> {
+      return this.http.get<any>(`${this.apiUrl}/${id}`)
+    }
+
+
+    addRdv(rendezVous: any): Observable<any> {
+      return this.http.post<any>(this.apiUrl, rendezVous)
+    }
+
+    updateRdv(id: string, rendezVous: any): Observable<any> {
+      return this.http.put<any>(`${this.apiUrl}/${id}`, rendezVous)
+    }
+
+
+
 }

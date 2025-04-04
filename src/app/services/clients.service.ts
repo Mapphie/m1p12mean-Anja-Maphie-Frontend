@@ -7,7 +7,6 @@ import { User } from './user.service';
 export interface Client {
     _id?: string;
     nom: string;
-    prenom: string;
     idrole: {
         _idrole: string;
         role: string

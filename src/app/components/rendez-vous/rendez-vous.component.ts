@@ -26,6 +26,8 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ChipModule } from 'primeng/chip';
+import { ServiceService } from '../../services/service.service';
+import { map, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-rendez-vous',
@@ -70,7 +72,7 @@ export class RendezVousComponent {
   selectedRdv: RendezVous = {} as RendezVous;
   rdvForm: FormGroup
   minDate: Date = new Date()
-
+  rdv: RendezVous = {} as RendezVous;
   clientOptions: any[] = []
   serviceOptions: any[] = []
   statuses: any[] = [
@@ -78,6 +80,7 @@ export class RendezVousComponent {
     { label: "En attenta", value: "en attenta" },
     { label: "Annulé", value: "annule" },
   ]
+  client: Client = {} as Client;
 
   constructor(
     private fb: FormBuilder,
@@ -85,7 +88,8 @@ export class RendezVousComponent {
     private messageService: MessageService,
     private rdvService: RendezVousService,
     private clientService: ClientsService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private serviceService: ServiceService,
   ) {
     this.rdvForm = this.fb.group({
       client: ["", Validators.required],
@@ -100,6 +104,9 @@ export class RendezVousComponent {
 
   ngOnInit(): void {
     this.clientNumber = this.route.snapshot.paramMap.get('id')!;
+    this.clientService.getClientById(this.clientNumber).subscribe((client) =>{
+        this.client = client;
+    })
     console.log('client Number : ', this.clientNumber);
 
     this.loadData()
@@ -112,16 +119,23 @@ export class RendezVousComponent {
 
     // Exemple de données - à remplacer par votre appel API
     setTimeout(() => {
-        let rdvData = this.rdvService.getData();
+        let rdvData$ = this.rdvService.getRdv();
         if(this.clientNumber){
-            rdvData = this.rdvService.getRdvByClient(this.clientNumber);
+            rdvData$ = this.rdvService.getRdvByClient(this.clientNumber);
         }
 
-      console.log('RDV DATA : ', rdvData);
-
-      this.rendezVous = rdvData ? rdvData : [];
-
-      this.loading = false
+        rdvData$.subscribe({
+            next: (rdvs) => {
+              console.log('RDV DATA : ', rdvs);
+              this.rendezVous = rdvs ? rdvs : [];
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('Error fetching RDV data: ', err);
+              this.rendezVous = [];
+              this.loading = false;
+            }
+          });
     }, 1000)
   }
 
@@ -134,25 +148,16 @@ export class RendezVousComponent {
 
   loadServices(): void {
     // Exemple de données - à remplacer par votre appel API
-    this.serviceOptions = [
-      { name: "Changement d'huile", code: "SRV001" },
-      { name: "Révision", code: "SRV002" },
-      { name: "Diagnostic électronique", code: "SRV003" },
-      { name: "Changement des plaquettes et disques", code: "SRV004" },
-      { name: "Équilibrage des roues", code: "SRV005" },
-      { name: "Remplacement des freins", code: "SRV006" },
+    this.serviceService.getAllServices().subscribe((services) =>{
+        this.serviceOptions = services
+    })
 
-    ]
   }
 
   getClient(clientCode: string): any {
     return this.clientOptions.find((c) => c.number === clientCode) || { nom: clientCode, contact: "N/A" }
   }
 
-  getClientName(clientCode: string): string {
-    const client = this.clientOptions.find((c) => c.number === clientCode)
-    return client ? client.nom : clientCode
-  }
 
   getSeverity(status: string){
     switch (status.toLowerCase()) {
@@ -192,6 +197,7 @@ export class RendezVousComponent {
     this.selectedRdv = rdv
     this.rdvDialog = true
   }
+
 
   UpdateRdvDialog(isEdit: boolean, rdv?: RendezVous): void {
     this.isEdit = isEdit
@@ -238,45 +244,74 @@ export class RendezVousComponent {
     if (this.rdvForm.invalid) {
       // Marquer tous les champs comme touchés pour afficher les erreurs
       Object.keys(this.rdvForm.controls).forEach((key) => {
-        const control = this.rdvForm.get(key)
-        control?.markAsTouched()
-      })
-      return
+        const control = this.rdvForm.get(key);
+        control?.markAsTouched();
+      });
+      return;
     }
 
-    const formData = this.rdvForm.value
+    const formData = this.rdvForm.value;
 
     if (this.isEdit) {
       // Mise à jour d'un rendez-vous existant
-      const index = this.rendezVous.findIndex((rdv) => rdv.number === this.selectedRdv.number)
-      if (index !== -1) {
-        this.rendezVous[index] = {
-          ...this.selectedRdv,
-          ...formData,
-        }
-        this.messageService.add({
-          severity: "success",
-          summary: "Succès",
-          detail: "Rendez-vous mis à jour",
-          life: 3000,
-        })
-      }
+      this.updateRdv();
     } else {
       // Création d'un nouveau rendez-vous
       const newRdv = {
         number: this.generateId(),
         ...formData,
-      }
-      this.rendezVous.push(newRdv)
-      this.messageService.add({
-        severity: "success",
-        summary: "Succès",
-        detail: "Rendez-vous créé",
-        life: 3000,
-      })
+      };
+
+      // Appel de la méthode d'ajout du service
+      this.rdvService.addRdv(newRdv).subscribe({
+        next: (createdRdv) => {
+          this.rendezVous.push(createdRdv); // Ajouter le RDV créé à la liste
+          this.messageService.add({
+            severity: "success",
+            summary: "Succès",
+            detail: "Rendez-vous créé",
+            life: 3000,
+          });
+        },
+        error: (err) => {
+          console.error("Erreur lors de la création du rendez-vous", err);
+          this.messageService.add({
+            severity: "error",
+            summary: "Erreur",
+            detail: "Une erreur est survenue lors de la création du rendez-vous.",
+            life: 3000,
+          });
+        }
+      });
     }
 
-    this.closeUpdatingDialog()
+    this.closeUpdatingDialog();
+  }
+
+  updateRdv(): void {
+    if (this.rdv && this.rdv._id!) {
+      // Appel de la méthode de mise à jour du service
+      this.rdvService.updateRdv(this.rdv._id!, this.rdv).subscribe({
+        next: () => {
+          this.loadData(); // Recharger les données après la mise à jour
+          this.messageService.add({
+            severity: "success",
+            summary: "Succès",
+            detail: "Rendez-vous mis à jour",
+            life: 3000,
+          });
+        },
+        error: (err) => {
+          console.error("Erreur lors de la mise à jour du rendez-vous", err);
+          this.messageService.add({
+            severity: "error",
+            summary: "Erreur",
+            detail: "Une erreur est survenue lors de la mise à jour du rendez-vous.",
+            life: 3000,
+          });
+        }
+      });
+    }
   }
 
   generateId(): string {

@@ -40,21 +40,21 @@
         <div class="info-row">
           <div class="info-item">
             <strong>Immatriculation</strong>
-            <span>{{ vehicule.matricule }}</span>
+            <span>{{ devis?.vehicule?.matricule }}</span>
           </div>
           <div class="info-item">
             <strong>Marque</strong>
-            <span>{{ vehicule.marque }}</span>
+            <span>{{ devis?.vehicule?.marque }}</span>
           </div>
         </div>
         <div class="info-row">
           <div class="info-item">
             <strong>Année</strong>
-            <span>{{ vehicule.annee }} km</span>
+            <span>{{ devis?.vehicule?.annee }} km</span>
           </div>
           <div class="info-item">
             <strong>Modèle</strong>
-            <span>{{ vehicule.modele }}</span>
+            <span>{{ devis?.vehicule?.modele }}</span>
           </div>
         </div>
       </div>
@@ -65,7 +65,7 @@
         <thead>
           <tr>
             <th>Référence</th>
-            <th>Article</th>
+            <th>Service</th>
             <th>Description</th>
             <th>Remise</th>
             <th>Prix U. HT</th>
@@ -77,7 +77,7 @@
         <tbody>
           <tr *ngFor="let ligne of devis?.lignes">
             <td>{{ ligne.reference }}</td>
-            <td>{{ ligne.service }}</td>
+            <td>{{ ligne.service.nom }}</td>
             <td>{{ ligne.description }}</td>
             <td>{{ ligne.remise }}%</td>
             <td>{{ ligne.prixUnitaireHT | currency:'EUR' }}</td>

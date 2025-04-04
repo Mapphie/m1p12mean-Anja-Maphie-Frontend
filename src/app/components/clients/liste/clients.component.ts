@@ -134,7 +134,6 @@ export class ClientsComponent {
         email: '',
         contact: '',
         adresse: '',
-        prenom: '',
         idrole: {
             _idrole: '',
             role: ''

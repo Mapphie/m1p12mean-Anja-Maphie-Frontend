@@ -107,7 +107,7 @@
                 <td (click)="getDetails(rendezVous)">
                     <span class="inline-flex align-items-center">
                         <i class="pi pi-user text-primary mr-2"></i>
-                        <span>{{ rendezVous.client }}</span>
+                        <span>{{ (rendezVous.client.nom) }}</span>
                     </span>
                 </td>
                 <td (click)="getDetails(rendezVous)" class="text-center">
@@ -184,12 +184,11 @@
 
         <div class="p-4">
             <!-- Infos client -->
-            <div class="flex align-items-center gap-3 mb-4 p-3 border-round bg-gray-50">
+            <div *ngIf="selectedRdv && selectedRdv.client" class="flex align-items-center gap-3 mb-4 p-3 border-round bg-gray-50">
                 <i class="pi pi-user text-xl text-primary"></i>
                 <div>
-                    <div class="font-semibold text-lg">{{ getClient(selectedRdv.client)?.number }}</div>
-                    <div class="font-semibold text-lg">{{ getClient(selectedRdv.client)?.nom }}</div>
-                    <div class="text-600">{{ getClient(selectedRdv.client)?.contact }}</div>
+                    <div class="font-semibold text-lg">{{ selectedRdv.client.nom }}</div>
+                    <div class="text-600">{{ selectedRdv.client.contact }}</div>
                 </div>
             </div>
 
@@ -207,7 +206,7 @@
                 <i class="pi pi-briefcase text-xl text-primary"></i>
                 <div>
                     <div *ngFor="let serviceItem of selectedRdv?.service" class="mb-1">
-                        <p-chip [label]="serviceItem" styleClass="mr-2 mb-2"></p-chip>
+                        <p-chip [label]="serviceItem.nom" styleClass="mr-2 mb-2"></p-chip>
                     </div>
                 </div>
             </div>
@@ -273,7 +272,7 @@
                         <ng-template pTemplate="selectedItem">
                             <div class="flex align-items-center gap-2" *ngIf="rdvForm.get('client')?.value">
                                 <i class="pi pi-user"></i>
-                                <div>{{ getClientName(rdvForm.get('client')?.value) }}</div>
+                                <div>{{ rdvForm.get('client')?.value?.nom }}</div>
                             </div>
                         </ng-template>
                         <ng-template let-client pTemplate="item">

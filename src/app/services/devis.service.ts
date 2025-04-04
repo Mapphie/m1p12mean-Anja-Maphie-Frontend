@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Client } from './clients.service';
 import { Service } from './service.service';
+import { User } from './user.service';
+import { ClientVehicule } from './client-vehicule.service';
 
 
 export enum StatutDevis {
@@ -15,9 +16,9 @@ export enum StatutDevis {
 
 export interface Devis {
     numero: string;
-    client: string; // ID de l'utilisateur (ObjectId)
-    manager: string; // ID du manager (ObjectId)
-    vehicule: string; // ID du véhicule (ObjectId)
+    client: User; // ID de l'utilisateur (ObjectId)
+    manager: User; // ID du manager (ObjectId)
+    vehicule: ClientVehicule; // ID du véhicule (ObjectId)
     dateCreation: Date;
     totalHT: number;
     totalTTC: number;
@@ -28,7 +29,7 @@ export interface Devis {
 
   export interface LigneDevis {
     reference: string;
-    service: string;
+    service: Service;
     description?: string;
     remise: number;
     prixUnitaireHT: number;

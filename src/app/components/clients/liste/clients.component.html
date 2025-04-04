@@ -53,12 +53,6 @@
                     </div>
                 </th>
 
-                <th style="min-width: 12rem">
-                    <div class="flex justify-between items-center">
-                        Prénom
-                        <p-columnFilter type="text" field="name" display="menu" placeholder="Search by name"></p-columnFilter>
-                    </div>
-                </th>
 
                 <th style="min-width: 12rem">
                     <div class="flex justify-between items-center">
@@ -88,9 +82,7 @@
                 <td>
                     {{ customer.nom }}
                 </td>
-                <td>
-                    {{ customer.prenom }}
-                </td>
+
                 <td>
                     {{ customer.adresse }}
                 </td>
@@ -135,11 +127,7 @@
                     <input type="text" pInputText id="nom" [(ngModel)]="client.nom" required autofocus fluid />
                     <small class="text-red-500" *ngIf="submitted && !client.nom">Nom est requis.</small>
                 </div>
-                <div class="col-12 field mb-4">
-                    <label for="prenom" class="font-medium mb-2 block">Prénom</label>
-                    <input type="text" pInputText id="prenom" [(ngModel)]="client.prenom" required autofocus fluid />
-                    <small class="text-red-500" *ngIf="submitted && !client.prenom">Nom est requis.</small>
-                </div>
+
                 <div class="col-12 field mb-4">
                     <label for="adresse" class="font-medium mb-2 block">Adresse</label>
                     <input type="text" pInputText id="adresse" [(ngModel)]="client.adresse" required autofocus fluid />

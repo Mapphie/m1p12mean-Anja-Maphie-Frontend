@@ -11,6 +11,7 @@ export interface Service {
     duree: string;
     prix: string;
     image: string;
+    taxe: number;
 }
 
 @Injectable({

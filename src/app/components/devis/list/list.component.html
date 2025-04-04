@@ -60,13 +60,6 @@
                             </div>
                         </th>
 
-                        <th style="min-width: 10rem">
-                            <div class="flex justify-between items-center">
-                                Date prévue
-                                <p-columnFilter type="date" field="date" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
-                            </div>
-                        </th>
-
                         <th style="min-width: 12rem">
                             <div class="flex justify-between items-center">
                                 Facture
@@ -98,15 +91,13 @@
                     </tr>
                 </ng-template>
                 <ng-template #body let-devis>
-                    <tr (click)="voirDevis(devis.numero)" [style.cursor]="'pointer'">
+                    <tr (click)="voirDevis(devis._id)" [style.cursor]="'pointer'">
                         <td>{{ devis.numero }}</td>
-                        <td>{{ devis.client.nom }}</td>
+                        <td>{{ devis.client?.nom }}</td>
                         <td>{{ devis.dateCreation | date:'dd/MM/yyyy' }}</td>
-                        <td>{{ devis.manager }}</td>
-
-                        <td>{{ devis.datePrevue | date:'dd/MM/yyyy' }}</td>
-                        <td>{{ devis.facture }}</td>
-                        <td>{{ devis.total | currency:'EUR' }}</td>
+                        <td>{{ devis.manager?.nom }}</td>
+                        <td>{{ devis.facture || "Aucun enregistrement" }}</td>
+                        <td>{{ devis.totalTTC | currency:'EUR' }}</td>
                         <td>
                             <p-tag [value]="devis.etat" [severity]="getSeverity(devis.etat)" styleClass="dark:!bg-surface-900" />
                         </td>
