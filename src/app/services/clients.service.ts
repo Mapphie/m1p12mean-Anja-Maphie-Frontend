@@ -23,8 +23,7 @@ export interface Client {
 })
 export class ClientsService {
   private apiUrl = environment.url + "users";
-  private apiUrlmanager = environment.url + "manager/users";
-  private apiUrlclient = environment.url + "client/users";
+
 
   constructor(private http: HttpClient) { }
 
@@ -35,7 +34,7 @@ export class ClientsService {
   }
 
   getClientById(id: string): Observable<any> {
-    return this.http.get(`${this.apiUrlclient}/${id}`)
+    return this.http.get(`${this.apiUrl}/${id}`)
   }
 
   addClient(user: any): Observable<any> {
@@ -43,11 +42,11 @@ export class ClientsService {
   }
 
   updateClient(id: string, user: any): Observable<any> {
-        return this.http.put(`${this.apiUrlclient}/${id}`, user);
+        return this.http.put(`${this.apiUrl}/${id}`, user);
     }
 
     deleteClient(id: string): Observable<any> {
-        return this.http.delete(`${this.apiUrlclient}/${id}`);
+        return this.http.delete(`${this.apiUrl}/${id}`);
     }
 
 
