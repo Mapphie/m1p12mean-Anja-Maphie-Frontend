@@ -49,6 +49,8 @@ export class UserService {
     sendtolog(email: string, password: string): Observable<any> {
         return this.http.post(`${this.apiUrl}/login`, { email: email, password: password });
     }
-
+    getUserById(id: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/byid-user/${id}`);
+    }
 
 }

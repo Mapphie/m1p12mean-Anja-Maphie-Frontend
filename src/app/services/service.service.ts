@@ -8,9 +8,10 @@ export interface Service {
     nom: string;
     categorie: string;
     description: string;
-    duree: string;
-    prix: string;
+    duree: number;
+    prix: number;
     image: string;
+    taxe : number
 }
 
 @Injectable({
