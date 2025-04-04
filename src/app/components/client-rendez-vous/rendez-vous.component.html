@@ -1,0 +1,440 @@
+<div class="card shadow-sm border-round">
+    <div class="font-bold text-xl mb-4 text-900">Rendez-vous</div>
+
+    <!-- Tableau des rendez-vous -->
+    <p-table
+        #dt1
+        [value]="rendezVous"
+        dataKey="number"
+        [rows]="10"
+        [loading]="loading"
+        [rowHover]="true"
+        [showGridlines]="true"
+        [paginator]="true"
+        [globalFilterFields]="['date', 'service', 'client', 'etat']"
+        responsiveLayout="scroll"
+        styleClass="p-datatable-sm"
+    >
+        <ng-template #caption>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; gap: 8px;">
+                    <button
+                        pButton
+                        label="Nouveau"
+                        icon="pi pi-plus"
+                        class="p-button-success"
+                        (click)="UpdateRdvDialog(false)">
+                    </button>
+
+                    <button
+                        pButton
+                        label="Réinitialiser"
+                        class="p-button-outlined"
+                        icon="pi pi-filter-slash"
+                        (click)="clear(dt1)">
+                    </button>
+                </div>
+
+                <p-iconfield iconPosition="left" class="ml-auto">
+                    <p-inputicon>
+                        <i class="pi pi-search"></i>
+                    </p-inputicon>
+                    <input pInputText type="text" (input)="onGlobalFilter(dt1, $event)" placeholder="Search keyword" />
+                </p-iconfield>
+            </div>
+        </ng-template>
+
+        <ng-template #header>
+            <tr>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-content-between align-items-center">
+                        <span>Date</span>
+                        <p-columnFilter type="date" field="date" display="menu"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-content-between align-items-center">
+                        <span>Créneau</span>
+                        <p-columnFilter type="text" field="startTime" display="menu"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 12rem">
+                    <div class="flex justify-content-between align-items-center">
+                        <span>Client</span>
+                        <p-columnFilter type="text" field="client" display="menu"></p-columnFilter>
+                    </div>
+                </th>
+                <th style="min-width: 10rem">
+                    <div class="flex justify-content-between align-items-center">
+                        <span>État</span>
+                        <p-columnFilter field="etat" matchMode="equals" display="menu">
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                                <p-dropdown
+                                    [ngModel]="value"
+                                    [options]="statuses"
+                                    (onChange)="filter($event.value)"
+                                    placeholder="Tous"
+                                    [style]="{ 'min-width': '8rem' }"
+                                    appendTo="body"
+                                >
+                                    <ng-template let-option pTemplate="item">
+                                        <span [class]="'customer-badge status-' + option.value">{{ option.label }}</span>
+                                    </ng-template>
+                                </p-dropdown>
+                            </ng-template>
+                        </p-columnFilter>
+                    </div>
+                </th>
+                <th style="width: 5rem">
+                    <div class="flex justify-content-center align-items-center">
+                        <span>Actions</span>
+                    </div>
+                </th>
+            </tr>
+        </ng-template>
+
+        <ng-template #body let-rendezVous>
+            <tr class="cursor-pointer">
+                <td (click)="getDetails(rendezVous)">
+                    {{ rendezVous.date | date: 'dd/MM/yyyy' }}
+                </td>
+                <td (click)="getDetails(rendezVous)">
+                    <span class="inline-flex align-items-center">
+                        <i class="pi pi-clock text-primary mr-2"></i>
+                        <span>{{ rendezVous.startTime }} - {{ rendezVous.endTime }}</span>
+                    </span>
+                </td>
+                <td (click)="getDetails(rendezVous)">
+                    <span class="inline-flex align-items-center">
+                        <i class="pi pi-user text-primary mr-2"></i>
+                        <span>{{ rendezVous.client }}</span>
+                    </span>
+                </td>
+                <td (click)="getDetails(rendezVous)" class="text-center">
+                    <p-tag
+                        [value]="rendezVous.etat"
+                        [icon]="getSeverityIcon(rendezVous.etat)"
+                        [severity]="getSeverity(rendezVous.etat)"
+                    ></p-tag>
+                </td>
+                <td>
+                    <div class="flex justify-content-center gap-2">
+                        <button
+                            pButton
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-text p-button-sm"
+                            (click)="UpdateRdvDialog(true, rendezVous); $event.stopPropagation()">
+                        </button>
+                        <button
+                            pButton
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-text p-button-danger p-button-sm"
+                            (click)="confirmDelete(rendezVous); $event.stopPropagation()">
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="5" class="text-center p-4">
+                    <div class="flex flex-column align-items-center">
+                        <i class="pi pi-calendar-times text-6xl text-300 mb-3"></i>
+                        <span class="text-xl text-600">Aucun rendez-vous trouvé</span>
+                    </div>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="loadingbody">
+            <tr>
+                <td colspan="5" class="text-center p-4">
+                    <i class="pi pi-spin pi-spinner mr-2"></i>
+                    Chargement des rendez-vous...
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!-- Dialogue de détails du rendez-vous -->
+    <p-dialog
+        [(visible)]="rdvDialog"
+        [style]="{ width: '500px' }"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        styleClass="rdv-details-dialog"
+        [closeOnEscape]="true"
+        [dismissableMask]="true"
+        header="Détails du rendez-vous"
+    >
+        <ng-template pTemplate="header">
+            <div class="flex justify-content-between align-items-center w-full">
+                <p-button
+                    [label]="selectedRdv.etat"
+                    [icon]="getSeverityIcon(selectedRdv.etat)"
+                    [severity]="getSeverity(selectedRdv.etat)"
+                    outlined
+                >
+                </p-button>
+
+            </div>
+        </ng-template>
+
+        <div class="p-4">
+            <!-- Infos client -->
+            <div class="flex align-items-center gap-3 mb-4 p-3 border-round bg-gray-50">
+                <i class="pi pi-user text-xl text-primary"></i>
+                <div>
+                    <div class="font-semibold text-lg">{{ getClient(selectedRdv.client)?.number }}</div>
+                    <div class="font-semibold text-lg">{{ getClient(selectedRdv.client)?.nom }}</div>
+                    <div class="text-600">{{ getClient(selectedRdv.client)?.contact }}</div>
+                </div>
+            </div>
+
+            <!-- Date et heure -->
+            <div class="flex align-items-center gap-3 mb-4 p-3 border-round bg-gray-50">
+                <i class="pi pi-calendar text-xl text-primary"></i>
+                <div>
+                    <div class="font-semibold">{{ selectedRdv.startTime }} - {{ selectedRdv.endTime }}</div>
+                    <div class="text-600">{{ selectedRdv.date | date: 'EEEE, d MMMM yyyy' }}</div>
+                </div>
+            </div>
+
+            <!-- Service -->
+            <div class="flex align-items-start gap-3 mb-4 p-3 border-round bg-gray-50">
+                <i class="pi pi-briefcase text-xl text-primary"></i>
+                <div>
+                    <div *ngFor="let serviceItem of selectedRdv?.service" class="mb-1">
+                        <p-chip [label]="serviceItem" styleClass="mr-2 mb-2"></p-chip>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commentaire -->
+            <div class="flex align-items-start gap-3 mb-4 p-3 border-round bg-gray-50">
+                <i class="pi pi-comment text-xl text-primary"></i>
+                <div class="text-600">
+                    {{ selectedRdv.description || 'Aucune description' }}
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-content-end gap-2 mt-4">
+                <button
+                    pButton
+                    icon="pi pi-pencil"
+                    label="Modifier"
+                    class="p-button-outlined p-button-secondary"
+                    (click)="UpdateRdvDialog(true, selectedRdv)">
+                </button>
+                <button
+                    pButton
+                    icon="pi pi-trash"
+                    label="Supprimer"
+                    class="p-button-outlined p-button-danger"
+                    (click)="confirmDelete(selectedRdv)">
+                </button>
+            </div>
+        </div>
+    </p-dialog>
+
+    <!-- Dialogue de création/modification de rendez-vous -->
+    <p-dialog
+        [(visible)]="updatingDialog"
+        [modal]="true"
+        [header]="isEdit ? 'Modifier le Rendez-vous' : 'Nouveau Rendez-vous'"
+        [style]="{width: '550px'}"
+        [draggable]="false"
+        [resizable]="false"
+        styleClass="rdv-form-dialog"
+        [closeOnEscape]="true"
+        [dismissableMask]="true"
+    >
+        <form [formGroup]="rdvForm" (ngSubmit)="onSubmit()" class="p-fluid">
+            <div class="grid formgrid">
+                <!-- Client -->
+                <div class="col-12 field mb-4">
+                    <label for="client" class="font-medium mb-2 block">Client</label>
+                    <p-dropdown
+                        id="client"
+                        formControlName="client"
+                        [options]="clientOptions"
+                        optionLabel="nom"
+                        optionValue="number"
+                        placeholder="Sélectionner un client"
+                        [filter]="true"
+                        filterBy="nom"
+                        [showClear]="true"
+                        styleClass="w-full"
+                        appendTo="body"
+                    >
+                        <ng-template pTemplate="selectedItem">
+                            <div class="flex align-items-center gap-2" *ngIf="rdvForm.get('client')?.value">
+                                <i class="pi pi-user"></i>
+                                <div>{{ getClientName(rdvForm.get('client')?.value) }}</div>
+                            </div>
+                        </ng-template>
+                        <ng-template let-client pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <i class="pi pi-user"></i>
+                                <div>{{ client.nom }}</div>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <small *ngIf="rdvForm.get('client')?.invalid && rdvForm.get('client')?.touched" class="p-error">
+                        Client requis
+                    </small>
+                </div>
+
+                <!-- Services -->
+                <div class="col-12 field mb-4">
+                    <label for="services" class="font-medium mb-2 block">Services</label>
+                    <p-multiSelect
+                        id="services"
+                        formControlName="service"
+                        [options]="serviceOptions"
+                        optionLabel="name"
+                        optionValue="name"
+                        placeholder="Sélectionner les services"
+                        [filter]="true"
+                        [showToggleAll]="true"
+                        styleClass="w-full"
+                        appendTo="body"
+                        display="chip"
+                    >
+                    </p-multiSelect>
+                    <small *ngIf="rdvForm.get('service')?.invalid && rdvForm.get('service')?.touched" class="p-error">
+                        Au moins un service requis
+                    </small>
+                </div>
+
+                <!-- Date -->
+                <div class="col-12 field mb-4">
+                    <label for="date" class="font-medium mb-2 block">Date</label>
+                    <p-calendar
+                        id="date"
+                        formControlName="date"
+                        [showIcon]="true"
+                        dateFormat="dd/mm/yy"
+                        [showButtonBar]="true"
+                        [firstDayOfWeek]="1"
+                        [minDate]="minDate"
+                        placeholder="Sélectionner une date"
+                        styleClass="w-full"
+                        appendTo="body"
+                    >
+                    </p-calendar>
+                    <small *ngIf="rdvForm.get('date')?.invalid && rdvForm.get('date')?.touched" class="p-error">
+                        Date requise
+                    </small>
+                </div>
+
+                <!-- Heures -->
+                <div class="col-6 field mb-4">
+                    <label for="startTime" class="font-medium mb-2 block">Heure de début</label>
+                    <p-inputMask
+                        id="startTime"
+                        formControlName="startTime"
+                        mask="99:99"
+                        placeholder="HH:MM"
+                        styleClass="w-full"
+                        [slotChar]="'_'"
+                    >
+                    </p-inputMask>
+                    <small *ngIf="rdvForm.get('startTime')?.invalid && rdvForm.get('startTime')?.touched" class="p-error">
+                        Heure de début requise (format HH:MM)
+                    </small>
+                </div>
+
+                <div class="col-6 field mb-4">
+                    <label for="endTime" class="font-medium mb-2 block">Heure de fin</label>
+                    <p-inputMask
+                        id="endTime"
+                        formControlName="endTime"
+                        mask="99:99"
+                        placeholder="HH:MM"
+                        styleClass="w-full"
+                        [slotChar]="'_'"
+                    >
+                    </p-inputMask>
+                    <small *ngIf="rdvForm.get('endTime')?.invalid && rdvForm.get('endTime')?.touched" class="p-error">
+                        Heure de fin requise (format HH:MM)
+                    </small>
+                </div>
+
+                <!-- Description -->
+                <div class="col-12 field mb-4">
+                    <label for="description" class="font-medium mb-2 block">Description</label>
+                    <textarea
+                        id="description"
+                        pInputTextarea
+                        formControlName="description"
+                        rows="3"
+                        placeholder="Ajouter une description ou des notes"
+                        styleClass="w-full"
+                        autoResize="true"
+                    >
+                    </textarea>
+                </div>
+
+                <!-- État -->
+                <div class="col-12 field mb-4">
+                    <label for="etat" class="font-medium mb-2 block">État</label>
+                    <p-dropdown
+                        id="etat"
+                        formControlName="etat"
+                        [options]="statuses"
+                        optionLabel="name"
+                        optionValue="name"
+                        placeholder="Sélectionner un état"
+                        styleClass="w-full"
+                        appendTo="body"
+                    >
+                        <ng-template let-status pTemplate="item">
+                            <div class="flex align-items-center gap-2">
+                                <i [class]="'pi ' + getSeverityIcon(status.name.toLowerCase())"></i>
+                                <span>{{ status.name }}</span>
+                            </div>
+                        </ng-template>
+                    </p-dropdown>
+                    <small *ngIf="rdvForm.get('etat')?.invalid && rdvForm.get('etat')?.touched" class="p-error">
+                        État requis
+                    </small>
+                </div>
+            </div>
+
+            <div class="flex justify-content-end gap-2 mt-4">
+                <button
+                    pButton
+                    type="button"
+                    label="Annuler"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    (click)="closeUpdatingDialog()">
+                </button>
+                <button
+                    pButton
+                    type="submit"
+                    label="Enregistrer"
+                    icon="pi pi-check"
+                    class="p-button-primary"
+                    [disabled]="rdvForm.invalid">
+                </button>
+            </div>
+        </form>
+    </p-dialog>
+
+    <!-- Dialogue de confirmation de suppression -->
+    <p-confirmDialog
+        header="Confirmation de suppression"
+        icon="pi pi-exclamation-triangle"
+        acceptLabel="Oui"
+        rejectLabel="Non"
+        acceptButtonStyleClass="p-button-danger"
+        rejectButtonStyleClass="p-button-text"
+    >
+    </p-confirmDialog>
+</div>
+

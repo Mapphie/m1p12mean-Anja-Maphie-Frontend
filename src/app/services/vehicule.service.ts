@@ -40,8 +40,8 @@ export class VehiculeService {
         return this.http.delete(`${this.apiUrl}/${id}`);
     }
 
-    getVehiculeById(id: string): Observable<any> {
-        return this.http.get(`${this.apiUrl}/byid-user/${id}`);
+    getVehiculeByUserId(user: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/byid-user/${user}`);
     }
 
 }

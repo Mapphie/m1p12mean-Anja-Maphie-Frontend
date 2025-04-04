@@ -18,8 +18,7 @@
                     <label for="vehicule">Véhicule</label>
                     <select id="vehicule" formControlName="vehicule">
                         <option value="">Sélectionner un véhicule</option>
-                        <option value="vehicule1">Véhicule 1</option>
-                        <option value="vehicule2">Véhicule 2</option>
+                        <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">{{ vehicule.marque}} {{ vehicule.matricule}}</option>
                     </select>
                 </div>
             </div>
@@ -47,10 +46,10 @@
             <table class="lignes-table">
                 <thead>
                     <tr>
-                        <th>Référence</th>
-                        <th>Article</th>
+                        <th>Catégorie</th>
+                        <th>Service</th>
                         <th>Description</th>
-                        <th>Remise</th>
+                        <th>Durée (min)</th>
                         <th>Prix U. HT</th>
                         <th>Taxe</th>
                         <th>Qté</th>
@@ -61,27 +60,30 @@
                 <tbody formArrayName="lignes">
                     <tr *ngFor="let ligne of lignesArray.controls; let i = index" [formGroupName]="i">
                         <td>
-                            <input type="text" formControlName="reference">
+                            <select id="conditionPaiement" formControlName="conditionPaiement">
+                                <option [defaultSelected]="true" value="Voiture">Voiture</option>
+                                <option value="Moto">Moto</option>
+                            </select>
                         </td>
                         <td>
                             <select formControlName="articleId" (change)="onArticleChange(i)">
                                 <option value="">Sélectionner</option>
-                                <option *ngFor="let article of articles" [value]="article.reference">
-                                    {{ article.designation }}
+                                <option *ngFor="let service of services" [value]="service._id">
+                                    {{ service.nom }}
                                 </option>
                             </select>
                         </td>
                         <td>
-                            <input type="text" formControlName="description">
+                            <input type="text" formControlName="description" readonly>
                         </td>
                         <td>
-                            <input type="number" formControlName="remise" (input)="calculerTotal(i)">
+                            <input type="number" formControlName="duree" readonly>
                         </td>
                         <td>
-                            <input type="number" formControlName="prixUnitaireHT" (input)="calculerTotal(i)">
+                            <input type="number" formControlName="prixUnitaireHT" (input)="calculerTotal(i)" readonly>
                         </td>
                         <td>
-                            <input type="number" formControlName="taxe" (input)="calculerTotal(i)">
+                            <input type="number" formControlName="taxe" (input)="calculerTotal(i)" readonly>
                         </td>
                         <td>
                             <input type="number" formControlName="quantite" (input)="calculerTotal(i)">
@@ -106,21 +108,21 @@
         <div class="totals">
             <div class="total-item">
                 <span>Montant HT :</span>
-                <span>{{ totalHT | currency:'EUR' }}</span>
+                <span>{{ totalHT }} Ariary</span>
             </div>
             <div class="total-item">
                 <span>Taxes :</span>
-                <span>{{ totalTaxes | currency:'EUR' }}</span>
+                <span>{{ totalTaxes }} Ariary</span>
             </div>
             <div class="total-item total-ttc">
                 <span>Total :</span>
-                <span>{{ totalTTC | currency:'EUR' }}</span>
+                <span>{{ totalTTC }} Ariary</span>
             </div>
         </div>
 
         <div class="form-actions">
             <button type="button" class="btn-cancel" (click)="annuler()">Annuler</button>
-            <button type="submit" class="btn-create" [disabled]="devisForm.invalid">Créer le devis</button>
+            <button type="submit" class="btn-create" [disabled]="devisForm.invalid">Envoyer la demande</button>
         </div>
     </form>
 </div>

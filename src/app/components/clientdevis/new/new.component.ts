@@ -82,10 +82,10 @@ export class NewComponent {
     }
 
     loadDataClient(): void {
-        this.userService.getUserById("67eaf75fcac2069cac2eb1c2").subscribe(data => this.user = data);
+        this.userService.getUserById("67eaf35fcac2069cac2eb1be").subscribe(data => this.user = data);
     }
     loadDataVehicule(): void {
-        this.vehiculeService.getAllVehicule().subscribe(data => this.vehicules = data);
+        this.vehiculeService.getVehiculeByUserId("67eaf35fcac2069cac2eb1be").subscribe(data => this.vehicules = data);
     }
 
     loadDataService(): void {
@@ -98,6 +98,7 @@ export class NewComponent {
             articleId: [""],
             description: [""],
             remise: [0],
+            duree: [0],
             prixUnitaireHT: [0],
             taxe: [20], // Taux par défaut
             quantite: [1],
@@ -119,13 +120,13 @@ export class NewComponent {
         const articleId = ligneForm.get("articleId")?.value
 
         if (articleId) {
-            const article = this.articles.find((a) => a.reference === articleId)
-            if (article) {
+            const service = this.services.find((a) => a._id === articleId)
+            if (service) {
                 ligneForm.patchValue({
-                    reference: article.reference,
-                    description: article.designation,
-                    prixUnitaireHT: article.prixUnitaire,
-                    taxe: article.taxe,
+                    description: service.description,
+                    duree: service.duree,
+                    prixUnitaireHT: service.prix,
+                    taxe: service.taxe
                 })
                 this.calculerTotal(index)
             }
@@ -137,11 +138,10 @@ export class NewComponent {
         const prixUnitaireHT = ligneForm.get("prixUnitaireHT")?.value || 0
         const quantite = ligneForm.get("quantite")?.value || 0
         const taxe = ligneForm.get("taxe")?.value || 0
-        const remise = ligneForm.get("remise")?.value || 0
 
-        const prixHTApresRemise = prixUnitaireHT * (1 - remise / 100)
-        const montantTaxe = prixHTApresRemise * (taxe / 100)
-        const totalTTC = (prixHTApresRemise + montantTaxe) * quantite
+
+        const montantTaxe = prixUnitaireHT * (taxe / 100)
+        const totalTTC = (prixUnitaireHT + montantTaxe) * quantite
 
         ligneForm.patchValue({ totalTTC: totalTTC }, { emitEvent: false })
 
