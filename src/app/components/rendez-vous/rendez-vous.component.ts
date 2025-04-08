@@ -204,14 +204,17 @@ export class RendezVousComponent {
 
     if (isEdit && rdv) {
       this.rdvForm.patchValue({
-        client: rdv.client,
-        service: rdv.service,
+        client: rdv.client._id,
+        service: rdv.service.map(s=>s._id),
         date: new Date(rdv.date),
         startTime: rdv.startTime,
         endTime: rdv.endTime,
         description: rdv.description,
         etat: rdv.etat,
-      })
+      });
+
+      this.rdvForm.get('client')?.disable();
+
     } else {
       this.rdvForm.reset()
 
@@ -286,6 +289,11 @@ export class RendezVousComponent {
     }
 
     this.closeUpdatingDialog();
+  }
+
+  getSelectedClient() {
+    const selectedId = this.rdvForm.get('client')?.value;
+    return this.clientOptions.find(c => c._id === selectedId);
   }
 
   updateRdv(): void {

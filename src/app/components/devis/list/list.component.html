@@ -93,11 +93,26 @@
                 <ng-template #body let-devis>
                     <tr (click)="voirDevis(devis._id)" [style.cursor]="'pointer'">
                         <td>{{ devis.numero }}</td>
-                        <td>{{ devis.client?.nom }}</td>
-                        <td>{{ devis.dateCreation | date:'dd/MM/yyyy' }}</td>
-                        <td>{{ devis.manager?.nom }}</td>
-                        <td>{{ devis.facture || "Aucun enregistrement" }}</td>
-                        <td>{{ devis.totalTTC | currency:'EUR' }}</td>
+                        <td>
+                            <i class="pi pi-address-book text-primary mr-2"></i>
+                            <span>{{ devis.client?.nom }}</span>
+                        </td>
+                        <td>
+                            <i class="pi pi-calendar-clock text-primary mr-2"></i>
+                            <span>{{ devis.dateCreation | date:'dd/MM/yyyy' }}</span>
+                        </td>
+                        <td>
+                            <i class="pi pi-user text-primary mr-2"></i>
+                            <span>{{ devis.manager?.nom }}</span>
+                        </td>
+                        <td>
+                            <i class="pi pi-receipt text-primary mr-2"></i>
+                            <span>{{ devis.facture || "Aucun enregistrement" }}</span>
+                        </td>
+                        <td>
+                            <i class="pi pi-dollar text-primary mr-2"></i>
+                            <span>{{ devis.totalTTC | currency:'EUR' }}</span>
+                        </td>
                         <td>
                             <p-tag [value]="devis.etat" [severity]="getSeverity(devis.etat)" styleClass="dark:!bg-surface-900" />
                         </td>

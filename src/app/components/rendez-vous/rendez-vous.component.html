@@ -261,7 +261,7 @@
                         formControlName="client"
                         [options]="clientOptions"
                         optionLabel="nom"
-                        optionValue="number"
+                        optionValue="_id"
                         placeholder="Sélectionner un client"
                         [filter]="true"
                         filterBy="nom"
@@ -270,9 +270,9 @@
                         appendTo="body"
                     >
                         <ng-template pTemplate="selectedItem">
-                            <div class="flex align-items-center gap-2" *ngIf="rdvForm.get('client')?.value">
-                                <i class="pi pi-user"></i>
-                                <div>{{ rdvForm.get('client')?.value?.nom }}</div>
+                            <div class="flex align-items-center gap-2" *ngIf="getSelectedClient() as selectedClient">
+
+                                <div>{{ selectedClient.nom }}</div>
                             </div>
                         </ng-template>
                         <ng-template let-client pTemplate="item">
@@ -294,8 +294,8 @@
                         id="services"
                         formControlName="service"
                         [options]="serviceOptions"
-                        optionLabel="name"
-                        optionValue="name"
+                        optionLabel="nom"
+                        optionValue="_id"
                         placeholder="Sélectionner les services"
                         [filter]="true"
                         [showToggleAll]="true"
@@ -372,7 +372,7 @@
                         formControlName="description"
                         rows="3"
                         placeholder="Ajouter une description ou des notes"
-                        styleClass="w-full"
+                        cols="50"
                         autoResize="true"
                     >
                     </textarea>
@@ -393,8 +393,8 @@
                     >
                         <ng-template let-status pTemplate="item">
                             <div class="flex align-items-center gap-2">
-                                <i [class]="'pi ' + getSeverityIcon(status.name.toLowerCase())"></i>
-                                <span>{{ status.name }}</span>
+                                <i [class]="'pi ' + getSeverityIcon(status.label.toLowerCase())"></i>
+                                <span>{{ status.label }}</span>
                             </div>
                         </ng-template>
                     </p-dropdown>
