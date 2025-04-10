@@ -54,11 +54,36 @@ export class RendezVousService {
 
 
     addRdv(rendezVous: any): Observable<any> {
-      return this.http.post<any>(this.apiUrl, rendezVous)
+        const rdvToSend = this.prepareRdvForApi(rendezVous)
+        return this.http.post<RendezVous>(this.apiUrl, rdvToSend)
     }
 
     updateRdv(id: string, rendezVous: any): Observable<any> {
-      return this.http.put<any>(`${this.apiUrl}/${id}`, rendezVous)
+        const rdvToSend = this.prepareRdvForApi(rendezVous)
+        return this.http.put<any>(`${this.apiUrl}/${id}`, rdvToSend)
+    }
+
+    deleteRdv(id: string): Observable<any>{
+        return this.http.delete(`${this.apiUrl}/${id}`);
+    }
+
+
+    private prepareRdvForApi(rdv: any): any {
+        const prepared = { ...rdv }
+
+        // If service is an array of objects, extract just the IDs
+        if (prepared.service && Array.isArray(prepared.service)) {
+          if (prepared.service.length > 0 && typeof prepared.service[0] === "object" && prepared.service[0] !== null) {
+            prepared.service = prepared.service.map((service : Service) => service._id || service)
+          }
+        }
+
+        // If client is an object, extract just the ID
+        if (prepared.client && typeof prepared.client === "object" && prepared.client !== null) {
+          prepared.client = prepared.client._id || prepared.client
+        }
+
+        return prepared
     }
 
 

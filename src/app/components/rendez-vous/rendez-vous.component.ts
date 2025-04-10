@@ -77,10 +77,11 @@ export class RendezVousComponent {
   serviceOptions: any[] = []
   statuses: any[] = [
     { label: "Confirmé", value: "confirmé" },
-    { label: "En attenta", value: "en attenta" },
-    { label: "Annulé", value: "annule" },
+    { label: "En attente", value: "en attente" },
+    { label: "Annulé", value: "annulé" },
   ]
   client: Client = {} as Client;
+  currentRdv: RendezVous | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -200,7 +201,8 @@ export class RendezVousComponent {
 
 
   UpdateRdvDialog(isEdit: boolean, rdv?: RendezVous): void {
-    this.isEdit = isEdit
+    this.isEdit = isEdit;
+    this.currentRdv = { ...rdv } as RendezVous;
 
     if (isEdit && rdv) {
       this.rdvForm.patchValue({
@@ -244,8 +246,11 @@ export class RendezVousComponent {
   }
 
   onSubmit(): void {
+    console.log("Form submitted", this.rdvForm.value)
     if (this.rdvForm.invalid) {
-      // Marquer tous les champs comme touchés pour afficher les erreurs
+        console.log("THE RDV FORM IS INVALID");
+
+      // Mark all fields as touched to display errors
       Object.keys(this.rdvForm.controls).forEach((key) => {
         const control = this.rdvForm.get(key);
         control?.markAsTouched();
@@ -255,20 +260,32 @@ export class RendezVousComponent {
 
     const formData = this.rdvForm.value;
 
-    if (this.isEdit) {
-      // Mise à jour d'un rendez-vous existant
+    if (this.isEdit && this.currentRdv?._id) {
+      // Update an existing appointment
+      console.log("UPDATE RDV");
+
       this.updateRdv();
+
     } else {
-      // Création d'un nouveau rendez-vous
-      const newRdv = {
+        console.log("CREATE rdv");
+
+      // Create a new appointment
+      const newRdv: RendezVous = {
         number: this.generateId(),
-        ...formData,
+        service: formData.service,
+        client: formData.client,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        description: formData.description,
+        date: formData.date,
+        etat: formData.etat || 'pending' // Default state if not provided
       };
 
-      // Appel de la méthode d'ajout du service
+      // Call the service's add method
       this.rdvService.addRdv(newRdv).subscribe({
-        next: (createdRdv) => {
-          this.rendezVous.push(createdRdv); // Ajouter le RDV créé à la liste
+        next: () => {
+
+          this.loadData();
           this.messageService.add({
             severity: "success",
             summary: "Succès",
@@ -291,36 +308,47 @@ export class RendezVousComponent {
     this.closeUpdatingDialog();
   }
 
+  updateRdv(): void {
+    if (!this.currentRdv?._id) {
+      console.error("ID du rendez-vous manquant pour la mise à jour");
+      return;
+    }
+
+    const updatedRdv = {
+      ...this.rdvForm.value,
+      number: this.currentRdv.number
+    };
+
+    this.rdvService.updateRdv(this.currentRdv._id, updatedRdv).subscribe({
+      next: () => {
+        // Update the appointment in the list
+        this.loadData();
+
+        this.messageService.add({
+          severity: "success",
+          summary: "Succès",
+          detail: "Rendez-vous mis à jour",
+          life: 3000,
+        });
+      },
+      error: (err) => {
+        console.error("Erreur lors de la mise à jour du rendez-vous", err);
+        this.messageService.add({
+          severity: "error",
+          summary: "Erreur",
+          detail: "Une erreur est survenue lors de la mise à jour du rendez-vous.",
+          life: 3000,
+        });
+      }
+    });
+  }
+
   getSelectedClient() {
     const selectedId = this.rdvForm.get('client')?.value;
     return this.clientOptions.find(c => c._id === selectedId);
   }
 
-  updateRdv(): void {
-    if (this.rdv && this.rdv._id!) {
-      // Appel de la méthode de mise à jour du service
-      this.rdvService.updateRdv(this.rdv._id!, this.rdv).subscribe({
-        next: () => {
-          this.loadData(); // Recharger les données après la mise à jour
-          this.messageService.add({
-            severity: "success",
-            summary: "Succès",
-            detail: "Rendez-vous mis à jour",
-            life: 3000,
-          });
-        },
-        error: (err) => {
-          console.error("Erreur lors de la mise à jour du rendez-vous", err);
-          this.messageService.add({
-            severity: "error",
-            summary: "Erreur",
-            detail: "Une erreur est survenue lors de la mise à jour du rendez-vous.",
-            life: 3000,
-          });
-        }
-      });
-    }
-  }
+
 
   generateId(): string {
     const id = Math.floor(Math.random() * 1000) + 10;
@@ -332,7 +360,7 @@ export class RendezVousComponent {
     this.confirmationService.confirm({
       message: "Êtes-vous sûr de vouloir supprimer ce rendez-vous ?",
       accept: () => {
-        this.rendezVous = this.rendezVous.filter((r) => r.number !== rdv.number)
+        this.rdvService.deleteRdv(rdv._id!).subscribe(() =>  this.loadData());
         this.messageService.add({
           severity: "success",
           summary: "Succès",
