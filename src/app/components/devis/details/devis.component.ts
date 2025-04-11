@@ -80,8 +80,8 @@ export class DevisComponent implements OnInit{
   }
 
   confirmerDevis(): void {
-    if (this.devis) {
-      this.devisService.changerStatutDevis(this.devis.numero, StatutDevis.CONFIRME).subscribe((devis) => {
+    if (this.devis && this.devis._id) {
+      this.devisService.changerStatutDevis(this.devis._id, StatutDevis.CONFIRME).subscribe((devis) => {
         this.devis = devis
       })
     }

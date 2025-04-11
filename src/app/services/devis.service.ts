@@ -15,6 +15,7 @@ export enum StatutDevis {
 }
 
 export interface Devis {
+    _id?: string
     numero: string;
     client: User; // ID de l'utilisateur (ObjectId)
     manager: User; // ID du manager (ObjectId)
@@ -70,7 +71,7 @@ export class DevisService {
   }
 
   changerStatutDevis(id: string, statut: StatutDevis): Observable<Devis> {
-    return this.http.put<Devis>(`${this.apiUrl}/${id}/statut`, { etat: statut });
+    return this.http.put<Devis>(`${this.apiUrl}/${id}/etat`, { etat: statut });
   }
 
 }
