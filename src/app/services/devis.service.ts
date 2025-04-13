@@ -63,7 +63,8 @@ export class DevisService {
 
 
   ajouterDevis(quote: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, quote)
+    const quoteToSend = this.prepareDevisForApi(quote)
+    return this.http.post<any>(this.apiUrl, quoteToSend)
   }
 
   mettreAJourDevis(id: string, quote: any): Observable<any> {
@@ -73,6 +74,36 @@ export class DevisService {
   changerStatutDevis(id: string, statut: StatutDevis): Observable<Devis> {
     return this.http.put<Devis>(`${this.apiUrl}/${id}/etat`, { etat: statut });
   }
+
+  private prepareDevisForApi(devis: any): any {
+    const prepared = { ...devis }
+  
+    // Extraire juste l'ID du client
+    if (prepared.client && typeof prepared.client === 'object') {
+      prepared.client = prepared.client._id || prepared.client
+    }
+  
+    // Manager est null ou un objet → mettre uniquement l’ID si présent
+    if (prepared.manager && typeof prepared.manager === 'object') {
+      prepared.manager = prepared.manager._id || prepared.manager
+    }
+  
+    // Extraire l'ID du véhicule
+    if (prepared.vehicule && typeof prepared.vehicule === 'object') {
+      prepared.vehicule = prepared.vehicule._id || prepared.vehicule
+    }
+  
+    // Préparer chaque ligne de devis
+    prepared.lignes = prepared.lignes.map((ligne: any) => {
+      return {
+        ...ligne,
+        service: typeof ligne.service === 'object' ? (ligne.service._id || ligne.service) : ligne.service
+      }
+    })
+  
+    return prepared
+  }
+  
 
 }
 

@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { Service, ServiceService } from '../../../services/service.service';
 import { Client,ClientsService } from '../../../services/clients.service';
+import { ClientVehicule, ClientVehiculeService } from '../../../services/client-vehicule.service';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class NewComponent {
   devisForm: FormGroup
   clients: Client[] = []
   services: Service[] = []
+  vehicules : ClientVehicule[] = []
   totalHT = 0
   totalTaxes = 0
   totalTTC = 0
@@ -29,19 +31,30 @@ export class NewComponent {
     private devisService: DevisService,
     private clientService: ClientsService,
     private serviceService: ServiceService,
+    private vehiculeService: ClientVehiculeService,
     private router: Router,
   ) {
     this.devisForm = this.fb.group({
       clientId: ["", Validators.required],
       vehicule: [""],
       dateCommande: [new Date().toISOString().split("T")[0], Validators.required],
-      conditionPaiement: ["", Validators.required],
       lignes: this.fb.array([]),
     })
   }
 
   ngOnInit(): void {
     this.chargerClients()
+    this.devisForm.get('clientId')?.valueChanges.subscribe((clientId) => {
+      if (clientId) {
+        this.vehiculeService.getVehiculesByClientId(clientId).subscribe((vehicules) => {
+          this.vehicules = vehicules;
+          this.devisForm.get('vehicule')?.setValue(''); // Réinitialiser la sélection
+        });
+      } else {
+        this.vehicules = [];
+        this.devisForm.get('vehicule')?.setValue('');
+      }
+    });
     this.chargerServices()
     this.ajouterLigne()
   }
@@ -64,7 +77,6 @@ export class NewComponent {
 
   creerLigneForm(): FormGroup {
     return this.fb.group({
-      reference: [""],
       serviceId: [""],
       description: [""],
       remise: [0],
@@ -155,7 +167,6 @@ export class NewComponent {
       }
 
       const lignes = formValue.lignes.map((ligne: any) => ({
-        reference: ligne.reference,
         service: ligne.serviceId,
         description: ligne.description,
         remise: ligne.remise,
@@ -166,7 +177,8 @@ export class NewComponent {
       }))
 
       const nouveauDevis = {
-        client: client,
+        client: formValue.clientId,
+        vehicule: formValue.vehicule,
         dateCreation: new Date(),
         manager: null,
         facture: null,

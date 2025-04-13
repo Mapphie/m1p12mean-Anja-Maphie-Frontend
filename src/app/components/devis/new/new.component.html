@@ -17,8 +17,7 @@
             <label for="vehicule">Véhicule</label>
             <select id="vehicule" formControlName="vehicule">
               <option value="">Sélectionner un véhicule</option>
-              <option value="vehicule1">Véhicule 1</option>
-              <option value="vehicule2">Véhicule 2</option>
+              <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">{{ vehicule.marque }} - {{ vehicule.modele }}</option>
             </select>
           </div>
         </div>
@@ -37,7 +36,7 @@
         <table class="lignes-table">
           <thead>
             <tr>
-              <th>Article</th>
+              <th>Service</th>
               <th>Description</th>
               <th>Remise</th>
               <th>Prix U. HT</th>

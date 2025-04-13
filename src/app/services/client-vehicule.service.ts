@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { User } from './user.service';
 
 export interface ClientVehicule {
     _id?: string;
@@ -10,13 +11,14 @@ export interface ClientVehicule {
     modele: string;
     annee: string;
     matricule: string;
+    client :  User;
 }
 
 @Injectable({
     providedIn: 'root'
 })
 export class ClientVehiculeService {
-    private apiUrl = environment.url + "client-vehicule";
+    private apiUrl = environment.url + "client/vehicules";
 
     constructor(private http: HttpClient) { }
 
@@ -42,6 +44,19 @@ export class ClientVehiculeService {
 
     getVehiculeById(id: string): Observable<any> {
         return this.http.get<any>(`${this.apiUrl}/${id}`)
+    }
+
+    getVehiculesByClientId(clientId: string) {
+        return this.http.get<ClientVehicule[]>(`${this.apiUrl}/byid-user/${clientId}`).pipe(
+            catchError((error: HttpErrorResponse) => {
+              if (error.status === 404) {
+                return of([]); // retourne une liste vide au lieu de planter
+              } else {
+                console.error('Erreur lors de la récupération des véhicules :', error);
+                return throwError(() => new Error('Erreur lors de la récupération des véhicules'));
+              }
+            })
+          );
     }
 
 }
