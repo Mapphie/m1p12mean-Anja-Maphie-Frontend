@@ -1,3 +1,4 @@
+import { ClientVehicule, ClientVehiculeService } from './../../../services/client-vehicule.service';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, Validators,ReactiveFormsModule  } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -37,6 +38,9 @@ export class UpdateQuoteComponent implements OnInit {
     totalTTC = 0
     autoCalculate = true
     loader = [false, false, false, false]
+    vehicules : ClientVehicule[] = []
+    defaultVehicule : ClientVehicule = {} as ClientVehicule
+    errorMessage: string = "";
 
     constructor(
       private fb: FormBuilder,
@@ -47,6 +51,7 @@ export class UpdateQuoteComponent implements OnInit {
       private confirmationService: ConfirmationService,
       private changeDetectorRef: ChangeDetectorRef,
       private dialogService: DialogService,
+      private vehiculeService: ClientVehiculeService,
     ) {}
 
     ngOnInit(): void {
@@ -54,6 +59,7 @@ export class UpdateQuoteComponent implements OnInit {
 
       this.route.params.subscribe((params) => {
         this.quoteId = params["id"]
+
         if (this.quoteId) {
           this.loadQuote(this.quoteId)
         } else {
@@ -62,6 +68,20 @@ export class UpdateQuoteComponent implements OnInit {
           this.changeDetectorRef.detectChanges()
         }
       })
+    }
+
+    loadVehicules(): void {
+        this.loading = true;
+        this.vehiculeService.getAllVehicules().subscribe(
+          (vehicules: ClientVehicule[]) => {
+            this.vehicules = vehicules;
+            this.loading = false;
+          },
+          (error) => {
+            this.errorMessage = 'Error fetching vehicles: ' + error;
+            this.loading = false;
+          }
+        );
     }
 
     initForm(): void {
@@ -104,6 +124,11 @@ export class UpdateQuoteComponent implements OnInit {
             this.lignes.removeAt(0)
           }
 
+          // Set default Vehicule
+          this.vehiculeService.getVehiculeById(quote.vehicule).subscribe((vehicule) => {
+            this.defaultVehicule = vehicule
+          })
+
           // Set the form values
           this.quoteForm.patchValue({
             numero: quote.numero,
@@ -112,14 +137,6 @@ export class UpdateQuoteComponent implements OnInit {
             client: {
               id: quote.client?.id || "",
               nom: quote.client?.nom || "",
-            },
-            adresseFacturation: quote.adresseFacturation,
-            conditionPaiement: quote.conditionPaiement,
-            vehiculeInfo: quote.vehiculeInfo || {
-              immatriculation: "",
-              marque: "",
-              modele: "",
-              kilometrage: 0,
             },
           })
 
@@ -159,7 +176,7 @@ export class UpdateQuoteComponent implements OnInit {
 
     addLigne(ligne: LigneDevis | null = null): void {
       const ligneForm = this.fb.group({
-        reference: [ligne ? ligne.reference : ""],
+        // reference: [ligne ? ligne.reference : ""],
         service: [ligne ? ligne.service : "", Validators.required],
         description: [ligne ? ligne.description : ""],
         remise: [ligne ? ligne.remise : 0],

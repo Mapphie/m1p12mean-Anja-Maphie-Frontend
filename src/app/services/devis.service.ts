@@ -29,14 +29,14 @@ export interface Devis {
   }
 
   export interface LigneDevis {
-    reference: string;
+    // reference: string;
     service: Service;
     description?: string;
     remise: number;
     prixUnitaireHT: number;
     taxe: number;
     quantite: number;
-    totalHT: number;
+    // totalHT: number;
     totalTTC: number;
   }
 
@@ -77,22 +77,22 @@ export class DevisService {
 
   private prepareDevisForApi(devis: any): any {
     const prepared = { ...devis }
-  
+
     // Extraire juste l'ID du client
     if (prepared.client && typeof prepared.client === 'object') {
       prepared.client = prepared.client._id || prepared.client
     }
-  
+
     // Manager est null ou un objet → mettre uniquement l’ID si présent
     if (prepared.manager && typeof prepared.manager === 'object') {
       prepared.manager = prepared.manager._id || prepared.manager
     }
-  
+
     // Extraire l'ID du véhicule
     if (prepared.vehicule && typeof prepared.vehicule === 'object') {
       prepared.vehicule = prepared.vehicule._id || prepared.vehicule
     }
-  
+
     // Préparer chaque ligne de devis
     prepared.lignes = prepared.lignes.map((ligne: any) => {
       return {
@@ -100,10 +100,10 @@ export class DevisService {
         service: typeof ligne.service === 'object' ? (ligne.service._id || ligne.service) : ligne.service
       }
     })
-  
+
     return prepared
   }
-  
+
 
 }
 

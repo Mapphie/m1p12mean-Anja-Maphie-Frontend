@@ -75,7 +75,7 @@ export class DevisComponent implements OnInit{
     if (this.devis) {
         console.log('DEVIS : ',this.devis);
 
-      this.router.navigate(["/dash/devis/update", this.devis.numero])
+      this.router.navigate(["/dash/devis/update", this.devis._id])
     }
   }
 

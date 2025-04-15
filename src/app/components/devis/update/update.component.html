@@ -9,7 +9,7 @@
           <div class="form-group">
             <label for="numero">Numéro de devis</label>
             <p-iconfield>
-              <p-inputicon class="pi pi-user" />
+              <p-inputicon class="pi pi-user"></p-inputicon>
               <input id="numero" pInputText type="text" placeholder="Numéro de devis" formControlName="numero" />
             </p-iconfield>
             <small class="p-error" *ngIf="quoteForm.get('numero')?.invalid && quoteForm.get('numero')?.touched">
@@ -34,42 +34,15 @@
               Le nom du client est requis
             </small>
           </div>
-
-          <div class="form-group">
-            <label for="adresseFacturation">Adresse de facturation</label>
-            <textarea id="adresseFacturation" pInputTextarea formControlName="adresseFacturation" rows="3"></textarea>
-          </div>
-
-          <div class="form-group">
-            <label for="conditionPaiement">Condition de paiement</label>
-            <input id="conditionPaiement" type="text" pInputText formControlName="conditionPaiement">
-          </div>
         </div>
 
         <div class="vehicule-info-edit" formGroupName="vehiculeInfo">
-          <h3>Informations du véhicule</h3>
-          <div class="form-row">
-            <div class="form-group">
-              <label for="immatriculation">Immatriculation</label>
-              <input id="immatriculation" type="text" pInputText formControlName="immatriculation">
-            </div>
-
-            <div class="form-group">
-              <label for="marque">Marque</label>
-              <input id="marque" type="text" pInputText formControlName="marque">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="modele">Modèle</label>
-              <input id="modele" type="text" pInputText formControlName="modele">
-            </div>
-
-            <div class="form-group">
-              <label for="kilometrage">Kilométrage</label>
-              <p-inputNumber id="kilometrage" formControlName="kilometrage" suffix=" km"></p-inputNumber>
-            </div>
+          <div class="form-group">
+            <label for="vehiculeInfo">Véhicule</label>
+            <select id="vehiculeInfo" formControlName="vehiculeInfo">
+              <option value="">Sélectionner un véhicule</option>
+              <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">{{ vehicule.marque }} - {{ vehicule.modele }}</option>
+            </select>
           </div>
         </div>
       </div>
@@ -92,6 +65,7 @@
                 <th>Actions</th>
               </tr>
             </ng-template>
+
             <ng-template pTemplate="body" let-ligne let-i="rowIndex">
               <tr [formGroup]="ligne">
                 <td>
@@ -132,6 +106,7 @@
                 </td>
               </tr>
             </ng-template>
+
             <ng-template pTemplate="footer">
               <tr>
                 <td colspan="9">
@@ -173,4 +148,3 @@
   </ng-template>
 
   <p-confirmDialog></p-confirmDialog>
-

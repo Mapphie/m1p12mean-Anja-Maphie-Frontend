@@ -81,7 +81,6 @@
       <table class="lignes-table">
         <thead>
           <tr>
-            <th>Référence</th>
             <th>Service</th>
             <th>Description</th>
             <th>Remise</th>
@@ -93,7 +92,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let ligne of devis?.lignes">
-            <td>{{ ligne.reference }}</td>
             <td>{{ ligne.service.nom }}</td>
             <td>{{ ligne.description }}</td>
             <td>{{ ligne.remise }}%</td>

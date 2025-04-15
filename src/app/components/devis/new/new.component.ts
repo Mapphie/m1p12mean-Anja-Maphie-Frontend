@@ -9,6 +9,7 @@ import { ButtonModule } from 'primeng/button';
 import { Service, ServiceService } from '../../../services/service.service';
 import { Client,ClientsService } from '../../../services/clients.service';
 import { ClientVehicule, ClientVehiculeService } from '../../../services/client-vehicule.service';
+import { User, UserService } from '../../../services/user.service';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class NewComponent {
   totalHT = 0
   totalTaxes = 0
   totalTTC = 0
+  manager : User = {} as User
 
   constructor(
     private fb: FormBuilder,
@@ -32,6 +34,7 @@ export class NewComponent {
     private clientService: ClientsService,
     private serviceService: ServiceService,
     private vehiculeService: ClientVehiculeService,
+    private userService : UserService,
     private router: Router,
   ) {
     this.devisForm = this.fb.group({
@@ -158,40 +161,48 @@ export class NewComponent {
   }
 
   onSubmit(): void {
-    if (this.devisForm.valid) {
-      const formValue = this.devisForm.value
-      const client = this.clientService.getClientById(formValue.clientId)
+    this.userService.getUserById("67ea93b002f12ff871fddd19").subscribe((user) =>{
+        this.manager = user
 
-      if (!client) {
-        return
-      }
+        if (this.devisForm.valid) {
+            const formValue = this.devisForm.value
+            const client = this.clientService.getClientById(formValue.clientId)
 
-      const lignes = formValue.lignes.map((ligne: any) => ({
-        service: ligne.serviceId,
-        description: ligne.description,
-        remise: ligne.remise,
-        prixUnitaireHT: ligne.prixUnitaireHT,
-        taxe: ligne.taxe,
-        quantite: ligne.quantite,
-        totalTTC: ligne.totalTTC,
-      }))
+            if (!client) {
+              return
+            }
 
-      const nouveauDevis = {
-        client: formValue.clientId,
-        vehicule: formValue.vehicule,
-        dateCreation: new Date(),
-        manager: null,
-        facture: null,
-        total: this.totalTTC,
-        etat: StatutDevis.BROUILLON,
+            const lignes = formValue.lignes.map((ligne: any) => ({
+              service: ligne.serviceId,
+              description: ligne.description,
+              remise: ligne.remise,
+              prixUnitaireHT: ligne.prixUnitaireHT,
+              taxe: ligne.taxe,
+              quantite: ligne.quantite,
+              totalTTC: ligne.totalTTC,
+            }))
 
-        lignes: lignes,
-      }
+            const nouveauDevis = {
+              numero: "DEV0025",
+              client: formValue.clientId,
+              vehicule: formValue.vehicule,
+              dateCreation: new Date(),
+              manager: this.manager._id,
+              facture: null,
+              totalHT: this.totalHT,
+              totalTTC: this.totalTTC,
+              etat: StatutDevis.BROUILLON,
 
-      this.devisService.ajouterDevis(nouveauDevis).subscribe((devis) => {
-        this.router.navigate(["/dash/devis", devis.id])
-      })
-    }
+              lignes: lignes,
+            }
+
+            this.devisService.ajouterDevis(nouveauDevis).subscribe((devis) => {
+              this.router.navigate(["/dash/devis", devis._id])
+            })
+          }
+    })
+
+
   }
 
   annuler(): void {

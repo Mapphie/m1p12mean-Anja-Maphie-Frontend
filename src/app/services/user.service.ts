@@ -51,5 +51,9 @@ export class UserService {
         return this.http.post(`${this.apiUrl}/login`, { email: email, password: password }, { withCredentials: true });
     }
 
+    getUserById(id: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/byid-user/${id}`)
+      }
+
 
 }
