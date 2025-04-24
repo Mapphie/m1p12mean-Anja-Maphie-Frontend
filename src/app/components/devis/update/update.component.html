@@ -23,28 +23,37 @@
           </div>
         </div>
 
-        <div class="client-info-edit" formGroupName="client">
-          <div class="form-group">
-            <label for="clientNom">Client</label>
-            <div class="p-inputgroup">
-              <input id="clientNom" type="text" pInputText formControlName="nom">
-              <p-button type="button" styleClass="h-full" icon="pi pi-search" [loading]="loader[2]" (click)="load(2)"></p-button>
+        <div class="client-vehicule-row" style="display: flex; gap: 1rem;">
+          <div class="client-info-edit" formGroupName="client" style="flex: 1;">
+            <div class="form-group">
+              <label for="clientNom">Client</label>
+              <div class="p-inputgroup">
+                <input id="clientNom" type="text" pInputText formControlName="nom">
+                <p-button type="button" styleClass="h-full" icon="pi pi-search" [loading]="loader[2]" (click)="load(2)"></p-button>
+              </div>
+              <small class="p-error" *ngIf="quoteForm.get('client.nom')?.invalid && quoteForm.get('client.nom')?.touched">
+                Le nom du client est requis
+              </small>
             </div>
-            <small class="p-error" *ngIf="quoteForm.get('client.nom')?.invalid && quoteForm.get('client.nom')?.touched">
-              Le nom du client est requis
-            </small>
+          </div>
+        
+          <div class="vehicule-info-edit" formGroupName="vehicule" style="flex: 1;">
+            <div class="form-group">
+              <label for="vehicule">Véhicule</label>
+              <div class="p-inputgroup" style="max-width: 195px;"> <!-- Added fixed width to match date field -->
+                <select formControlName="id" id="vehicule" class="p-inputtext p-component w-100">
+                  <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">
+                    {{ vehicule.marque }} - {{ vehicule.modele }}
+                  </option>
+                </select>
+                <span class="p-inputgroup-addon" *ngIf="vehiclesLoading">
+                  <i class="pi pi-spin pi-spinner"></i>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="vehicule-info-edit" formGroupName="vehiculeInfo">
-          <div class="form-group">
-            <label for="vehiculeInfo">Véhicule</label>
-            <select id="vehiculeInfo" formControlName="vehiculeInfo">
-              <option value="">Sélectionner un véhicule</option>
-              <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">{{ vehicule.marque }} - {{ vehicule.modele }}</option>
-            </select>
-          </div>
-        </div>
+        
       </div>
 
       <div class="devis-content">
@@ -54,8 +63,7 @@
           <p-table [value]="lignes.controls" [responsive]="true">
             <ng-template pTemplate="header">
               <tr>
-                <th>Référence</th>
-                <th>Article</th>
+                <th>Service</th>
                 <th>Description</th>
                 <th>Remise (%)</th>
                 <th>Prix U. HT</th>
@@ -68,12 +76,9 @@
 
             <ng-template pTemplate="body" let-ligne let-i="rowIndex">
               <tr [formGroup]="ligne">
-                <td>
-                  <input type="text" pInputText formControlName="reference">
-                </td>
-                <td>
-                  <input type="text" pInputText formControlName="article" required>
-                  <small class="p-error" *ngIf="ligne.get('article')?.invalid && ligne.get('article')?.touched">
+                <td formGroupName="service">
+                  <input type="text" pInputText formControlName="nom" required>
+                  <small class="p-error" *ngIf="ligne.get('service')?.get('nom')?.invalid && ligne.get('service')?.get('nom')?.touched">
                     Requis
                   </small>
                 </td>

@@ -68,7 +68,8 @@ export class DevisService {
   }
 
   mettreAJourDevis(id: string, quote: any): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, quote)
+    const quoteToSend = this.prepareDevisForApi(quote)
+    return this.http.put<any>(`${this.apiUrl}/${id}`, quoteToSend)
   }
 
   changerStatutDevis(id: string, statut: StatutDevis): Observable<Devis> {

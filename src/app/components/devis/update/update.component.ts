@@ -41,6 +41,7 @@ export class UpdateQuoteComponent implements OnInit {
     vehicules : ClientVehicule[] = []
     defaultVehicule : ClientVehicule = {} as ClientVehicule
     errorMessage: string = "";
+    vehiclesLoading = true;
 
     constructor(
       private fb: FormBuilder,
@@ -70,11 +71,14 @@ export class UpdateQuoteComponent implements OnInit {
       })
     }
 
-    loadVehicules(): void {
+    loadVehicules(clientId: string): void {
+      console.log("VEHICULES LOADIIG");
+      
         this.loading = true;
-        this.vehiculeService.getAllVehicules().subscribe(
-          (vehicules: ClientVehicule[]) => {
-            this.vehicules = vehicules;
+        this.vehiculeService.getVehiculesByClientId(clientId).subscribe((vehicules) => {
+          this.vehicules = vehicules;
+          console.log(vehicules);
+          
             this.loading = false;
           },
           (error) => {
@@ -92,21 +96,16 @@ export class UpdateQuoteComponent implements OnInit {
         client: this.fb.group({
           id: [""],
           nom: ["", Validators.required],
-          adresseFacturation: [""],
-          conditionPaiement: [""],
         }),
-        vehiculeInfo: this.fb.group({
-          immatriculation: [""],
-          marque: [""],
-          modele: [""],
-          kilometrage: [0],
+        vehicule: this.fb.group({
+          id: [""],
         }),
         lignes: this.fb.array([]),
-      })
+      });
     }
 
     loadQuote(id: string): void {
-      this.loading = true
+      this.loading = true;
       this.quoteService.getDevisById(id).subscribe(
         (quote) => {
           if (!quote) {
@@ -114,60 +113,85 @@ export class UpdateQuoteComponent implements OnInit {
               severity: "error",
               summary: "Erreur",
               detail: "Devis non trouvé",
-            })
-            this.loading = false
-            return
+            });
+            this.loading = false;
+            this.changeDetectorRef.detectChanges();
+            return;
           }
-
-          // Clear existing line items
-          while (this.lignes.length) {
-            this.lignes.removeAt(0)
+    
+          // Load vehicles first and wait for them to load before setting the form value
+          if (quote.client?._id) {
+            this.vehiclesLoading = true;
+            this.vehiculeService.getVehiculesByClientId(quote.client._id).subscribe(
+              (vehicules) => {
+                this.vehicules = vehicules;
+                this.vehiclesLoading = false;
+                
+                // Now set the form values after vehicles are loaded
+                this.setQuoteFormValues(quote);
+                this.changeDetectorRef.detectChanges();
+              },
+              (error) => {
+                this.errorMessage = 'Error fetching vehicles: ' + error;
+                this.vehiclesLoading = false;
+                
+                // Still set the form values even if vehicle loading failed
+                this.setQuoteFormValues(quote);
+                this.changeDetectorRef.detectChanges();
+              }
+            );
+          } else {
+            // No client ID, just set the form values
+            this.setQuoteFormValues(quote);
           }
-
-          // Set default Vehicule
-          this.vehiculeService.getVehiculeById(quote.vehicule).subscribe((vehicule) => {
-            this.defaultVehicule = vehicule
-          })
-
-          // Set the form values
-          this.quoteForm.patchValue({
-            numero: quote.numero,
-            etat: quote.etat,
-            dateCreation: new Date(quote.dateCreation),
-            client: {
-              id: quote.client?.id || "",
-              nom: quote.client?.nom || "",
-            },
-          })
-
-          // Add lines in batch
-          this.autoCalculate = false
-          if (quote.lignes && quote.lignes.length) {
-            quote.lignes.forEach((ligne: LigneDevis) => {
-              this.addLigne(ligne)
-            })
-          }
-
-          // Re-enable calculations and update totals
-          this.autoCalculate = true
-          this.calculateTotals()
-
-          this.loading = false
-
-          // Force change detection to update the view
-          setTimeout(() => {
-            this.changeDetectorRef.detectChanges()
-          })
         },
         (error) => {
           this.messageService.add({
             severity: "error",
             summary: "Erreur",
             detail: "Impossible de charger le devis",
-          })
-          this.loading = false
+          });
+          this.loading = false;
+          this.changeDetectorRef.detectChanges();
+        }
+      );
+    }
+    
+    // Helper method to set form values
+    private setQuoteFormValues(quote: any): void {
+      // Clear existing line items
+      while (this.lignes.length) {
+        this.lignes.removeAt(0);
+      }
+    
+      // Set the form values
+      this.quoteForm.patchValue({
+        numero: quote.numero,
+        etat: quote.etat,
+        dateCreation: new Date(quote.dateCreation),
+        client: {
+          id: quote.client?._id || "",
+          nom: quote.client?.nom || "",
         },
-      )
+        vehicule: {
+          id: quote.vehicule?._id || "",
+        }
+      });
+    
+      // Add lines in batch
+      this.autoCalculate = false;
+      if (quote.lignes && quote.lignes.length) {
+        quote.lignes.forEach((ligne: LigneDevis) => {
+          this.addLigne(ligne);
+        });
+      }
+    
+      // Re-enable calculations and update totals
+      this.autoCalculate = true;
+      this.calculateTotals();
+    
+      this.loading = false;
+      this.changeDetectorRef.detectChanges();
     }
 
     get lignes(): FormArray {
@@ -176,19 +200,21 @@ export class UpdateQuoteComponent implements OnInit {
 
     addLigne(ligne: LigneDevis | null = null): void {
       const ligneForm = this.fb.group({
-        // reference: [ligne ? ligne.reference : ""],
-        service: [ligne ? ligne.service : "", Validators.required],
+        service: this.fb.group({
+          nom: [ligne?.service?.nom || "", Validators.required],
+          _id: [ligne?.service?._id || ""]
+        }),
         description: [ligne ? ligne.description : ""],
         remise: [ligne ? ligne.remise : 0],
         prixUnitaireHT: [ligne ? ligne.prixUnitaireHT : 0, Validators.required],
         taxe: [ligne ? ligne.taxe : 20], // Default VAT rate
         quantite: [ligne ? ligne.quantite : 1, [Validators.required, Validators.min(1)]],
         totalTTC: [{ value: ligne ? ligne.totalTTC : 0, disabled: true }],
-      })
-
+      });
+    
       // Calculate initial line total
-      this.calculateLineTotals(ligneForm)
-
+      this.calculateLineTotals(ligneForm);
+    
       // Setup change listeners with debounce
       merge(
         ligneForm.get("prixUnitaireHT")!.valueChanges,
@@ -199,16 +225,16 @@ export class UpdateQuoteComponent implements OnInit {
         .pipe(debounceTime(100))
         .subscribe(() => {
           if (this.autoCalculate) {
-            this.calculateLineTotals(ligneForm)
-            this.calculateTotals()
-            this.changeDetectorRef.detectChanges()
+            this.calculateLineTotals(ligneForm);
+            this.calculateTotals();
+            this.changeDetectorRef.detectChanges();
           }
-        })
-
-      this.lignes.push(ligneForm)
-
+        });
+    
+      this.lignes.push(ligneForm);
+    
       if (this.autoCalculate) {
-        this.calculateTotals()
+        this.calculateTotals();
       }
     }
 
@@ -273,6 +299,8 @@ export class UpdateQuoteComponent implements OnInit {
       }
 
       const quoteData = this.prepareQuoteData()
+      console.log("QUOTE DATA : ",quoteData);
+      
       this.loading = true
 
       if (this.quoteId) {
@@ -326,14 +354,15 @@ export class UpdateQuoteComponent implements OnInit {
 
     prepareQuoteData(): any {
       const formValue = this.quoteForm.getRawValue()
-
+      if (formValue.client?.id) formValue.client = formValue.client.id;
+      if (formValue.vehicule?.id) formValue.vehicule = formValue.vehicule.id;
       // Calculate totals
       this.calculateTotals()
 
       // Add calculated totals
       formValue.totalHT = this.totalHT
       formValue.totalTaxes = this.totalTaxes
-      formValue.total = this.totalTTC
+      formValue.totalTTC = this.totalTTC
 
       return formValue
     }
