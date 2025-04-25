@@ -20,6 +20,9 @@ import { SliderModule } from 'primeng/slider';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { Client, ClientsService } from '../../../services/clients.service';
+import { Service, ServiceService } from '../../../services/service.service';
+import { ClientVehicule, ClientVehiculeService } from '../../../services/client-vehicule.service';
 
 @Component({
   selector: 'app-new',
@@ -64,35 +67,19 @@ export class NewInvoiceComponent {
     status: "En attente",
   }
 
-  vehicleInfo = {
-    registration: "AB-123-CD",
-    brand: "Renault",
-    model: "Clio",
-    serialNumber: "SER12345678",
-    mileage: "45000",
-  }
-
-  clients = [
-    {
-      id: "client1",
-      name: "Client SARL",
-      address: "456 Avenue du Commerce, 69002 Lyon",
-      phone: "+33 9 87 65 43 21",
-      email: "contact@client.fr",
-    },
-    {
-      id: "client2",
-      name: "Entreprise ABC",
-      address: "789 Boulevard des Affaires, 75008 Paris",
-      phone: "+33 1 11 22 33 44",
-      email: "contact@abc.fr",
-    },
-  ]
+  clients: Client[] = []
+  services: Service[] = []
+  vehicules : ClientVehicule[] = []
 
   selectedClient = ""
+  selectedVehicule = ""
+
 
   constructor(
     private invoiceService: InvoiceService,
+    private clientService: ClientsService,
+    private serviceService: ServiceService,
+    private vehiculeService: ClientVehiculeService,
     private router: Router,
   ) {}
 
@@ -101,8 +88,21 @@ export class NewInvoiceComponent {
     this.calculateTotals()
   }
 
+  loadClients(): void {
+    this.clientService.getClients().subscribe((clients) => {
+      this.clients = clients
+    })
+  }
+
+  loadServices(): void {
+    this.serviceService.getAllServices().subscribe((services) => {
+      this.services = services
+    })
+  }
+
   onClientChange(): void {
-    const client = this.clients.find((c) => c.id === this.selectedClient)
+    const client = this.clients.find((c) => c._id === this.selectedClient)
+
     if (client) {
       this.invoice.clientName = client.name
       this.invoice.clientAddress = client.address

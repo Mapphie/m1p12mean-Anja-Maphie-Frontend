@@ -44,7 +44,6 @@
           <div class="form-section">
             <h2>Client</h2>
             <div class="form-group">
-              <label for="client">Sélectionner un client</label>
               <select
                 id="client"
                 name="client"
@@ -103,65 +102,23 @@
 
           <div class="form-section">
             <h2>Informations du véhicule</h2>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="registration">Immatriculation</label>
-                <input
-                  type="text"
-                  id="registration"
-                  name="registration"
-                  [(ngModel)]="vehicleInfo.registration"
+            <div class="form-group">
+                <select
+                  id="vehicule"
+                  name="vehicule"
+                  [(ngModel)]="selectedVehicule"
                   required
                 >
+                  <option value="">-- Sélectionner un vehicule --</option>
+                  <option *ngFor="let vehicule of vehicules" [value]="vehicule.id">{{ vehicule.name }}</option>
+                </select>
               </div>
-              <div class="form-group">
-                <label for="brand">Marque</label>
-                <input
-                  type="text"
-                  id="brand"
-                  name="brand"
-                  [(ngModel)]="vehicleInfo.brand"
-                  required
-                >
-              </div>
-              <div class="form-group">
-                <label for="model">Modèle</label>
-                <input
-                  type="text"
-                  id="model"
-                  name="model"
-                  [(ngModel)]="vehicleInfo.model"
-                  required
-                >
-              </div>
-              <div class="form-group">
-                <label for="serial-number">N° série</label>
-                <input
-                  type="text"
-                  id="serial-number"
-                  name="serialNumber"
-                  [(ngModel)]="vehicleInfo.serialNumber"
-                  required
-                >
-              </div>
-              <div class="form-group">
-                <label for="mileage">Kilométrage</label>
-                <input
-                  type="text"
-                  id="mileage"
-                  name="mileage"
-                  [(ngModel)]="vehicleInfo.mileage"
-                  required
-                >
-              </div>
-            </div>
           </div>
 
           <div class="form-section">
-            <h2>Articles</h2>
+            <h2>Services</h2>
 
             <div class="items-header">
-              <div class="item-col reference">Référence</div>
               <div class="item-col designation">Désignation</div>
               <div class="item-col price">Prix u HT</div>
               <div class="item-col quantity">Qté</div>
