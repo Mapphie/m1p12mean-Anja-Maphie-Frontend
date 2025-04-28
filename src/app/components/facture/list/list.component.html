@@ -18,7 +18,7 @@
             [rowHover]="true"
             [showGridlines]="true"
             [paginator]="true"
-            [globalFilterFields]="['invoiceNumber', 'client.name', 'total', 'status']"
+            [globalFilterFields]="['number', 'client.name', 'total', 'status']"
             responsiveLayout="scroll"
         >
         <ng-template #caption>
@@ -81,8 +81,8 @@
               </th>
             </ng-template>
           <ng-template #body let-facture >
-            <tr (click)="getDetail(facture.invoiceNumber)" style="cursor: pointer;">
-                <td>{{ facture.invoiceNumber }}</td>
+            <tr (click)="getDetail(facture._id)" style="cursor: pointer;">
+                <td>{{ facture.number }}</td>
                 <td>{{ facture.clientName }}</td>
                 <td>{{ facture.issueDate | date:'dd/MM/yyyy' }}</td>
                 <td>{{ facture.dueDate | date:'dd/MM/yyyy' }}</td>

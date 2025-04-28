@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Invoice, InvoiceItem, InvoiceService } from '../../../services/invoice.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
@@ -27,7 +27,7 @@ import { ClientVehicule, ClientVehiculeService } from '../../../services/client-
 @Component({
   selector: 'app-new',
   imports: [CommonModule,RouterModule,
-    MultiSelectModule,
+  MultiSelectModule,
     SelectModule,
     InputIconModule,
     TagModule,
@@ -50,30 +50,15 @@ import { ClientVehicule, ClientVehiculeService } from '../../../services/client-
   styleUrl: './new.component.scss'
 })
 export class NewInvoiceComponent {
-  invoice: Invoice = {
-    id: "",
-    invoiceNumber: "",
-    issueDate: new Date().toISOString().split("T")[0],
-    dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
-    clientName: "",
-    clientAddress: "",
-    clientEmail: "",
-    clientPhone: "",
-    items: [{ designation: "", quantity: 1, price: 0, amount: 0 }],
-    subtotal: 0,
-    taxRate: 0.2,
-    taxAmount: 0,
-    total: 0,
-    status: "En attente",
-  }
+  invoice: Invoice = {} as Invoice
 
-  clients: Client[] = []
-  services: Service[] = []
-  vehicules : ClientVehicule[] = []
+  clients: Client[] = [];
+  services: Service[] = [];
+  vehicules: ClientVehicule[] = [];
+  defaultService: Service = {} as Service;
 
-  selectedClient = ""
-  selectedVehicule = ""
-
+  selectedClient = "";
+  selectedVehicule = "";
 
   constructor(
     private invoiceService: InvoiceService,
@@ -84,86 +69,117 @@ export class NewInvoiceComponent {
   ) {}
 
   ngOnInit(): void {
-    this.invoice.invoiceNumber = this.invoiceService.generateInvoiceNumber()
-    this.calculateTotals()
+    this.invoice.number = "FAC0002"
+    this.loadClients();
+    this.loadServices();
   }
 
   loadClients(): void {
     this.clientService.getClients().subscribe((clients) => {
-      this.clients = clients
-    })
+      this.clients = clients;
+    });
   }
 
   loadServices(): void {
     this.serviceService.getAllServices().subscribe((services) => {
-      this.services = services
-    })
+      this.services = services;
+    });
+    this.defaultService = this.services[0]
+  }
+
+  loadVehicules(): void {
+    this.vehiculeService.getAllVehicules().subscribe((vehicules) => {
+      this.vehicules = vehicules;
+    });
   }
 
   onClientChange(): void {
-    const client = this.clients.find((c) => c._id === this.selectedClient)
+    const client = this.clients.find((c) => c._id === this.selectedClient);
 
     if (client) {
-      this.invoice.clientName = client.name
-      this.invoice.clientAddress = client.address
-      this.invoice.clientPhone = client.phone
-      this.invoice.clientEmail = client.email
+      this.invoice.client = client;
+      this.vehiculeService.getVehiculesByClientId(this.selectedClient).subscribe((vehicules) => {
+        this.vehicules = vehicules;
+      });
+    }
+  }
+
+  onVehiculeChange(): void{
+    const vehicule = this.vehicules.find((c) => c._id === this.selectedVehicule);
+
+    if (vehicule) {
+      this.invoice.vehicule = vehicule;
+      this.vehiculeService.getVehiculesByClientId(this.selectedVehicule).subscribe((vehicules) => {
+        this.vehicules = vehicules;
+      });
     }
   }
 
   addItem(): void {
-    this.invoice.items.push({ designation: "", quantity: 1, price: 0, amount: 0 })
+    if (!this.invoice) return;
+
+    const item: InvoiceItem = {
+      service: this.defaultService, // pas encore de service choisi
+      description: '',
+      remise: 0,
+      prixUnitaireHT: 0,
+      taxe: 20,
+      quantite: 1,
+      totalHT: 0,
+      totalTTC: 0
+    };
+
+    this.invoice.lignes.push(item);
+  
   }
 
   removeItem(index: number): void {
-    if (this.invoice.items.length > 1) {
-      this.invoice.items.splice(index, 1)
-      this.calculateTotals()
+    if (this.invoice.lignes.length > 1) {
+      this.invoice.lignes.splice(index, 1);
+      this.calculateTotals();
     }
   }
 
   updateItemAmount(item: InvoiceItem): void {
-    item.amount = item.quantity * item.price
-    this.calculateTotals()
+    item.totalHT = item.prixUnitaireHT * item.quantite;
+    item.totalTTC = item.totalHT + (item.totalHT * (item.taxe / 100));
+    this.calculateTotals();
   }
 
   calculateTotals(): void {
-    this.invoice.subtotal = this.invoice.items.reduce((sum, item) => sum + item.amount, 0)
-    this.invoice.taxAmount = this.invoice.subtotal * this.invoice.taxRate
-    this.invoice.total = this.invoice.subtotal + this.invoice.taxAmount
+    this.invoice.totalHT = this.invoice.lignes.reduce((sum, item) => sum + item.totalHT, 0);
+    this.invoice.totalTTC = this.invoice.lignes.reduce((sum, item) => sum + item.totalTTC, 0);
   }
 
   onSubmit(): void {
+    if (!this.invoice) {
+      alert('Formulaire incomplet');
+      return;
+    }
+  
     if (this.isFormValid()) {
-      // Créer une copie de l'objet invoice pour éviter les références
-      const invoiceToSave: Invoice = { ...this.invoice }
-
-      this.invoiceService.addInvoice(invoiceToSave).subscribe(() => {
-        this.router.navigate(["/dash/factures"])
-      })
+      this.invoiceService.addInvoice(this.invoice).subscribe(() => {
+        this.router.navigate(['/dash/factures']);
+      });
     } else {
-      alert("Veuillez remplir tous les champs obligatoires.")
+      alert('Veuillez remplir tous les champs.');
     }
   }
 
   isFormValid(): boolean {
     return !!(
-      this.invoice.clientName &&
-      this.invoice.invoiceNumber &&
-      this.invoice.issueDate &&
-      this.invoice.dueDate &&
-      this.invoice.items.length > 0 &&
-      this.invoice.items.every((item) => item.designation && item.quantity > 0)
-    )
+      this.invoice.number &&
+      this.invoice.client &&
+      this.invoice.manager &&
+      this.invoice.vehicule &&
+      this.invoice.lignes.length > 0 &&
+      this.invoice.lignes.every((item) => item.service && item.quantite > 0)
+    );
   }
 
   cancel(): void {
-    this.router.navigate(["/dash/factures"])
+    this.router.navigate(["/dash/factures"]);
   }
-
-  updateItemTotal(item: InvoiceItem): void {
-    item.amount = item.quantity * item.price
-    this.calculateTotals()
-  }
+  
 }
 

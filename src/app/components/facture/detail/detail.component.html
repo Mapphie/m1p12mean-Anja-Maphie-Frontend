@@ -9,7 +9,7 @@
         <span class="text-color-secondary">/</span>
       </li>
       <li>
-        <span class="text-color-secondary">{{ invoice?.invoiceNumber || 'Détail facture' }}</span>
+        <span class="text-color-secondary">{{ invoice?.number || 'Détail facture' }}</span>
       </li>
     </ul>
   </div>
@@ -19,10 +19,10 @@
     <div class="surface-card p-4 shadow-2 border-round mb-4">
       <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
         <div>
-          <h1 class="text-3xl font-medium text-900 mb-2">Facture {{ invoice?.invoiceNumber }}</h1>
+          <h1 class="text-3xl font-medium text-900 mb-2">Facture {{ invoice?.number }}</h1>
           <div class="flex align-items-center">
             <span class="status-badge" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
-            <span class="ml-3 text-color-secondary">Émise le {{ invoice?.issueDate }}</span>
+            <span class="ml-3 text-color-secondary">Émise le {{ invoice?.dateCreation }}</span>
           </div>
         </div>
         <div class="flex mt-3 md:mt-0">
@@ -43,14 +43,14 @@
     </div>
 
     <!-- Action Buttons -->
-    <div class="surface-card p-4 shadow-2 border-round mb-4" *ngIf="invoice?.status !== 'Payée'">
+    <div class="surface-card p-4 shadow-2 border-round mb-4" *ngIf="invoice?.etat !== 'Payée'">
       <div class="flex flex-wrap gap-2">
-        <button *ngIf="invoice?.status !== 'Payée'" class="p-button p-button-success" (click)="registerPayment()">
+        <button *ngIf="invoice?.etat !== 'Payée'" class="p-button p-button-success" (click)="registerPayment()">
           <i class="pi pi-wallet mr-2"></i>
           Enregistrer un paiement
         </button>
         
-        <button class="p-button p-button-help" *ngIf="invoice?.status !== 'Payée'" (click)="setDraft()">
+        <button class="p-button p-button-help" *ngIf="invoice?.etat !== 'Payée'" (click)="setDraft()">
           <i class="pi pi-pencil mr-2"></i>
           Modifier
         </button>
@@ -67,13 +67,13 @@
               <h2 class="text-xl font-medium text-900 m-0">Client</h2>
             </div>
             <div class="card-content">
-              <h3 class="text-lg font-medium text-900 mb-2">{{ invoice!.clientName }}</h3>
-              <p class="m-0 line-height-3 mb-2">{{ invoice!.clientAddress }}</p>
-              <p class="m-0 mb-2" *ngIf="invoice!.clientPhone">
-                <span class="font-medium">Téléphone:</span> {{ invoice!.clientPhone }}
+              <h3 class="text-lg font-medium text-900 mb-2">{{ invoice!.client!.nom }}</h3>
+              <p class="m-0 line-height-3 mb-2">{{ invoice!.client!.adresse }}>
+              <p class="m-0 mb-2" *ngIf="invoice!.client!.contact">
+                <span class="font-medium">Téléphone:</span> {{ invoice!.client!.contact }}
               </p>
-              <p class="m-0" *ngIf="invoice!.clientEmail">
-                <span class="font-medium">Email:</span> {{ invoice!.clientEmail }}
+              <p class="m-0" *ngIf="invoice!.client!.email">
+                <span class="font-medium">Email:</span> {{ invoice!.client!.email }}
               </p>
             </div>
           </div>
@@ -88,19 +88,16 @@
             <div class="card-content">
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Numéro:</span>
-                <span>{{ invoice!.invoiceNumber }}</span>
+                <span>{{ invoice!.number }}</span>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Date:</span>
-                <span>{{ invoice!.issueDate }}</span>
+                <span>{{ invoice!.dateCreation }}</span>
               </div>
-              <div class="flex justify-content-between mb-2">
-                <span class="font-medium">Échéance:</span>
-                <span>{{ invoice!.dueDate }}</span>
-              </div>
+              
               <div class="flex justify-content-between">
                 <span class="font-medium">Total:</span>
-                <span class="font-medium text-primary">{{ invoice!.total.toFixed(2) }} €</span>
+                <span class="font-medium text-primary">{{ invoice!.totalTTC.toFixed(2) }} €</span>
               </div>
             </div>
           </div>
@@ -153,12 +150,12 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of invoice!.items">
+                  <tr *ngFor="let item of invoice!.lignes">
                     <td>REF001</td>
-                    <td>{{ item.designation }}</td>
-                    <td class="text-right">{{ item.price.toFixed(2) }} €</td>
-                    <td class="text-right">{{ item.quantity }}</td>
-                    <td class="text-right">{{ item.amount.toFixed(2) }} €</td>
+                    <td>{{ item.description }}</td>
+                    <td class="text-right">{{ item.prixUnitaireHT.toFixed(2) }} €</td>
+                    <td class="text-right">{{ item.quantite }}</td>
+                    <td class="text-right">{{ item.totalTTC.toFixed(2) }} €</td>
                   </tr>
                 </tbody>
               </table>
@@ -167,15 +164,15 @@
             <div class="p-4 border-top-1 surface-border">
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Total HT:</span>
-                <span>{{ invoice!.total.toFixed(2) }} €</span>
+                <span>{{ invoice!.totalHT.toFixed(2) }} €</span>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">TVA (20%):</span>
-                <span>{{ invoice!.taxAmount.toFixed(2) }} €</span>
+                <!-- <span>{{ invoice!.taxAmount.toFixed(2) }} €</span> -->
               </div>
               <div class="flex justify-content-between">
                 <span class="font-medium text-lg">Total TTC:</span>
-                <span class="font-medium text-lg text-primary">{{ invoice!.total.toFixed(2) }} €</span>
+                <span class="font-medium text-lg text-primary">{{ invoice!.totalTTC.toFixed(2) }} €</span>
               </div>
             </div>
           </div>
@@ -217,26 +214,23 @@
             <div class="invoice-ref">
               <div class="ref-item">
                 <span class="ref-label">N° Facture:</span>
-                <span class="ref-value">{{ invoice?.invoiceNumber }}</span>
+                <span class="ref-value">{{ invoice?.number }}</span>
               </div>
               <div class="ref-item">
                 <span class="ref-label">Date:</span>
-                <span class="ref-value">{{ invoice?.issueDate }}</span>
+                <span class="ref-value">{{ invoice?.dateCreation }}</span>
               </div>
-              <div class="ref-item">
-                <span class="ref-label">Échéance:</span>
-                <span class="ref-value">{{ invoice?.dueDate }}</span>
-              </div>
+              
             </div>
           </div>
 
           <div class="pdf-client">
             <div class="client-label">Facturé à:</div>
             <div class="client-info">
-              <p class="client-name">{{ invoice?.clientName }}</p>
-              <p>{{ invoice?.clientAddress }}</p>
-              <p *ngIf="invoice?.clientPhone">Tél: {{ invoice?.clientPhone }}</p>
-              <p *ngIf="invoice?.clientEmail">Email: {{ invoice?.clientEmail }}</p>
+              <p class="client-name">{{ invoice?.client?.nom }}</p>
+              <p>{{ invoice?.client?.adresse }}</p>
+              <p *ngIf="invoice?.client?.contact">Tél: {{ invoice?.client?.contact }}</p>
+              <p *ngIf="invoice?.client?.email">Email: {{ invoice?.client?.email }}</p>
             </div>
           </div>
 
@@ -274,15 +268,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of invoice?.items">
+              <tr *ngFor="let item of invoice?.lignes">
                 <td>REF001</td>
-                <td>{{ item.designation }}</td>
-                <td class="text-right">{{ item.price.toFixed(2) }} €</td>
-                <td class="text-right">{{ item.quantity }}</td>
-                <td class="text-right">{{ item.amount.toFixed(2) }} €</td>
+                <td>{{ item.description }}</td>
+                <td class="text-right">{{ item.prixUnitaireHT.toFixed(2) }} €</td>
+                <td class="text-right">{{ item.quantite }}</td>
+                <td class="text-right">{{ item.totalTTC.toFixed(2) }} €</td>
               </tr>
               <!-- Lignes vides pour remplir l'espace si peu d'articles -->
-              <tr *ngFor="let empty of [].constructor(Math.max(0, 5 - (invoice?.items!.length || 0)))" class="empty-row">
+              <tr *ngFor="let empty of [].constructor(Math.max(0, 5 - (invoice?.lignes!.length || 0)))" class="empty-row">
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -298,15 +292,15 @@
                   <p><strong>IBAN:</strong> FR76 1234 5678 9123 4567 8912 345</p>
                 </td>
                 <td class="total-label">Total HT</td>
-                <td class="total-value">{{ invoice?.total!.toFixed(2) }} €</td>
+                <td class="total-value">{{ invoice?.totalHT!.toFixed(2) }} €</td>
               </tr>
               <tr>
                 <td class="total-label">TVA (20%)</td>
-                <td class="total-value">{{ invoice?.taxAmount!.toFixed(2) }} €</td>
+                <!-- <td class="total-value">{{ invoice?.taxe!.toFixed(2) }} €</td> -->
               </tr>
               <tr class="grand-total">
                 <td class="total-label">Total TTC</td>
-                <td class="total-value">{{ invoice?.total!.toFixed(2) }} €</td>
+                <td class="total-value">{{ invoice?.totalTTC!.toFixed(2) }} €</td>
               </tr>
             </tfoot>
           </table>

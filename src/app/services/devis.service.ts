@@ -17,9 +17,9 @@ export enum StatutDevis {
 export interface Devis {
     _id?: string
     numero: string;
-    client: User; // ID de l'utilisateur (ObjectId)
-    manager: User; // ID du manager (ObjectId)
-    vehicule: ClientVehicule; // ID du véhicule (ObjectId)
+    client: User; 
+    manager: User;
+    vehicule: ClientVehicule; 
     dateCreation: Date;
     totalHT: number;
     totalTTC: number;
@@ -29,7 +29,6 @@ export interface Devis {
   }
 
   export interface LigneDevis {
-    // reference: string;
     service: Service;
     description?: string;
     remise: number;
@@ -46,7 +45,6 @@ export interface Devis {
 export class DevisService {
   private apiUrl = environment.url + "adminDevis";
   private devisList = new BehaviorSubject<Devis[]>([])
-  devis$ = this.devisList.asObservable()
 
   // Données de test
 

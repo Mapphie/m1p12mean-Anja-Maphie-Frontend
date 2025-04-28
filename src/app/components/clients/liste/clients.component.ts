@@ -130,7 +130,7 @@ export class ClientsComponent {
     }
 
     openNewClient() {
-        this.client = {nom: '',
+        this.client = {nom: '',prenom: '',
         email: '',
         contact: '',
         adresse: '',

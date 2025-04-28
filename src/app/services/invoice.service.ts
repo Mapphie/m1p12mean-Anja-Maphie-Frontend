@@ -1,11 +1,20 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Service } from './service.service';
+import { User } from './user.service';
+import { ClientVehicule } from './client-vehicule.service';
+import { Devis } from './devis.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 export interface InvoiceItem {
-  designation: string
-  quantity: number
-  price: number
-  amount: number
+  service: Service;
+  description?: string;
+  remise: number;
+  prixUnitaireHT: number;
+  taxe: number;
+  quantite: number;
+  totalHT: number;
+  totalTTC: number;
 }
 
 export enum StatutInvoice {
@@ -16,131 +25,79 @@ export enum StatutInvoice {
 }
 
 export interface Invoice {
-  id: string
-  clientName: string
-  clientAddress: string
-  clientEmail: string
-  clientPhone: string
-  invoiceNumber: string
-  issueDate: string
-  dueDate: string
-  quoteNumber?: string
-  items: InvoiceItem[]
-  subtotal: number
-  taxRate: number
-  taxAmount: number
-  total: number
-  status: string
-  notes?: string
+  id: string;
+  number: string;
+  devis?: Devis;
+  client: User; 
+  manager: User; 
+  vehicule: ClientVehicule; 
+  dateCreation: Date;
+  totalHT: number;
+  totalTTC: number;
+  etat: string;
+  lignes: InvoiceItem[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvoiceService {
-  private invoices: Invoice[] = [
-    {
-      id: "1",
-      invoiceNumber: "F-2025-0001",
-      clientName: "Client SARL",
-      clientAddress: "456 Avenue du Commerce\n69002 Lyon, France",
-      clientEmail: "contact@client.fr",
-      clientPhone: "+33 9 87 65 43 21",
-      issueDate: "2025-03-31",
-      dueDate: "2025-04-30",
-      quoteNumber: "D-2025-0001",
-      items: [
-        { designation: "Consultation initiale", quantity: 1, price: 150, amount: 150 },
-        { designation: "Développement de site web", quantity: 1, price: 1200, amount: 1200 },
-        { designation: "Hébergement (annuel)", quantity: 1, price: 120, amount: 120 },
-      ],
-      subtotal: 1470,
-      taxRate: 0.2,
-      taxAmount: 294,
-      total: 1764,
-      status: StatutInvoice.BROUILLON,
-    },
-    {
-      id: "2",
-      invoiceNumber: "F-2025-0002",
-      clientName: "Entreprise ABC",
-      clientAddress: "789 Boulevard des Affaires\n75008 Paris, France",
-      clientEmail: "contact@abc.fr",
-      clientPhone: "+33 1 23 45 67 89",
-      issueDate: "2025-03-28",
-      dueDate: "2025-04-27",
-      items: [
-        { designation: "Refonte graphique", quantity: 1, price: 2500, amount: 2500 },
-        { designation: "Formation équipe", quantity: 2, price: 450, amount: 900 },
-      ],
-      subtotal: 3400,
-      taxRate: 0.2,
-      taxAmount: 680,
-      total: 4080,
-      status: StatutInvoice.PAYE,
-    },
-    {
-      id: "3",
-      invoiceNumber: "F-2025-0003",
-      clientName: "Société XYZ",
-      clientAddress: "123 Rue du Commerce\n33000 Bordeaux, France",
-      clientEmail: "contact@xyz.fr",
-      clientPhone: "+33 5 55 55 55 55",
-      issueDate: "2025-03-25",
-      dueDate: "2025-04-24",
-      items: [
-        { designation: "Maintenance mensuelle", quantity: 3, price: 250, amount: 750 },
-        { designation: "Mise à jour sécurité", quantity: 1, price: 350, amount: 350 },
-      ],
-      subtotal: 1100,
-      taxRate: 0.2,
-      taxAmount: 220,
-      total: 1320,
-      status: StatutInvoice.CONFIRME,
-    },
-  ]
 
-  constructor() {}
+  private apiUrl = environment.url + "invoice";
+  private invoiceList = new BehaviorSubject<Invoice[]>([])
 
-  getInvoices(): Observable<Invoice[]> {
-    return of(this.invoices)
-  }
+  constructor(private http: HttpClient) {}
 
-  getInvoiceById(id: string): Observable<Invoice | undefined> {
-    const invoice = this.invoices.find((inv) => inv.id === id)
-    return of(invoice)
-  }
-
-  getInvoiceByNumber(number: string): Observable<Invoice | undefined> {
-    const invoice = this.invoices.find((inv) => inv.invoiceNumber === number)
-    return of(invoice)
-  }
-
-  addInvoice(invoice: Omit<Invoice, "id">): Observable<Invoice> {
-    const newId = (this.invoices.length + 1).toString()
-    const newInvoice = { ...invoice, id: newId }
-    this.invoices.push(newInvoice)
-    return of(newInvoice)
-  }
-
-  updateInvoice(invoice: Invoice): Observable<Invoice> {
-    const index = this.invoices.findIndex((inv) => inv.id === invoice.id)
-    if (index !== -1) {
-      this.invoices[index] = invoice
+  getAllInvoices(): Observable<any> {
+      return this.http.get(this.apiUrl);
     }
-    return of(invoice)
-  }
-
-  deleteInvoice(id: string): Observable<boolean> {
-    const initialLength = this.invoices.length
-    this.invoices = this.invoices.filter((inv) => inv.id !== id)
-    return of(this.invoices.length !== initialLength)
-  }
-
-  generateInvoiceNumber(): string {
-    const year = new Date().getFullYear()
-    const count = this.invoices.length + 1
-    return `F-${year}-${count.toString().padStart(4, "0")}`
-  }
+  
+    getInvoiceById(id: string): Observable<any> {
+      return this.http.get<any>(`${this.apiUrl}/${id}`)
+    }
+  
+  
+    addInvoice(quote: any): Observable<any> {
+      const InvoiceToSend = this.prepareInvoiceForApi(quote)
+      return this.http.post<any>(this.apiUrl, InvoiceToSend)
+    }
+  
+    updateInvoice(id: string, quote: any): Observable<any> {
+      const InvoiceToSend = this.prepareInvoiceForApi(quote)
+      return this.http.put<any>(`${this.apiUrl}/${id}`, InvoiceToSend)
+    }
+  
+    updateStateInvoice(id: string, statut: StatutInvoice): Observable<Invoice> {
+      return this.http.put<Invoice>(`${this.apiUrl}/${id}/etat`, { etat: statut });
+    }
+  
+    private prepareInvoiceForApi(invoice: any): any {
+      const prepared = { ...invoice }
+  
+      // Extraire juste l'ID du client
+      if (prepared.client && typeof prepared.client === 'object') {
+        prepared.client = prepared.client._id || prepared.client
+      }
+  
+      // Manager est null ou un objet → mettre uniquement l’ID si présent
+      if (prepared.manager && typeof prepared.manager === 'object') {
+        prepared.manager = prepared.manager._id || prepared.manager
+      }
+  
+      // Extraire l'ID du véhicule
+      if (prepared.vehicule && typeof prepared.vehicule === 'object') {
+        prepared.vehicule = prepared.vehicule._id || prepared.vehicule
+      }
+  
+      // Préparer chaque ligne de facture
+      prepared.lignes = prepared.lignes.map((ligne: any) => {
+        return {
+          ...ligne,
+          service: typeof ligne.service === 'object' ? (ligne.service._id || ligne.service) : ligne.service
+        }
+      })
+  
+      return prepared
+    }
 }
 

@@ -45,7 +45,7 @@ export class DetailComponent {
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id")
       if (id) {
-        this.invoiceService.getInvoiceByNumber(id).subscribe((invoice) => {
+        this.invoiceService.getInvoiceById(id).subscribe((invoice) => {
           this.invoice = invoice
         })
       }
@@ -64,12 +64,12 @@ export class DetailComponent {
 
   downloadInvoice(): void {
     // Logique pour télécharger la facture
-    console.log("Téléchargement de la facture:", this.invoice?.invoiceNumber)
+    console.log("Téléchargement de la facture:", this.invoice?.number)
   }
 
   sendInvoice(): void {
     // Logique pour envoyer la facture par email
-    console.log("Envoi de la facture par email:", this.invoice?.invoiceNumber)
+    console.log("Envoi de la facture par email:", this.invoice?.number)
   }
 
   registerPayment(): void {
@@ -81,21 +81,21 @@ export class DetailComponent {
   }
 
   setDraft(): void {
-    this.router.navigate(["/dash/factures/update", this.invoice?.invoiceNumber])
+    this.router.navigate(["/dash/factures/update", this.invoice?.number])
   }
 
   setActiveTab(tab: string): void {
     this.activeTab = tab
   }
   getStatusLabel(): string {
-    if (!this.invoice || !this.invoice.status) return "En attente"
-    return this.invoice.status
+    if (!this.invoice || !this.invoice.etat) return "En attente"
+    return this.invoice.etat
   }
 
   getStatusClass(): string {
-    if (!this.invoice || !this.invoice.status) return "status-pending"
+    if (!this.invoice || !this.invoice.etat) return "status-pending"
 
-    switch (this.invoice.status) {
+    switch (this.invoice.etat) {
       case "Payée":
         return "status-paid"
       case "En retard":

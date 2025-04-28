@@ -54,7 +54,7 @@ export class InvoiceListComponent {
   ) {}
 
   ngOnInit(): void {
-    this.invoiceService.getInvoices().subscribe((data) => {
+    this.invoiceService.getAllInvoices().subscribe((data) => {
       this.invoices = data
       this.loading = false;
     })
@@ -67,11 +67,11 @@ export class InvoiceListComponent {
 
   downloadInvoice(invoice: Invoice): void {
     // Logique pour télécharger la facture
-    console.log("Téléchargement de la facture:", invoice.invoiceNumber)
+    console.log("Téléchargement de la facture:", invoice.number)
   }
 
-  getDetail(invoiceNumber: string){
-    this.router.navigate(['/dash/factures', invoiceNumber]);
+  getDetail(invoiceId: string){
+    this.router.navigate(['/dash/factures', invoiceId]);
   }
 
   clear(table: Table) {

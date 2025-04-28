@@ -14,7 +14,7 @@
                   type="text"
                   id="invoice-number"
                   name="invoiceNumber"
-                  [(ngModel)]="invoice.invoiceNumber"
+                  [(ngModel)]="invoice.number"
                   required
                 >
               </div>
@@ -24,20 +24,11 @@
                   type="text"
                   id="invoice-date"
                   name="date"
-                  [(ngModel)]="invoice.issueDate"
+                  [(ngModel)]="invoice.dateCreation"
                   required
                 >
               </div>
-              <div class="form-group">
-                <label for="payment-due-date">Limite de paiement</label>
-                <input
-                  type="text"
-                  id="payment-due-date"
-                  name="paymentDueDate"
-                  [(ngModel)]="invoice.dueDate"
-                  required
-                >
-              </div>
+              
             </div>
           </div>
 
@@ -52,7 +43,7 @@
                 required
               >
                 <option value="">-- Sélectionner un client --</option>
-                <option *ngFor="let client of clients" [value]="client.id">{{ client.name }}</option>
+                <option *ngFor="let client of clients" [value]="client._id">{{ client.nom }}</option>
               </select>
             </div>
             <div class="form-grid">
@@ -62,8 +53,8 @@
                   type="text"
                   id="client-name"
                   name="clientName"
-                  [(ngModel)]="invoice.clientName"
-                  required
+                  [(ngModel)]="invoice.client.nom"
+                  disabled
                 >
               </div>
 
@@ -73,8 +64,8 @@
                   type="text"
                   id="client-address"
                   name="clientAddress"
-                  [(ngModel)]="invoice.clientAddress"
-                  required
+                  [(ngModel)]="invoice.client.adresse"
+                  disabled
                 >
               </div>
               <div class="form-group">
@@ -83,8 +74,8 @@
                   type="text"
                   id="client-phone"
                   name="clientPhone"
-                  [(ngModel)]="invoice.clientPhone"
-                  required
+                  [(ngModel)]="invoice.client.contact"
+                  disabled
                 >
               </div>
               <div class="form-group">
@@ -93,8 +84,8 @@
                   type="email"
                   id="client-email"
                   name="clientEmail"
-                  [(ngModel)]="invoice.clientEmail"
-                  required
+                  [(ngModel)]="invoice.client.email"
+                  disabled
                 >
               </div>
             </div>
@@ -110,7 +101,7 @@
                   required
                 >
                   <option value="">-- Sélectionner un vehicule --</option>
-                  <option *ngFor="let vehicule of vehicules" [value]="vehicule.id">{{ vehicule.name }}</option>
+                  <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">{{ vehicule.marque }}</option>
                 </select>
               </div>
           </div>
@@ -126,7 +117,7 @@
               <div class="item-col actions">Actions</div>
             </div>
 
-            <div class="item-row" *ngFor="let item of invoice.items; let i = index">
+            <div class="item-row" *ngFor="let item of invoice.lignes; let i = index">
               <div class="item-col reference">
 
               </div>
@@ -134,7 +125,7 @@
                 <input
                   type="text"
                   [name]="'item-desc-' + i"
-                  [(ngModel)]="item.designation"
+                  [(ngModel)]="item.service.nom"
                   placeholder="Désignation"
                   required
                 >
@@ -143,10 +134,10 @@
                 <input
                   type="number"
                   [name]="'item-price-' + i"
-                  [(ngModel)]="item.price"
+                  [(ngModel)]="item.prixUnitaireHT"
                   min="0"
                   step="0.01"
-                  (change)="updateItemTotal(item)"
+                  (change)="updateItemAmount(item)"
                   required
                 >
               </div>
@@ -154,10 +145,10 @@
                 <input
                   type="number"
                   [name]="'item-qty-' + i"
-                  [(ngModel)]="item.quantity"
+                  [(ngModel)]="item.quantite"
                   min="0.5"
                   step="0.5"
-                  (change)="updateItemTotal(item)"
+                  (change)="updateItemAmount(item)"
                   required
                 >
               </div>
@@ -165,7 +156,7 @@
                 <input
                   type="text"
                   [name]="'item-total-' + i"
-                  [value]="item.amount.toFixed(2) + ' €'"
+                  [value]="item.totalTTC.toFixed(2) + ' €'"
                   readonly
                 >
               </div>
@@ -174,7 +165,7 @@
                   type="button"
                   class="btn btn-icon"
                   (click)="removeItem(i)"
-                  [disabled]="invoice.items.length === 1"
+                  [disabled]="invoice.lignes.length === 1"
                 >
                   <span class="icon">🗑️</span>
                 </button>
@@ -186,15 +177,15 @@
             <div class="totals-section">
               <div class="total-row">
                 <span>Total HT:</span>
-                <span>{{ invoice.total.toFixed(2) }} €</span>
+                <span>{{ invoice.totalHT.toFixed(2) }} €</span>
               </div>
               <div class="total-row">
                 <span>TVA (20%):</span>
-                <span>{{ invoice.taxAmount.toFixed(2) }} €</span>
+                <!-- <span>{{ invoice.taxe.toFixed(2) }} €</span> -->
               </div>
               <div class="total-row total">
                 <span>Total TTC:</span>
-                <span>{{ invoice.total.toFixed(2) }} €</span>
+                <span>{{ invoice.totalTTC.toFixed(2) }} €</span>
               </div>
             </div>
           </div>
