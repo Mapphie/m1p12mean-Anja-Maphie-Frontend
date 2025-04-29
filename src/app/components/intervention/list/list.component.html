@@ -10,7 +10,7 @@
         </div>
         <div class="stat-info">
           <h3>Total</h3>
-          <p>{{ stats.total }} interventions</p>
+          <p>{{ stats.total }} intervention(s)</p>
         </div>
       </div>
 
@@ -20,7 +20,7 @@
         </div>
         <div class="stat-info">
           <h3>En Attente</h3>
-          <p>{{ stats.enAttente }} interventions</p>
+          <p>{{ stats.enAttente }} intervention(s)</p>
         </div>
       </div>
 
@@ -30,7 +30,7 @@
         </div>
         <div class="stat-info">
           <h3>En cours</h3>
-          <p>{{ stats.enCours }} interventions</p>
+          <p>{{ stats.enCours }} intervention(s)</p>
         </div>
       </div>
 
@@ -40,11 +40,11 @@
         </div>
         <div class="stat-info">
           <h3>Fini</h3>
-          <p>{{ stats.fini }} interventions</p>
+          <p>{{ stats.fini }} intervention(s)</p>
         </div>
       </div>
 
-      
+
     </div>
 
     <div class="search-bar">
@@ -68,8 +68,7 @@
       <table>
         <thead>
           <tr>
-            <th>Id</th>
-            <th>Type</th>
+            <th>Service</th>
             <th>Client</th>
             <th>Véhicule</th>
             <th>Date de demande</th>
@@ -78,36 +77,32 @@
             <th>Date de fin</th>
             <th>Mécanicien</th>
             <th>Coût estimé</th>
-            <th>Coût final</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let intervention of filteredInterventions">
-            <td>{{ intervention.id }}</td>
-            <td>{{ intervention.type }}</td>
-            <td>{{ intervention.client }}</td>
-            <td>{{ intervention.vehicule }}</td>
+            <td>{{ intervention.service.nom }}</td>
+            <td>{{ intervention.client.nom }}</td>
+            <td>{{ intervention.vehicule.marque}}</td>
             <td>{{ intervention.dateDemande | date:'dd/MM/yyyy' }}</td>
             <td>{{ intervention.dateDebut | date:'dd/MM/yyyy' }}</td>
             <td>{{ intervention.dureeEstimee }}</td>
             <td>{{ intervention.dateFin | date:'dd/MM/yyyy' }}</td>
-            <td>{{ intervention.mecanicien }}</td>
+            <td>{{ intervention.mecanicien.nom }}</td>
             <td>{{ intervention.coutEstime | currency:'EUR' }}</td>
-            <td>{{ intervention.coutFinal | currency:'EUR' }}</td>
             <td>{{ intervention.status }}</td>
             <td>
               <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="openEditInterventionForm(intervention.id)" />
-                        <p-button icon="pi pi-trash" severity="danger" [rounded]="true" (click)="deleteIntervention(intervention.id)" [outlined]="true" />
             </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <app-new-intervention 
-      *ngIf="showInterventionForm" 
+    <app-new-intervention
+      *ngIf="showInterventionForm"
       [interventionId]="selectedInterventionId"
       (close)="closeInterventionForm()">
     </app-new-intervention>

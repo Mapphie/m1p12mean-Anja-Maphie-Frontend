@@ -84,9 +84,9 @@ export class ListInterventionComponent {
     this.filteredInterventions = this.interventions.filter((intervention) => {
       const matchesSearch =
         !searchTerm ||
-        intervention.client.toLowerCase().includes(searchTerm) ||
-        intervention.vehicule.toLowerCase().includes(searchTerm) ||
-        intervention.type.toLowerCase().includes(searchTerm)
+        intervention.client.nom.toLowerCase().includes(searchTerm) ||
+        intervention.vehicule.marque.toLowerCase().includes(searchTerm) ||
+        intervention.service.nom.toLowerCase().includes(searchTerm)
 
       const matchesSite = !site || true // Ajoutez la logique de filtrage par site si nécessaire
 
@@ -111,13 +111,6 @@ export class ListInterventionComponent {
     this.loadStats()
   }
 
-  deleteIntervention(id: number): void {
-    if (confirm("Êtes-vous sûr de vouloir supprimer cette intervention ?")) {
-      this.interventionService.deleteIntervention(id).subscribe(() => {
-        this.loadInterventions()
-        this.loadStats()
-      })
-    }
-  }
+
 }
 

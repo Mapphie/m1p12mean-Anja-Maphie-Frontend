@@ -1,19 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map, Observable, of } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Service } from './service.service';
+import { Client } from './clients.service';
+import { ClientVehicule } from './client-vehicule.service';
+import { User } from './user.service';
 
 export interface Intervention {
     id: number;
-    type: string;
-    client: string;
-    vehicule: string;
+    service: Service;
+    client: Client;
+    vehicule: ClientVehicule;
     dateDemande: Date;
     dateDebut: Date;
-    dureeEstimee: string;
+    dureeEstimee: number;
     dateFin: Date | null;
-    mecanicien: string;
+    mecanicien: User;
     coutEstime: number;
-    coutFinal: number | null;
     status: 'En cours' | 'Fini' | 'En attente';
   }
 
@@ -28,90 +32,71 @@ export interface Intervention {
   providedIn: 'root'
 })
 export class InterventionService {
-    private interventions: Intervention[] = [
-        {
-          id: 1,
-          type: 'Réparation',
-          client: 'Jean Dupont',
-          vehicule: 'Renault Clio',
-          dateDemande: new Date('2025-03-15'),
-          dateDebut: new Date('2025-03-18'),
-          dureeEstimee: '2 jours',
-          dateFin: new Date('2025-03-20'),
-          mecanicien: 'Pierre Martin',
-          coutEstime: 350,
-          coutFinal: 380,
-          status: 'Fini'
-        },
-        // Ajoutez d'autres interventions pour tester
-      ];
+    private apiUrl = environment.url + "intervention";
 
-      private interventionsSubject = new BehaviorSubject<Intervention[]>(this.interventions);
 
-      constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {}
 
-      getInterventions(): Observable<Intervention[]> {
-        // Dans un cas réel, vous feriez un appel HTTP
-        // return this.http.get<Intervention[]>('api/interventions');
-        return this.interventionsSubject.asObservable();
-      }
+    getInterventions(): Observable<any> {
+        return this.http.get(this.apiUrl);
+    }
 
-      getInterventionStats(): Observable<InterventionStats> {
+    getInterventionStats(): Observable<InterventionStats> {
         return this.getInterventions().pipe(
-          map(interventions => {
-            const total = interventions.length;
-            const enCours = interventions.filter(i => i.status === 'En cours').length;
-            const fini = interventions.filter(i => i.status === 'Fini').length;
-            const enAttente = interventions.filter(i => i.status === 'En attente').length;
+            map((response: any) => {
+              const interventions = Array.isArray(response) ? response : response.data || [];
+              const total = interventions.length;
+              const enCours = interventions.filter((i: Intervention) => i.status === 'En cours').length;
+              const fini = interventions.filter((i: Intervention) => i.status === 'Fini').length;
+              const enAttente = interventions.filter((i: Intervention) => i.status === 'En attente').length;
 
-            return { total, enCours, fini, enAttente };
-          })
+              return { total, enCours, fini, enAttente };
+            })
         );
-      }
+    }
 
-      getInterventionById(id: number): Observable<Intervention | undefined> {
-        // Dans un cas réel, vous feriez un appel HTTP
-        // return this.http.get<Intervention>(`api/interventions/${id}`);
-        const intervention = this.interventions.find((i) => i.id === id)
-        return of(intervention)
-      }
+    getInterventionById(id: number): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/${id}`)
+    }
 
-      addIntervention(intervention: Omit<Intervention, 'id'>): Observable<Intervention> {
-        const newId = Math.max(...this.interventions.map(i => i.id), 0) + 1;
-        const newIntervention = { ...intervention, id: newId };
+    addIntervention(intervention: any): Observable<any> {
+        const interventionToSend = this.prepareInterventionForApi(intervention)
+        return this.http.post<any>(this.apiUrl, interventionToSend)
 
-        this.interventions.push(newIntervention);
-        this.interventionsSubject.next([...this.interventions]);
+    }
 
-        return of(newIntervention);
-      }
+    updateIntervention(id: number, intervention: any): Observable<any> {
+        const interventionToSend = this.prepareInterventionForApi(intervention)
+        return this.http.put<any>(`${this.apiUrl}/${id}`, interventionToSend)
+    }
 
-      updateIntervention(id: number, intervention: Omit<Intervention, "id">): Observable<Intervention> {
-        // Dans un cas réel, vous feriez un appel HTTP PUT
-        // return this.http.put<Intervention>(`api/interventions/${id}`, intervention);
 
-        const index = this.interventions.findIndex((i) => i.id === id)
-        if (index !== -1) {
-          const updatedIntervention = { ...intervention, id }
-          this.interventions[index] = updatedIntervention
-          this.interventionsSubject.next([...this.interventions])
-          return of(updatedIntervention)
+    private prepareInterventionForApi(devis: any): any {
+        const prepared = { ...devis }
+
+        // Extraire juste l'ID du client
+        if (prepared.client && typeof prepared.client === 'object') {
+          prepared.client = prepared.client._id || prepared.client
         }
 
-        throw new Error(`Intervention with id ${id} not found`)
-      }
-
-      deleteIntervention(id: number): Observable<void> {
-        // Dans un cas réel, vous feriez un appel HTTP DELETE
-        // return this.http.delete<void>(`api/interventions/${id}`);
-
-        const index = this.interventions.findIndex((i) => i.id === id)
-        if (index !== -1) {
-          this.interventions.splice(index, 1)
-          this.interventionsSubject.next([...this.interventions])
-          return of(void 0)
+        if (prepared.mecanicien && typeof prepared.mecanicien === 'object') {
+          prepared.mecanicien = prepared.mecanicien._id || prepared.mecanicien
         }
 
-        throw new Error(`Intervention with id ${id} not found`)
+        // Extraire l'ID du véhicule
+        if (prepared.vehicule && typeof prepared.vehicule === 'object') {
+          prepared.vehicule = prepared.vehicule._id || prepared.vehicule
+        }
+
+        // Préparer chaque ligne de devis
+        prepared.lignes = prepared.lignes.map((ligne: any) => {
+          return {
+            ...ligne,
+            service: typeof ligne.service === 'object' ? (ligne.service._id || ligne.service) : ligne.service
+          }
+        })
+
+        return prepared
       }
+
 }

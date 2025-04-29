@@ -11,7 +11,7 @@ import { RendezVousComponent } from './app/components/rendez-vous/rendez-vous.co
 import { InvoiceListComponent } from './app/components/facture/list/list.component';
 import { DetailComponent } from './app/components/facture/detail/detail.component';
 import { NewInvoiceComponent } from './app/components/facture/new/new.component';
-import { InvoiceEditComponent } from './app/components/facture/update/update.component';
+// import { InvoiceEditComponent } from './app/components/facture/update/update.component';
 import { ListComponent } from './app/components/devis/list/list.component';
 import { DevisComponent } from './app/components/devis/details/devis.component';
 import { NewComponent } from './app/components/devis/new/new.component';
@@ -40,7 +40,7 @@ export const appRoutes: Routes = [
             { path:'factures', component:InvoiceListComponent },
             { path:'factures/nouveau', component:NewInvoiceComponent },
             { path:'factures/:id', component:DetailComponent },
-            { path:'factures/update/:id', component:InvoiceEditComponent },
+            // { path:'factures/update/:id', component:InvoiceEditComponent },
 
             { path:'devis', component:ListComponent },
             { path:'devis/new', component:NewComponent },
