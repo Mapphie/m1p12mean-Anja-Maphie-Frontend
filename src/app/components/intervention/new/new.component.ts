@@ -1,3 +1,4 @@
+import { Service, ServiceService } from './../../../services/service.service';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { InterventionService } from '../../../services/intervention.service';
@@ -9,6 +10,9 @@ import { DialogModule } from 'primeng/dialog';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
 import { InputTextModule } from 'primeng/inputtext';
+import { Client,ClientsService } from '../../../services/clients.service';
+import { UserService } from './../../../services/user.service';
+import { ClientVehiculeService } from './../../../services/client-vehicule.service';
 
 @Component({
   selector: 'app-new-intervention',
@@ -25,38 +29,46 @@ export class NewInterventionComponent implements OnInit {
   formTitle = "Nouvel Intervention"
   statuses = ["En cours", "Fini", "En attente"];
 
-  clients = ["Client 1", "Client 2", "Client 3"]
+  clients : Client[] = []
   vehicules = ["Renault Clio", "Peugeot 208", "Citroën C3"]
-  types = ["Réparation", "Entretien", "Diagnostic"]
+  services : Service[] = []
   mecaniciens = ["Pierre Martin", "Jean Dupont", "Marie Durand"]
 
   constructor(
     private fb: FormBuilder,
     private interventionService: InterventionService,
+    private clientService: ClientsService,
+    private vehiculeService: ClientVehiculeService,
+    private serviceService: ServiceService,
+    private userService: UserService,
   ) {
     this.interventionForm = this.createForm()
   }
 
   ngOnInit(): void {
+
     if (this.interventionId) {
       this.isEditMode = true
       this.formTitle = "Modifier Intervention"
       this.loadIntervention(this.interventionId)
+
     }
+
+    this.loadClient()
+    this.loadService()
   }
 
   createForm(): FormGroup {
     return this.fb.group({
       client: ["", Validators.required],
       vehicule: ["", Validators.required],
-      type: ["", Validators.required],
+      service: ["", Validators.required],
       mecanicien: ["", Validators.required],
       dateDemande: ["", Validators.required],
       dateDebut: ["", Validators.required],
       dureeEstimee: ["", Validators.required],
       dateFin: [""],
       coutEstime: [0, [Validators.required, Validators.min(0)]],
-      coutFinal: [0, Validators.min(0)],
       status: ["En cours", Validators.required],
     })
   }
@@ -74,6 +86,18 @@ export class NewInterventionComponent implements OnInit {
 
         this.interventionForm.patchValue(formattedIntervention)
       }
+    })
+  }
+
+  loadClient(): void{
+    this.clientService.getClients().subscribe((clients) => {
+        this.clients = clients
+    })
+  }
+
+  loadService(): void{
+    this.serviceService.getAllServices().subscribe((services) => {
+        this.services = services
     })
   }
 

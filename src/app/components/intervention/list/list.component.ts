@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 import { Intervention, InterventionService, InterventionStats } from '../../../services/intervention.service';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -14,6 +15,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { NewInterventionComponent } from '../new/new.component';
 import { Router } from '@angular/router';
+
 
 
 @Component({
@@ -49,7 +51,11 @@ export class ListInterventionComponent {
   showInterventionForm = false
   selectedInterventionId?: number
 
-  constructor(private interventionService: InterventionService) {}
+
+  constructor(
+    private interventionService: InterventionService,
+
+    ) {}
 
   ngOnInit(): void {
     this.loadInterventions()
@@ -70,6 +76,8 @@ export class ListInterventionComponent {
       this.filteredInterventions = data
     })
   }
+
+
 
   loadStats(): void {
     this.interventionService.getInterventionStats().subscribe((stats) => {

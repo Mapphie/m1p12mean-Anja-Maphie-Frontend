@@ -8,31 +8,31 @@
           <div class="form-group">
             <label for="client">Client</label>
             <select id="client" formControlName="client">
-              <option value="">Combo Box</option>
-              <option *ngFor="let client of clients" [value]="client">{{ client }}</option>
+              <option value="">Choisir un client</option>
+              <option *ngFor="let client of clients" [value]="client._id">{{ client.nom }}</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="vehicule">Véhicule</label>
             <select id="vehicule" formControlName="vehicule">
-              <option value="">Combo Box</option>
+              <option value="">Choisir un véhicule</option>
               <option *ngFor="let vehicule of vehicules" [value]="vehicule">{{ vehicule }}</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="type">Type</label>
-            <select id="type" formControlName="type">
-              <option value="">Combo Box</option>
-              <option *ngFor="let type of types" [value]="type">{{ type }}</option>
+            <label for="service">Service</label>
+            <select id="service" formControlName="service">
+              <option value="">Choisir un service</option>
+              <option *ngFor="let service of services" [value]="service._id">{{ service.nom }}</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="mecanicien">Mécanicien</label>
             <select id="mecanicien" formControlName="mecanicien">
-              <option value="">Combo Box</option>
+              <option value="">Choisir un Mécanicien</option>
               <option *ngFor="let mecanicien of mecaniciens" [value]="mecanicien">{{ mecanicien }}</option>
             </select>
           </div>
