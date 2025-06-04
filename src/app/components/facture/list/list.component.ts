@@ -57,7 +57,9 @@ export class InvoiceListComponent {
     this.invoiceService.getAllInvoices().subscribe((data) => {
       this.invoices = data
       this.loading = false;
+      console.log(this.invoices)
     })
+
   }
 
 

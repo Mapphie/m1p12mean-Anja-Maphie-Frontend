@@ -38,27 +38,28 @@
               <th style="min-width: 12rem">
                   <div class="flex justify-between items-center">
                     N° Facture
-                      <p-columnFilter type="text" field="num" display="menu" placeholder="Search by name"></p-columnFilter>
+                      <p-columnFilter type="text" field="number" display="menu" placeholder="Search by number"></p-columnFilter>
                   </div>
               </th>
               <th style="min-width: 12rem">
                 <div class="flex justify-between items-center">
                   Client
-                    <p-columnFilter type="text" field="client" display="menu" placeholder="Search by name"></p-columnFilter>
+                    <p-columnFilter type="text" field="client_name" display="menu" placeholder="Search by name"></p-columnFilter>
+                </div>
+              </th>
+              <th style="min-width: 12rem">
+                <div class="flex justify-between items-center">
+                    Manager
+                    <p-columnFilter type="text" field="manager_name" display="menu" placeholder="Search by name"></p-columnFilter>
                 </div>
               </th>
               <th style="min-width: 12rem">
                 <div class="flex justify-between items-center">
                   Date
-                    <p-columnFilter type="date" field="date" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
+                    <p-columnFilter type="date" field="dateCreation" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
                 </div>
               </th>
-              <th style="min-width: 12rem">
-                <div class="flex justify-between items-center">
-                  Échéance
-                    <p-columnFilter type="date" field="date" display="menu" placeholder="mm/dd/yyyy"></p-columnFilter>
-                </div>
-              </th>
+
               <th style="min-width: 10rem">
                 <div class="flex justify-between items-center">
                   Montant
@@ -67,7 +68,7 @@
               </th>
               <th style="min-width: 12rem">
                 <div class="flex justify-between items-center">
-                    Status
+                    Etat
                     <p-columnFilter field="status" matchMode="equals" display="menu">
                         <ng-template #filter let-value let-filter="filterCallback">
                             <p-select [ngModel]="value" [options]="statutOptions" (onChange)="filter($event.value)" placeholder="Any" [style]="{ 'min-width': '12rem' }">
@@ -83,12 +84,12 @@
           <ng-template #body let-facture >
             <tr (click)="getDetail(facture._id)" style="cursor: pointer;">
                 <td>{{ facture.number }}</td>
-                <td>{{ facture.clientName }}</td>
-                <td>{{ facture.issueDate | date:'dd/MM/yyyy' }}</td>
-                <td>{{ facture.dueDate | date:'dd/MM/yyyy' }}</td>
-                <td>{{ facture.total | currency:'AR' }}</td>
+                <td>{{ facture.client?.nom }}</td>
+                <td>{{ facture.manager?.nom }}</td>
+                <td>{{ facture.dateCreation | date:'dd/MM/yyyy' }}</td>
+                <td>{{ facture.totalTTC | currency:'AR' }}</td>
                 <td>
-                    <p-tag [value]="facture.status" [severity]="getSeverity(facture.status)" styleClass="dark:!bg-surface-900" />
+                    <p-tag [value]="facture.etat" [severity]="getSeverity(facture.etat)" styleClass="dark:!bg-surface-900" />
                 </td>
 
             </tr>
