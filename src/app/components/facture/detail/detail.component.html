@@ -22,7 +22,7 @@
           <h1 class="text-3xl font-medium text-900 mb-2">Facture {{ invoice?.number }}</h1>
           <div class="flex align-items-center">
             <span class="status-badge" [ngClass]="getStatusClass()">{{ getStatusLabel() }}</span>
-            <span class="ml-3 text-color-secondary">Émise le {{ invoice?.dateCreation }}</span>
+            <span class="ml-3 text-color-secondary">Émise le {{ invoice?.dateCreation | date:'dd/MM/yyyy'}}</span>
           </div>
         </div>
         <div class="flex mt-3 md:mt-0">
@@ -67,13 +67,13 @@
               <h2 class="text-xl font-medium text-900 m-0">Client</h2>
             </div>
             <div class="card-content">
-              <h3 class="text-lg font-medium text-900 mb-2">{{ invoice!.client!.nom }}</h3>
-              <p class="m-0 line-height-3 mb-2">{{ invoice!.client!.adresse }}>
-              <p class="m-0 mb-2" *ngIf="invoice!.client!.contact">
-                <span class="font-medium">Téléphone:</span> {{ invoice!.client!.contact }}
+              <h3 class="text-lg font-medium text-900 mb-2">{{ invoice?.client?.nom }}</h3>
+              <p class="m-0 line-height-3 mb-2">{{ invoice?.client?.adresse }}
+              <p class="m-0 mb-2" *ngIf="invoice?.client?.contact">
+                <span class="font-medium">Téléphone:</span> {{ invoice?.client?.contact }}
               </p>
-              <p class="m-0" *ngIf="invoice!.client!.email">
-                <span class="font-medium">Email:</span> {{ invoice!.client!.email }}
+              <p class="m-0" *ngIf="invoice?.client?.email">
+                <span class="font-medium">Email:</span> {{ invoice?.client?.email }}
               </p>
             </div>
           </div>
@@ -88,16 +88,16 @@
             <div class="card-content">
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Numéro:</span>
-                <span>{{ invoice!.number }}</span>
+                <span>{{ invoice?.number }}</span>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Date:</span>
-                <span>{{ invoice!.dateCreation }}</span>
+                <span>{{ invoice?.dateCreation | date:'dd/MM/yyyy'}}</span>
               </div>
               
               <div class="flex justify-content-between">
                 <span class="font-medium">Total:</span>
-                <span class="font-medium text-primary">{{ invoice!.totalTTC.toFixed(2) }} €</span>
+                <span class="font-medium text-primary">{{ invoice?.totalTTC?.toFixed(2) }} €</span>
               </div>
             </div>
           </div>
@@ -150,7 +150,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let item of invoice!.lignes">
+                  <tr *ngFor="let item of invoice?.lignes">
                     <td>REF001</td>
                     <td>{{ item.description }}</td>
                     <td class="text-right">{{ item.prixUnitaireHT.toFixed(2) }} €</td>
@@ -164,15 +164,15 @@
             <div class="p-4 border-top-1 surface-border">
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Total HT:</span>
-                <span>{{ invoice!.totalHT.toFixed(2) }} €</span>
+                <span>{{ invoice?.totalHT?.toFixed(2) }} €</span>
               </div>
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">TVA (20%):</span>
-                <!-- <span>{{ invoice!.taxAmount.toFixed(2) }} €</span> -->
+                <!-- <span>{{ invoice?.taxAmount.toFixed(2) }} €</span> -->
               </div>
               <div class="flex justify-content-between">
                 <span class="font-medium text-lg">Total TTC:</span>
-                <span class="font-medium text-lg text-primary">{{ invoice!.totalTTC.toFixed(2) }} €</span>
+                <span class="font-medium text-lg text-primary">{{ invoice?.totalTTC?.toFixed(2) }} €</span>
               </div>
             </div>
           </div>
@@ -292,15 +292,15 @@
                   <p><strong>IBAN:</strong> FR76 1234 5678 9123 4567 8912 345</p>
                 </td>
                 <td class="total-label">Total HT</td>
-                <td class="total-value">{{ invoice?.totalHT!.toFixed(2) }} €</td>
+                <td class="total-value">{{ invoice?.totalHT?.toFixed(2) }} €</td>
               </tr>
               <tr>
                 <td class="total-label">TVA (20%)</td>
-                <!-- <td class="total-value">{{ invoice?.taxe!.toFixed(2) }} €</td> -->
+                <!-- <td class="total-value">{{ invoice?.taxe?.toFixed(2) }} €</td> -->
               </tr>
               <tr class="grand-total">
                 <td class="total-label">Total TTC</td>
-                <td class="total-value">{{ invoice?.totalTTC!.toFixed(2) }} €</td>
+                <td class="total-value">{{ invoice?.totalTTC?.toFixed(2) }} €</td>
               </tr>
             </tfoot>
           </table>

@@ -26,7 +26,7 @@ export enum StatutInvoice {
 }
 
 export interface Invoice {
-  id: string;
+  id?: string;
   number: string;
   devis?: Devis;
   client: Client;

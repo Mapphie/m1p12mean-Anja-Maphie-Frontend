@@ -1,131 +1,127 @@
 <div class="container">
-    <form (ngSubmit)="onSubmit()" #invoiceForm="ngForm">
-      <div class="card">
-        <div class="card-header">
-          <h1 class="card-title">Créer une nouvelle facture</h1>
-        </div>
-        <div class="card-content">
-          <div class="form-section">
-            <h2>Informations de la facture</h2>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="invoice-number">Numéro de facture</label>
-                <input
-                  type="text"
-                  id="invoice-number"
-                  name="invoiceNumber"
-                  [(ngModel)]="invoice.number"
-                  required
-                >
-              </div>
-              <div class="form-group">
-                <label for="invoice-date">Date</label>
-                <input
-                  type="text"
-                  id="invoice-date"
-                  name="date"
-                  [(ngModel)]="invoice.dateCreation"
-                  required
-                >
-              </div>
-              
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h2>Client</h2>
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+    <div class="card">
+      <div class="card-header">
+        <h1 class="card-title">Créer une nouvelle facture</h1>
+      </div>
+      <div class="card-content">
+        <div class="form-section">
+          <h2>Informations de la facture</h2>
+          <div class="form-grid">
             <div class="form-group">
-              <select
-                id="client"
-                name="client"
-                [(ngModel)]="selectedClient"
-                (change)="onClientChange()"
+              <label for="invoice-number">Numéro de facture</label>
+              <input
+                type="text"
+                id="invoice-number"
+                formControlName="number"
                 required
               >
-                <option value="">-- Sélectionner un client --</option>
-                <option *ngFor="let client of clients" [value]="client._id">{{ client.nom }}</option>
-              </select>
             </div>
-            <div class="form-grid">
-              <div class="form-group">
-                <label for="client-name">Nom du client</label>
-                <input
-                  type="text"
-                  id="client-name"
-                  name="clientName"
-                  [(ngModel)]="invoice.client.nom"
-                  disabled
-                >
-              </div>
-
-              <div class="form-group">
-                <label for="client-address">Adresse</label>
-                <input
-                  type="text"
-                  id="client-address"
-                  name="clientAddress"
-                  [(ngModel)]="invoice.client.adresse"
-                  disabled
-                >
-              </div>
-              <div class="form-group">
-                <label for="client-phone">Téléphone</label>
-                <input
-                  type="text"
-                  id="client-phone"
-                  name="clientPhone"
-                  [(ngModel)]="invoice.client.contact"
-                  disabled
-                >
-              </div>
-              <div class="form-group">
-                <label for="client-email">Email</label>
-                <input
-                  type="email"
-                  id="client-email"
-                  name="clientEmail"
-                  [(ngModel)]="invoice.client.email"
-                  disabled
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="form-section">
-            <h2>Informations du véhicule</h2>
             <div class="form-group">
-                <select
-                  id="vehicule"
-                  name="vehicule"
-                  [(ngModel)]="selectedVehicule"
-                  required
-                >
-                  <option value="">-- Sélectionner un vehicule --</option>
-                  <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">{{ vehicule.marque }}</option>
-                </select>
-              </div>
+              <label for="invoice-date">Date</label>
+              <input
+                type="date"
+                id="invoice-date"
+                formControlName="dateCreation"
+                required
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Client</h2>
+          <div class="form-group">
+            <select
+              id="client"
+              formControlName="selectedClient"
+              (change)="onClientChange()"
+              required
+            >
+              <option value="">-- Sélectionner un client --</option>
+              <option *ngFor="let client of clients" [value]="client._id">
+                {{ client.nom }}
+              </option>
+            </select>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="client-name">Nom du client</label>
+              <input
+                type="text"
+                id="client-name"
+                formControlName="clientNom"
+                readonly
+              >
+            </div>
+            <div class="form-group">
+              <label for="client-address">Adresse</label>
+              <input
+                type="text"
+                id="client-address"
+                formControlName="clientAdresse"
+                readonly
+              >
+            </div>
+            <div class="form-group">
+              <label for="client-phone">Téléphone</label>
+              <input
+                type="text"
+                id="client-phone"
+                formControlName="clientContact"
+                readonly
+              >
+            </div>
+            <div class="form-group">
+              <label for="client-email">Email</label>
+              <input
+                type="email"
+                id="client-email"
+                formControlName="clientEmail"
+                readonly
+              >
+            </div>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Informations du véhicule</h2>
+          <div class="form-group">
+            <select
+              id="vehicule"
+              formControlName="selectedVehicule"
+              (change)="onVehiculeChange()"
+              required
+            >
+              <option value="">-- Sélectionner un véhicule --</option>
+              <option *ngFor="let vehicule of vehicules" [value]="vehicule._id">
+                {{ vehicule.marque }} - {{ vehicule.modele }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h2>Services</h2>
+
+          <div class="items-header">
+            <div class="item-col designation">Désignation</div>
+            <div class="item-col price">Prix u HT</div>
+            <div class="item-col quantity">Qté</div>
+            <div class="item-col total">Total TTC</div>
+            <div class="item-col actions">Actions</div>
           </div>
 
-          <div class="form-section">
-            <h2>Services</h2>
-
-            <div class="items-header">
-              <div class="item-col designation">Désignation</div>
-              <div class="item-col price">Prix u HT</div>
-              <div class="item-col quantity">Qté</div>
-              <div class="item-col total">Total HT</div>
-              <div class="item-col actions">Actions</div>
-            </div>
-
-            <div class="item-row" *ngFor="let item of invoice.lignes; let i = index">
-              <div class="item-col reference">
-
-              </div>
+          <div formArrayName="lignes">
+            <div 
+              class="item-row" 
+              *ngFor="let itemGroup of lignesFormArray.controls; let i = index"
+              [formGroupName]="i"
+            >
               <div class="item-col designation">
                 <input
                   type="text"
-                  [name]="'item-desc-' + i"
-                  [(ngModel)]="item.service.nom"
+                  formControlName="serviceNom"
                   placeholder="Désignation"
                   required
                 >
@@ -133,30 +129,27 @@
               <div class="item-col price">
                 <input
                   type="number"
-                  [name]="'item-price-' + i"
-                  [(ngModel)]="item.prixUnitaireHT"
+                  formControlName="prixUnitaireHT"
                   min="0"
                   step="0.01"
-                  (change)="updateItemAmount(item)"
+                  (input)="updateItemAmount(i)"
                   required
                 >
               </div>
               <div class="item-col quantity">
                 <input
                   type="number"
-                  [name]="'item-qty-' + i"
-                  [(ngModel)]="item.quantite"
+                  formControlName="quantite"
                   min="0.5"
                   step="0.5"
-                  (change)="updateItemAmount(item)"
+                  (input)="updateItemAmount(i)"
                   required
                 >
               </div>
               <div class="item-col total">
                 <input
                   type="text"
-                  [name]="'item-total-' + i"
-                  [value]="item.totalTTC.toFixed(2) + ' €'"
+                  formControlName="totalTTC"
                   readonly
                 >
               </div>
@@ -165,37 +158,47 @@
                   type="button"
                   class="btn btn-icon"
                   (click)="removeItem(i)"
-                  [disabled]="invoice.lignes.length === 1"
+                  [disabled]="lignesFormArray.length === 1"
                 >
                   <span class="icon">🗑️</span>
                 </button>
               </div>
             </div>
-            <p-button icon="pi pi-plus" severity="help" label="Ajouter un service" (click)="addItem()" outlined />
+          </div>
 
+          <p-button 
+            icon="pi pi-plus" 
+            severity="help" 
+            label="Ajouter un service" 
+            (click)="addItem()" 
+            outlined 
+          />
 
-            <div class="totals-section">
-              <div class="total-row">
-                <span>Total HT:</span>
-                <span>{{ invoice.totalHT.toFixed(2) }} €</span>
-              </div>
-              <div class="total-row">
-                <span>TVA (20%):</span>
-                <!-- <span>{{ invoice.taxe.toFixed(2) }} €</span> -->
-              </div>
-              <div class="total-row total">
-                <span>Total TTC:</span>
-                <span>{{ invoice.totalTTC.toFixed(2) }} €</span>
-              </div>
+          <div class="totals-section">
+            <div class="total-row">
+              <span>Total HT:</span>
+              <span>{{ invoice.totalHT?.toFixed(2) || '0.00' }} €</span>
+            </div>
+            <div class="total-row">
+              <span>TVA (20%):</span>
+              <span>{{ (invoice.totalTTC - invoice.totalHT)?.toFixed(2) || '0.00' }} €</span>
+            </div>
+            <div class="total-row total">
+              <span>Total TTC:</span>
+              <span>{{ invoice.totalTTC?.toFixed(2) || '0.00' }} €</span>
             </div>
           </div>
         </div>
-        <div class="card-footer">
-            <p-button label="Annuler" severity="danger" (click)="cancel()" outlined />
-            <p-button label="Créer la facture" type="submit" severity="primary"  />
-
-        </div>
       </div>
-    </form>
-  </div>
-
+      <div class="card-footer">
+        <p-button label="Annuler" severity="danger" (click)="cancel()" outlined />
+        <p-button 
+          label="Créer la facture" 
+          type="submit" 
+          severity="primary"
+          [disabled]="!invoiceForm.valid"
+        />
+      </div>
+    </div>
+  </form>
+</div>

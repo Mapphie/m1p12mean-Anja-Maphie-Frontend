@@ -42,11 +42,16 @@ export class DetailComponent {
   ) {}
 
   ngOnInit(): void {
+    this.chargerFacture();
+  }
+
+  chargerFacture(): void{
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id")
       if (id) {
         this.invoiceService.getInvoiceById(id).subscribe((invoice) => {
           this.invoice = invoice
+          console.log('Détails: ',this.invoice)
         })
       }
     })
