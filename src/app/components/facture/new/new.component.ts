@@ -63,6 +63,7 @@ export class NewInvoiceComponent {
   selectedClient: Client | null = null;
   selectedVehicule: ClientVehicule | null = null;
 
+
   constructor(
     private fb: FormBuilder,
     private invoiceService: InvoiceService,
@@ -87,6 +88,7 @@ export class NewInvoiceComponent {
   ngOnInit(): void {
     this.loadClients();
     this.loadServices();
+    this.loadVehicules();
     this.addItem();
   }
 
@@ -96,10 +98,12 @@ export class NewInvoiceComponent {
 
   createItemFormGroup(): FormGroup {
     return this.fb.group({
-      serviceNom: ['', Validators.required],
-      prixUnitaireHT: [0, [Validators.required, Validators.min(0)]],
-      quantite: [1, [Validators.required, Validators.min(0.5)]],
-      totalTTC: [{ value: 0, disabled: true }]
+        selectedService: ['', Validators.required],
+        prixUnitaireHT: [0, [Validators.required, Validators.min(0)]],
+        quantite: [1, [Validators.required, Validators.min(0)]],
+        taxe: [20],
+        totalHT: [{ value: 0, disabled: true }],
+        totalTTC: [{ value: 0, disabled: true }]
     });
   }
 
@@ -122,6 +126,7 @@ export class NewInvoiceComponent {
     this.vehiculeService.getAllVehicules().subscribe((vehicules) => {
       this.vehicules = vehicules;
     });
+
   }
 
   onClientChange(): void {
@@ -130,7 +135,7 @@ export class NewInvoiceComponent {
 
     if (client) {
       this.selectedClient = client;
-      
+
       // Mettre à jour les champs client dans le formulaire
       this.invoiceForm.patchValue({
         clientNom: client.nom || '',
@@ -166,6 +171,26 @@ export class NewInvoiceComponent {
     }
   }
 
+  onServiceChange(index: number): void {
+    const ligneForm = this.lignesFormArray.at(index) as FormGroup;
+    const serviceId = ligneForm.get("selectedService")?.value;
+
+    if (serviceId) {
+      this.serviceService.getServiceById(serviceId).subscribe(service => {
+        if (service) {
+          ligneForm.patchValue({
+            // serviceNom: service.nom,
+            prixUnitaireHT: service.prix,
+            // taxe: 20,
+          });
+          this.updateItemAmount(index);
+        }
+      }, error => {
+        console.error('Erreur lors de la récupération du service:', error);
+      });
+    }
+  }
+
   addItem(): void {
     this.lignesFormArray.push(this.createItemFormGroup());
   }
@@ -181,63 +206,102 @@ export class NewInvoiceComponent {
     const itemGroup = this.lignesFormArray.at(index);
     const prix = itemGroup.get('prixUnitaireHT')?.value || 0;
     const quantite = itemGroup.get('quantite')?.value || 0;
+    const taxe = itemGroup.get('taxe')?.value || 20;
+
     const totalHT = prix * quantite;
-    const totalTTC = totalHT * 1.2; // 20% TVA
-    
-    itemGroup.get('totalTTC')?.setValue(totalTTC.toFixed(2));
+    const totalTTC = totalHT * (1 + taxe / 100);
+
+    itemGroup.get('totalHT')?.setValue(parseFloat(totalHT.toFixed(2)));
+    itemGroup.get('totalTTC')?.setValue(parseFloat(totalTTC.toFixed(2)));
+
     this.calculateTotals();
   }
 
   calculateTotals(): void {
     let totalTTC = 0;
     let totalHT = 0;
-    
+
     this.lignesFormArray.controls.forEach((control: any) => {
       const itemTTC = parseFloat(control.get('totalTTC')?.value) || 0;
       totalTTC += itemTTC;
       totalHT += itemTTC / 1.2;
     });
-    
+
     this.invoice.totalTTC = totalTTC;
     this.invoice.totalHT = totalHT;
   }
 
   onSubmit(): void {
-    if (this.invoiceForm.valid) {
-      // Construire l'objet invoice à partir du formulaire
-      const formValue = this.invoiceForm.value;
-      
-      this.invoice = {
-        number: formValue.number,
-        dateCreation: new Date(formValue.dateCreation),
-        client: this.selectedClient!,
-        vehicule: this.selectedVehicule!,
-        manager: {} as User, // À définir selon vos besoins
-        lignes: formValue.lignes.map((ligne: any) => ({
-          service: { nom: ligne.serviceNom },
-          prixUnitaireHT: ligne.prixUnitaireHT,
-          quantite: ligne.quantite,
-          totalHT: ligne.prixUnitaireHT * ligne.quantite,
-          totalTTC: parseFloat(ligne.totalTTC),
-          taxe: 20,
-          remise: 0,
-          description: ligne.serviceNom
-        })),
-        totalHT: this.invoice.totalHT,
-        totalTTC: this.invoice.totalTTC,
-        taxe: this.invoice.totalTTC - this.invoice.totalHT,
-        statut: 'brouillon'
-      };
+    if (this.invoiceForm.valid && this.selectedClient && this.selectedVehicule) {
+        // Construire l'objet invoice à partir du formulaire
+        const formValue = this.invoiceForm.value;
 
-      this.invoiceService.addInvoice(this.invoice).subscribe(() => {
-        this.router.navigate(['/dash/factures']);
-      });
-    } else {
-      alert('Veuillez remplir tous les champs requis.');
-    }
+        this.invoice = {
+          number: formValue.number,
+          dateCreation: new Date(formValue.dateCreation),
+          client: this.selectedClient,
+          vehicule: this.selectedVehicule,
+          manager: {} as User, // À définir selon vos besoins
+          lignes: formValue.lignes.map((ligne: any) => ({
+            service: { nom: ligne.serviceNom },
+            prixUnitaireHT: ligne.prixUnitaireHT,
+            quantite: ligne.quantite,
+            totalHT: ligne.totalHT,
+            totalTTC: ligne.totalTTC,
+            taxe: ligne.taxe || 20,
+            remise: 0,
+            description: ligne.description || ligne.serviceNom
+          })),
+          totalHT: this.invoice.totalHT,
+          totalTTC: this.invoice.totalTTC,
+          etat: 'brouillon'
+        };
+
+        this.invoiceService.addInvoice(this.invoice).subscribe({
+          next: () => {
+            this.router.navigate(['/dash/factures']);
+          },
+          error: (error) => {
+            console.log(this.invoice)
+            console.error('Erreur lors de la création de la facture:', error);
+            alert('Erreur lors de la création de la facture.');
+          }
+        });
+      } else {
+        alert('Veuillez remplir tous les champs requis et sélectionner un client et un véhicule.');
+      }
   }
 
   cancel(): void {
     this.router.navigate(["/dash/factures"]);
   }
+
+  checkFormErrors(): void {
+    console.log('Form valid:', this.invoiceForm.valid);
+    console.log('Form errors:', this.invoiceForm.errors);
+
+    // Vérifier chaque contrôle du formulaire principal
+    Object.keys(this.invoiceForm.controls).forEach(key => {
+      const control = this.invoiceForm.get(key);
+      if (control && control.invalid) {
+        console.log(`${key} is invalid:`, control.errors);
+      }
+    });
+
+    // Vérifier les lignes du FormArray
+    this.lignesFormArray.controls.forEach((ligneControl, index) => {
+      if (ligneControl.invalid) {
+        console.log(`Ligne ${index} is invalid:`, ligneControl.errors);
+
+        // Vérifier chaque champ de la ligne
+        Object.keys((ligneControl as FormGroup).controls).forEach(fieldKey => {
+          const fieldControl = ligneControl.get(fieldKey);
+          if (fieldControl && fieldControl.invalid) {
+            console.log(`  - ${fieldKey} is invalid:`, fieldControl.errors);
+          }
+        });
+      }
+    });
+  }
+
 }

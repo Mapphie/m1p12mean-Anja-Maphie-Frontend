@@ -49,7 +49,7 @@
           <i class="pi pi-wallet mr-2"></i>
           Enregistrer un paiement
         </button>
-        
+
         <button class="p-button p-button-help" *ngIf="invoice?.etat !== 'Payée'" (click)="setDraft()">
           <i class="pi pi-pencil mr-2"></i>
           Modifier
@@ -78,7 +78,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Invoice Information -->
         <div class="col-12 md:col-6 flex align-items-stretch">
           <div class="card-container mb-4 w-full">
@@ -94,7 +94,7 @@
                 <span class="font-medium">Date:</span>
                 <span>{{ invoice?.dateCreation | date:'dd/MM/yyyy'}}</span>
               </div>
-              
+
               <div class="flex justify-content-between">
                 <span class="font-medium">Total:</span>
                 <span class="font-medium text-primary">{{ invoice?.totalTTC?.toFixed(2) }} €</span>
@@ -103,7 +103,7 @@
           </div>
         </div>
       </div>
-    
+
       <!-- Vehicle Information -->
       <div class="col-12">
         <div class="card-container mb-4">
@@ -113,24 +113,24 @@
           <div class="card-content">
             <div class="flex justify-content-between mb-1">
               <span class="font-medium">Immatriculation:</span>
-              <span>{{ vehicleInfo.registration }}</span>
+              <span>{{ invoice?.vehicule?.matricule }}</span>
             </div>
             <div class="flex justify-content-between mb-1">
               <span class="font-medium">Marque:</span>
-              <span>{{ vehicleInfo.brand }}</span>
+              <span>{{ invoice?.vehicule?.marque }}</span>
             </div>
             <div class="flex justify-content-between mb-1">
               <span class="font-medium">Modèle:</span>
-              <span>{{ vehicleInfo.model }}</span>
+              <span>{{ invoice?.vehicule?.modele }}</span>
             </div>
             <div class="flex justify-content-between">
-              <span class="font-medium">Kilométrage:</span>
-              <span>{{ vehicleInfo.mileage }}</span>
+              <span class="font-medium">Année:</span>
+              <span>{{ invoice?.vehicule?.annee }}</span>
             </div>
           </div>
         </div>
       </div>
-    
+
       <!-- Items Table -->
       <div class="col-12">
         <div class="card-container">
@@ -160,7 +160,7 @@
                 </tbody>
               </table>
             </div>
-            
+
             <div class="p-4 border-top-1 surface-border">
               <div class="flex justify-content-between mb-2">
                 <span class="font-medium">Total HT:</span>
@@ -179,7 +179,7 @@
         </div>
       </div>
     </div>
-    
+
   </div>
 
   <!-- PDF Preview Modal -->
@@ -220,7 +220,7 @@
                 <span class="ref-label">Date:</span>
                 <span class="ref-value">{{ invoice?.dateCreation }}</span>
               </div>
-              
+
             </div>
           </div>
 

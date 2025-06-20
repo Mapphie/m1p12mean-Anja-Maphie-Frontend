@@ -113,35 +113,33 @@
           </div>
 
           <div formArrayName="lignes">
-            <div 
-              class="item-row" 
+            <div
+              class="item-row"
               *ngFor="let itemGroup of lignesFormArray.controls; let i = index"
               [formGroupName]="i"
             >
               <div class="item-col designation">
-                <input
-                  type="text"
-                  formControlName="serviceNom"
-                  placeholder="Désignation"
-                  required
-                >
+                <select id="service-{{i}}" formControlName="selectedService" (change)="onServiceChange(i)" required>
+                    <option value="">-- Sélectionner un Service --</option>
+                    <option *ngFor="let service of services" [value]="service._id">
+                    {{ service.nom }}
+                    </option>
+                </select>
               </div>
               <div class="item-col price">
                 <input
                   type="number"
                   formControlName="prixUnitaireHT"
-                  min="0"
-                  step="0.01"
                   (input)="updateItemAmount(i)"
-                  required
+                  readonly
                 >
               </div>
               <div class="item-col quantity">
                 <input
                   type="number"
                   formControlName="quantite"
-                  min="0.5"
-                  step="0.5"
+                  min="1"
+                  step="1"
                   (input)="updateItemAmount(i)"
                   required
                 >
@@ -166,37 +164,37 @@
             </div>
           </div>
 
-          <p-button 
-            icon="pi pi-plus" 
-            severity="help" 
-            label="Ajouter un service" 
-            (click)="addItem()" 
-            outlined 
+          <p-button
+            icon="pi pi-plus"
+            severity="help"
+            label="Ajouter un service"
+            (click)="addItem()"
+            outlined
           />
 
           <div class="totals-section">
             <div class="total-row">
               <span>Total HT:</span>
-              <span>{{ invoice.totalHT?.toFixed(2) || '0.00' }} €</span>
+              <span>{{ invoice.totalHT || '0.00' }} €</span>
             </div>
             <div class="total-row">
               <span>TVA (20%):</span>
-              <span>{{ (invoice.totalTTC - invoice.totalHT)?.toFixed(2) || '0.00' }} €</span>
+              <span>{{ (invoice.totalTTC - invoice.totalHT) || '0.00' }} €</span>
             </div>
             <div class="total-row total">
               <span>Total TTC:</span>
-              <span>{{ invoice.totalTTC?.toFixed(2) || '0.00' }} €</span>
+              <span>{{ invoice.totalTTC || '0.00' }} €</span>
             </div>
           </div>
         </div>
       </div>
       <div class="card-footer">
         <p-button label="Annuler" severity="danger" (click)="cancel()" outlined />
-        <p-button 
-          label="Créer la facture" 
-          type="submit" 
+        <p-button
+          label="Créer la facture"
+          type="submit"
           severity="primary"
-          [disabled]="!invoiceForm.valid"
+          [disabled]="invoiceForm.invalid"
         />
       </div>
     </div>
