@@ -23,7 +23,7 @@ import { ToggleButtonModule } from 'primeng/togglebutton';
 import { Client, ClientsService } from '../../../services/clients.service';
 import { Service, ServiceService } from '../../../services/service.service';
 import { ClientVehicule, ClientVehiculeService } from '../../../services/client-vehicule.service';
-import { User } from '../../../services/user.service';
+import { User, UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-new',
@@ -62,7 +62,8 @@ export class NewInvoiceComponent {
 
   selectedClient: Client | null = null;
   selectedVehicule: ClientVehicule | null = null;
-
+  defaultManagerEmail = 'miradoranaivo@gmail.com';
+  defaultManager: User = {} as User;
 
   constructor(
     private fb: FormBuilder,
@@ -70,10 +71,11 @@ export class NewInvoiceComponent {
     private clientService: ClientsService,
     private serviceService: ServiceService,
     private vehiculeService: ClientVehiculeService,
+    private userService: UserService,
     private router: Router,
   ) {
     this.invoiceForm = this.fb.group({
-      number: ['FAC0002', Validators.required],
+      number: ['FAC0001', Validators.required],
       dateCreation: [new Date().toISOString().split('T')[0], Validators.required],
       selectedClient: ['', Validators.required],
       selectedVehicule: ['', Validators.required],
@@ -86,19 +88,56 @@ export class NewInvoiceComponent {
   }
 
   ngOnInit(): void {
+    this.generateInvoiceNumber();
     this.loadClients();
     this.loadServices();
     this.loadVehicules();
     this.addItem();
+    this.loadDefaultManager();
   }
 
   get lignesFormArray(): FormArray {
     return this.invoiceForm.get('lignes') as FormArray;
   }
 
+  generateInvoiceNumber(): void {
+    this.invoiceService.getLastInvoice().subscribe((lastInvoice) => {
+        let newNumber = 'FAC-2025-001'; // valeur par défaut
+
+        if (lastInvoice && lastInvoice.number) {
+          const lastNumber = lastInvoice.number; // ex: FAC-2025-003
+
+          // Extraire l’année et la partie numérique
+          const parts = lastNumber.split('-'); // ["FAC", "2025", "003"]
+          const year = parts[1];
+          const numericPart = parseInt(parts[2], 10) || 0;
+
+          // Vérifier si on est toujours sur la même année
+          const currentYear = new Date().getFullYear().toString();
+
+          let nextNumber: number;
+          if (year === currentYear) {
+            // Même année -> on incrémente
+            nextNumber = numericPart + 1;
+          } else {
+            // Nouvelle année -> on redémarre à 1
+            nextNumber = 1;
+          }
+
+          // Générer le nouveau code
+          newNumber = `FAC-${currentYear}-${nextNumber.toString().padStart(3, '0')}`;
+        }
+
+        this.invoiceForm.patchValue({ number: newNumber });
+        console.log('Generated invoice number:', newNumber);
+      });
+  }
+
+
   createItemFormGroup(): FormGroup {
     return this.fb.group({
         selectedService: ['', Validators.required],
+        serviceObj: [null],
         prixUnitaireHT: [0, [Validators.required, Validators.min(0)]],
         quantite: [1, [Validators.required, Validators.min(0)]],
         taxe: [20],
@@ -181,7 +220,8 @@ export class NewInvoiceComponent {
           ligneForm.patchValue({
             // serviceNom: service.nom,
             prixUnitaireHT: service.prix,
-            // taxe: 20,
+            serviceObj: service,
+
           });
           this.updateItemAmount(index);
         }
@@ -231,31 +271,55 @@ export class NewInvoiceComponent {
     this.invoice.totalHT = totalHT;
   }
 
+  loadDefaultManager(): void{
+    this.userService.getUserByEmail(this.defaultManagerEmail).subscribe({
+        next: (user) => {
+          this.defaultManager = user
+            console.log("Default Manager : ",this.defaultManager);
+        },
+        error: (err) => console.error('Impossible de récupérer le manager par défaut:', err)
+      });
+  }
+
   onSubmit(): void {
     if (this.invoiceForm.valid && this.selectedClient && this.selectedVehicule) {
         // Construire l'objet invoice à partir du formulaire
         const formValue = this.invoiceForm.value;
 
-        this.invoice = {
-          number: formValue.number,
-          dateCreation: new Date(formValue.dateCreation),
-          client: this.selectedClient,
-          vehicule: this.selectedVehicule,
-          manager: {} as User, // À définir selon vos besoins
-          lignes: formValue.lignes.map((ligne: any) => ({
-            service: { nom: ligne.serviceNom },
+        // Calculer les lignes et totaux localement avant de créer l'objet invoice
+        const lignes = formValue.lignes?.map((ligne: any) => {
+            const totalHT = ligne.prixUnitaireHT * ligne.quantite;
+            const totalTTC = totalHT * (1 + (ligne.taxe || 20) / 100);
+
+            return {
+            service: ligne.serviceObj._id,
             prixUnitaireHT: ligne.prixUnitaireHT,
             quantite: ligne.quantite,
-            totalHT: ligne.totalHT,
-            totalTTC: ligne.totalTTC,
             taxe: ligne.taxe || 20,
             remise: 0,
-            description: ligne.description || ligne.serviceNom
-          })),
-          totalHT: this.invoice.totalHT,
-          totalTTC: this.invoice.totalTTC,
-          etat: 'brouillon'
-        };
+            description: ligne.description || ligne.serviceNom,
+            totalHT,
+            totalTTC,
+            };
+        }) || [];
+
+      const totalHT = lignes.reduce((sum: any, l: { totalHT: any; }) => sum + l.totalHT, 0);
+      const totalTTC = lignes.reduce((sum: any, l: { totalTTC: any; }) => sum + l.totalTTC, 0);
+
+      this.invoice = {
+        number: formValue.number,
+        dateCreation: new Date(formValue.dateCreation),
+        client: this.selectedClient,
+        vehicule: this.selectedVehicule,
+        manager: this.defaultManager,
+        lignes,
+        totalHT,
+        totalTTC,
+        etat: 'Brouillon',
+      };
+
+
+        console.log('Payload envoyé:', JSON.stringify(this.invoice, null, 2));
 
         this.invoiceService.addInvoice(this.invoice).subscribe({
           next: () => {

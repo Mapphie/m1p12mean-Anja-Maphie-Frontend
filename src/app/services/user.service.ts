@@ -55,5 +55,7 @@ export class UserService {
         return this.http.get(`${this.apiUrl}/byid-user/${id}`)
       }
 
-
+    getUserByEmail(email: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/by-email/${email}`);
+    }
 }

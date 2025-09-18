@@ -60,7 +60,8 @@ export class InvoiceService {
 
     addInvoice(quote: any): Observable<any> {
       const InvoiceToSend = this.prepareInvoiceForApi(quote)
-      return this.http.post<any>(this.apiUrl, InvoiceToSend)
+      console.log(`${this.apiUrl}`)
+      return this.http.post<any>(`${this.apiUrl}`, InvoiceToSend)
     }
 
     updateInvoice(id: string, quote: any): Observable<any> {
@@ -72,7 +73,7 @@ export class InvoiceService {
       return this.http.put<Invoice>(`${this.apiUrl}/${id}/etat`, { etat: statut });
     }
 
-    private prepareInvoiceForApi(invoice: any): any {
+    prepareInvoiceForApi(invoice: any): any {
       const prepared = { ...invoice }
 
       // Extraire juste l'ID du client
@@ -99,6 +100,10 @@ export class InvoiceService {
       })
 
       return prepared
+    }
+
+    getLastInvoice(): Observable<Invoice> {
+        return this.http.get<Invoice>(`${this.apiUrl}/last`);
     }
 }
 
